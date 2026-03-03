@@ -1,0 +1,342 @@
+---
+title: "Optimisation de la Maintenance : Pompes et Compresseurs"
+author: "Theau Aguet"
+date: "`r Sys.Date()`"
+format:
+  html:
+    embed-resources: true
+    theme: 
+      light: lux
+      dark: darkly
+    toc: true
+    toc-location: left
+    number-sections: true
+    code-fold: true
+    code-summary: "Voir le code R"
+    code-copy: true
+    grid:
+      sidebar-width: 250px
+      body-width: 900px
+    highlight-style: dracula
+---
+
+# Exercice 1 : Politique de remplacement à l'âge
+
+## Introduction
+
+Cet exercice porte sur l'optimisation de la stratégie de maintenance de pompes centrifuges en acier inoxydable. Nous comparons la politique actuelle (remplacement périodique par bloc) avec une politique basée sur l'âge, tout en intégrant les coûts de non-production.
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+
+# Installation et chargement des bibliothèques nécessaires
+if(!require(flexsurv)) install.packages("flexsurv")
+if(!require(survival)) install.packages("survival")
+
+library(flexsurv)
+library(survival)
+
+
+```
+
+## Question 1 : Estimation des paramètres de Weibull
+
+Nous utilisons les données historiques pour estimer les paramètres $\beta$ (forme) et $\eta$ (échelle) via la fonction de densité de Weibull :
+
+
+$$f(t) = \frac{\beta}{\eta} \left( \frac{t}{\eta} \right)^{\beta-1} e^{-(t/\eta)^\beta}$$
+
+```{r}
+# 1. Chargement des données
+pump_data <- read.csv("../data/td_4/centrifugalpump.csv")
+
+# 2. Création de l'objet de survie (gestion de la censure à droite)
+surv_obj <- Surv(time = pump_data$time, event = pump_data$evt)
+
+# 3. Ajustement de la loi de Weibull
+fit <- flexsurvreg(surv_obj ~ 1, dist = "weibull")
+
+# 4. Extraction des paramètres
+beta_est <- fit$res["shape", "est"]
+eta_est  <- fit$res["scale", "est"]
+
+cat("Paramètre de forme (beta) :", beta_est, "\n")
+cat("Paramètre d'échelle (eta) :", eta_est, "\n")
+
+
+```
+
+**Analyse des résultats :**
+Le paramètre de forme $\beta$ est d'environ **2,37**. Comme $\beta > 1$, la pompe est dans sa phase de **vieillissement** (taux de défaillance croissant). Cela justifie l'application d'une maintenance préventive pour remplacer les composants avant qu'ils ne tombent en panne. Le paramètre d'échelle $\eta \approx 22\,881$ h indique la durée de vie caractéristique du système.
+
+## Question 2 : Espérance du nombre de défaillances
+
+Nous calculons l'espérance du nombre de pannes sur un intervalle de 2 ans ($T = 17520$ h) en utilisant la fonction de risque cumulé $H(t)$, conformément au Modèle III du cours (réparation minimale/PPNH) :
+
+
+$$E[N(T)] = H(T) = \left( \frac{T}{\eta} \right)^\beta$$
+
+```{r}
+# Définition des coûts incluant l'arrêt de production (Cd = 1000 €/h)
+Cc_total <- 5000 + (5 * 1000) # 10 000€
+Cp_total <- 2000 + (3 * 1000) # 5 000€
+
+# Espérance du nombre de pannes sur 2 ans
+t_intervalle <- 17520
+esperance_pannes <- (t_intervalle / eta_est)^beta_est
+
+cat("Espérance du nombre de pannes sur 2 ans :", esperance_pannes, "\n")
+
+
+```
+
+**Analyse des résultats :**
+L'espérance du nombre de pannes sur 2 ans est d'environ **0,53**. Cela signifie qu'en moyenne, chaque pompe installée risque de subir une panne environ une fois tous les 4 ans si elle n'est pas remplacée préventivement avant. Avec un coût de panne $C_c$ de 10 000 €, ce risque représente un poids financier significatif.
+
+## Question 3 : Coût de la politique actuelle (Bloc)
+
+L'exploitant remplace actuellement tout le parc tous les 2 ans. La formule du coût moyen par unité de temps est :
+
+
+$$C(b) = \frac{C_p + C_c \cdot H(b)}{b}$$
+
+```{r}
+# Fonction de coût moyen par unité de temps (Modèle par Bloc)
+f_cout_bloc <- function(b, shape, scale, Cc, Cp) {
+  M_b <- (b / scale)^shape 
+  return((Cc * M_b + Cp) / b)
+}
+
+# Coût actuel
+cout_actuel <- f_cout_bloc(17520, beta_est, eta_est, Cc_total, Cp_total)
+
+# Recherche de l'optimum par bloc
+opt_bloc <- optimize(f_cout_bloc, interval = c(100, 40000), 
+                     shape = beta_est, scale = eta_est, Cc = Cc_total, Cp = Cp_total)
+
+cat("Coût moyen actuel :", cout_actuel, "€/h\n")
+cat("Période optimale théorique par bloc :", opt_bloc$minimum, "heures\n")
+
+
+```
+
+**Analyse des résultats :**
+Le coût actuel de la politique par bloc est de **0,588 €/h**. Cependant, la période optimale théorique est de **14 953 h** (environ 1,7 an). L'exploitant attend donc trop longtemps (2 ans) avant de procéder au remplacement groupé, ce qui laisse trop de place aux pannes correctives coûteuses.
+
+## Question 4 : Modélisation du coût basé sur l'âge
+
+Expression du coût moyen par unité de temps $C(a)$ selon le modèle de remplacement à l'âge du cours :
+
+
+$$C(a) = \frac{C_p \cdot R(a) + C_c \cdot F(a)}{\int_{0}^{a} R(t) dt}$$
+
+```{r}
+# Fonction de coût basé sur l'âge
+cout_moyen_age <- function(a, shape, scale, Cc, Cp) {
+  R_a <- pweibull(a, shape = shape, scale = scale, lower.tail = FALSE)
+  F_a <- 1 - R_a
+  
+  # Espérance de la durée du cycle (Intégrale de R(t))
+  esperance_duree <- integrate(function(t) {
+    pweibull(t, shape = shape, scale = scale, lower.tail = FALSE)
+  }, lower = 0, upper = a)$value
+  
+  return((Cp * R_a + Cc * F_a) / esperance_duree)
+}
+
+# Calcul de l'optimum pour Cd = 1000
+opt_1000 <- optimize(cout_moyen_age, interval = c(100, 40000), 
+                     shape = beta_est, scale = eta_est, Cc = 10000, Cp = 5000)
+
+cat("Âge optimal de remplacement (a*) :", opt_1000$minimum, "h\n")
+
+
+```
+
+**Analyse des résultats :**
+Dans une politique basée sur l'âge, l'optimum se situe à **20 981 h**. Contrairement à la politique par bloc, on peut se permettre d'attendre plus longtemps pour le préventif car chaque pompe est gérée individuellement : une pompe tombée en panne prématurément repart à un âge de zéro, ce qui "économise" des remplacements inutiles.
+
+## Question 5 : Impact du coût de non-production (Cd)
+
+Comparaison de l'âge optimal si $C_d$ passe à 2000 €/h.
+
+```{r}
+Cd_2000 <- 2000
+Cc_2000 <- 5000 + (5 * Cd_2000) # 15000
+Cp_2000 <- 2000 + (3 * Cd_2000) # 8000
+
+opt_2000 <- optimize(cout_moyen_age, interval = c(100, 40000), 
+                     shape = beta_est, scale = eta_est, Cc = Cc_2000, Cp = Cp_2000)
+
+cat("Age optimal pour Cd=1000 :", opt_1000$minimum, "h\n")
+cat("Age optimal pour Cd=2000 :", opt_2000$minimum, "h\n")
+
+
+```
+
+**Analyse des résultats :**
+Lorsque le coût d'indisponibilité $C_d$ augmente, l'âge optimal augmente ici légèrement (passant de **20 981 h** à **22 346 h**). Bien que le coût des pannes augmente ($C_c$), le coût du remplacement préventif augmente également de manière proportionnelle ($C_p$). La stratégie s'adapte en cherchant à maximiser la durée d'utilisation de la pompe pour amortir ce coût préventif plus élevé.
+
+## Question 6 : Comparaison avec $\beta = 1.5$
+
+Analyse de l'efficacité relative des politiques Bloc vs Âge avec un paramètre de forme fixe.
+
+```{r}
+beta_test <- 1.5
+
+# Optimum Age
+res_age <- optimize(cout_moyen_age, interval = c(100, 50000), 
+                    shape = beta_test, scale = eta_est, Cc = 10000, Cp = 5000)
+
+# Optimum Bloc
+res_bloc <- optimize(f_cout_bloc, interval = c(100, 50000), 
+                     shape = beta_test, scale = eta_est, Cc = 10000, Cp = 5000)
+
+cat("Coût minimal (Politique Âge) :", res_age$objective, "€/h\n")
+cat("Coût minimal (Politique Bloc) :", res_bloc$objective, "€/h\n")
+
+
+```
+
+**Analyse des résultats :**
+Avec un $\beta$ plus faible (1,5), l'usure est moins marquée. On observe que la politique basée sur l'âge (**0,483 €/h**) reste systématiquement plus économique que la politique par bloc (**0,655 €/h**). La politique par bloc entraîne en effet des remplacements "systématiques" de composants encore jeunes, ce qui génère un surcoût inutile.
+
+---
+
+# Exercice 2 : Politique de remplacement périodique avec réparations minimales
+
+## Introduction
+
+Cet exercice porte sur le **Modèle III** du cours : la politique de remplacement périodique avec **Réparations Minimales**.
+
+Comme les réparations sont de type *As Bad As Old*, le nombre moyen de pannes sur un intervalle $[0, b]$ suit un **Processus de Poisson Non Homogène (PPNH)** dont l'espérance est donnée par la fonction de risque cumulé de Weibull :
+
+$$H(b) = \left(\frac{b}{\eta}\right)^\beta$$
+
+## Question 1 : Expression du coût moyen de maintenance
+
+Dans une politique de remplacement périodique avec réparations minimales entre deux remplacements, le coût moyen par unité de temps $C(b)$ est défini par :
+
+$$C(b) = \frac{C_p + C_c \cdot E[N(b)]}{b} = \frac{C_p + C_c \left( \frac{b}{\eta} \right)^\beta}{b}$$
+
+**Paramètres initiaux :**
+
+* $\beta = 1.7$
+* $\eta = 2300$ h
+* $C_c = 600$ €
+* $C_p = 1500$ €
+
+## Question 2 : Inclusion du coût de non-production ($C_d$)
+
+Les coûts totaux incluent le coût technique et le coût d'indisponibilité :
+
+
+$$c_C = C_c + (d_c \cdot C_d)$$
+
+$$c_P = C_p + (d_p \cdot C_d)$$
+
+**Calculs des coûts globaux :**
+
+* $d_c = 0.25 \text{ h}$
+* $d_p = 2 \text{ h}$
+* $C_d = 500$ €/h
+* $c_C = 600 + (0.25 \cdot 500) = 725$ €
+* $c_P = 1500 + (2 \cdot 500) = 2500$ €
+
+## Question 3 : Calcul de $C(b)$ pour $b=1000$ et $b=2500$
+
+```{r}
+# Paramètres de base
+beta <- 1.7
+eta <- 2300
+Cc_total <- 600 + (0.25 * 500) # 725 € 
+Cp_total <- 1500 + (2 * 500)   # 2500 € 
+
+# Définition de la fonction de coût
+C_b <- function(b, beta, eta, Cc, Cp) {
+  H_b <- (b / eta)^beta
+  return((Cp + Cc * H_b) / b)
+}
+
+# Évaluation
+cout_1000 <- C_b(1000, beta, eta, Cc_total, Cp_total)
+cout_2500 <- C_b(2500, beta, eta, Cc_total, Cp_total)
+
+cat("Coût moyen pour b = 1000h :", round(cout_1000, 4), "€/h\n")
+cat("Coût moyen pour b = 2500h :", round(cout_2500, 4), "€/h\n")
+
+
+```
+
+**Analyse des résultats :**
+L'analyse montre que le coût horaire à **2500 h (1,3342 €/h)** est bien inférieur à celui à **1000 h (2,676 €/h)**. À 1000 heures, la fréquence de remplacement préventif est trop élevée, empêchant d'amortir le coût fixe $C_p$.
+
+## Question 4 : Variation du coût de non-production ($C_d$)
+
+```{r}
+Cd_new <- 1000
+Cc_new <- 600 + (0.25 * Cd_new) # 850 €
+Cp_new <- 1500 + (2 * Cd_new)   # 3500 €
+
+# Recherche de l'optimum b*
+opt_Cd_double <- optimize(C_b, interval = c(100, 15000), 
+                          beta = beta, eta = eta, Cc = Cc_new, Cp = Cp_new)
+
+cat("Nouvel optimum b* (Cd=1000) :", round(opt_Cd_double$minimum, 2), "h\n")
+
+
+```
+
+**Analyse des résultats :**
+L'optimum se déplace vers **6522,36 h**. Comme chaque arrêt programmé coûte désormais 2000 € d'indisponibilité, la stratégie optimale consiste à espacer davantage les maintenances pour minimiser le nombre total d'arrêts de production.
+
+## Question 5 : Variation du paramètre d'échelle ($\eta$)
+
+```{r}
+eta_new <- 1500
+opt_eta_low <- optimize(C_b, interval = c(100, 10000), 
+                        beta = beta, eta = eta_new, Cc = Cc_total, Cp = Cp_total)
+
+cat("Nouvel optimum b* (eta=1500) :", round(opt_eta_low$minimum, 2), "h\n")
+
+
+```
+
+**Analyse des résultats :**
+L'optimum tombe à **3832,19 h**. La réduction de $\eta$ signifie que le compresseur s'use plus vite, ce qui oblige à rapprocher les interventions préventives pour limiter les pannes.
+
+## Question 6 (BONUS) : Inspection périodique $\delta$
+
+Formule du coût moyen :
+
+
+$$C(\delta) = \frac{C_i + C_d \int_{0}^{\delta} F(t) dt + C_p F(\delta)}{\delta}$$
+
+```{r}
+cout_inspection <- function(delta, beta, eta, Cd, Ci, Cp) {
+  temps_mort_moyen <- integrate(function(t) pweibull(t, shape=beta, scale=eta), 
+                                lower=0, upper=delta)$value
+  prob_panne <- pweibull(delta, shape=beta, scale=eta)
+  return((Ci + Cd * temps_mort_moyen + Cp * prob_panne) / delta)
+}
+
+# Test delta = 24h
+res_bonus <- cout_inspection(delta = 24, beta = 1.7, eta = 2300, 
+                             Cd = 500, Ci = 50, Cp = 1500)
+cat("Coût moyen pour une inspection quotidienne (delta=24) :", round(res_bonus, 4), "€/h\n")
+
+
+```
+
+**Analyse des résultats :**
+Le coût obtenu (**2,1893 €/h**) est supérieur à la politique de remplacement périodique optimale. L'inspection quotidienne génère des coûts fixes fréquents et un délai de détection de panne trop long.
+
+---
+
+## Conclusion Finale
+
+1. **Arbitrage Technique** : La politique de remplacement périodique ou à l'âge est plus efficace que l'inspection simple.
+2. **Impact de l'Indisponibilité** : Le coût de non-production ($C_d$) peut paradoxalement pousser à espacer les maintenances si l'arrêt programmé est lui-même très coûteux.
+3. **Fiabilité** : Toute baisse de $\eta$ doit entraîner un rapprochement des maintenances préventives.
