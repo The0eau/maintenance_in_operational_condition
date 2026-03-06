@@ -1,0 +1,125 @@
+---
+title: "TD 2 : Modèles de régression en fiabilité"
+author: "Theau Aguet"
+date: "`r Sys.Date()`"
+format:
+  html:
+    embed-resources: true
+    theme: 
+      light: lux
+      dark: darkly
+    toc: true
+    toc-location: left
+    number-sections: true
+    code-fold: true
+    code-summary: "Voir le code R"
+    code-copy: true
+    grid:
+      sidebar-width: 250px
+      body-width: 900px
+    highlight-style: dracula
+---
+
+# Introduction
+
+Ce notebook présente la résolution complète et détaillée des exercices du TD 2, incluant les calculs théoriques de vieillissement accéléré (Arrhenius) et les applications pratiques sur R (Modèle de Cox et Modèle Exponentiel).
+
+# Exercice 1 : Modèle d'Arrhenius (Cartes électroniques)
+
+### Question 1 : Expression du facteur d'accélération
+Le facteur d'accélération $FA$ entre la température normale $\theta_0$ et la température de test $\theta_A$ est défini par :
+$$FA = \frac{\lambda(\theta_A)}{\lambda(\theta_0)} = \exp\left( \frac{E_a}{k} \left( \frac{1}{\theta_0} - \frac{1}{\theta_A} \right) \right)$$
+Données : $\frac{E_a}{k} = 0.95 \times 10^4$, $\theta_0 = 328^\circ K$.
+
+### Question 2 : Température de test $\theta_A$
+Pour simuler 5 ans (60 mois) en 3 mois, nous ciblons $FA = 20$.
+$\ln(20) = 9500 \cdot (\frac{1}{328} - \frac{1}{\theta_A}) \implies \theta_A \approx 365.9^\circ K$ (soit $92.7^\circ C$).
+
+### Question 3 : Fiabilité et MTTF
+- **Fiabilité à 3 mois en test** : $\hat{R}_A(3) = \frac{100 - 2}{100} = 0.98$.
+- **MTTF en conditions normales** : $\hat{\lambda}_A = -\frac{\ln(0.98)}{3} \approx 0.00673$.
+$MTTF_0 = FA \cdot \frac{1}{\hat{\lambda}_A} = 20 \cdot 148.59 = \mathbf{2971.8 \text{ mois}}$.
+
+### Question 4 : Intervalle de confiance à 5 ans
+En conditions normales à 5 ans, $\hat{R}_0(60) = \hat{R}_A(3) = 0.98$.
+$IC_{95\%} = 0.98 \pm 1.96 \sqrt{\frac{0.98 \cdot 0.02}{100}} = [0.9525, 1.00]$.
+
+# Exercice 2 : Système électronique (Weibull & Arrhenius)
+
+### Question 1 : Loi de Weibull accélérée
+Pour une loi de Weibull $W(\beta, \eta)$, sous le modèle d'Arrhenius, le paramètre de forme $\beta$ reste invariant ($\beta_1 = \beta_0$). Seul le paramètre d'échelle $\eta$ est modifié :
+$\eta_1 = \eta_0 \cdot \exp\left( \alpha \left( \frac{1}{\theta_0} - \frac{1}{\theta_1} \right) \right)$.
+
+### Question 2 : Estimation à $\theta_1 = 75^\circ C$
+
+```{r}
+library(survival)
+library(flexsurv)
+
+data_sys <- read.csv("../data/td_2/sys_arrhenius.csv")
+fit_w <- flexsurvreg(Surv(survtime, fail) ~ 1, dist = "weibull", data = data_sys)
+fit_w
+
+# Calcul du facteur d'accélération (AF)
+alpha <- -15060
+theta0 <- 293
+theta1 <- 348
+AF <- exp(-alpha * (1/theta0 - 1/theta1))
+cat("Facteur d'accélération (AF) :", AF)
+
+```
+
+**Analyse :** Le paramètre de forme $\hat{\beta}$ est de **1.09** (proche de 1, suggérant un comportement proche d'une loi exponentielle/taux quasi-constant). Le facteur d'accélération calculé entre $20^\circ C$ et $75^\circ C$ est très élevé, ce qui est typique des modèles thermiques.
+
+### Question 3 : Distribution à $20^\circ C$
+
+Les paramètres à température habituelle sont :
+
+* $\beta_0 = 1.09$
+* $\eta_0 = \hat{\eta}_{scale} \cdot AF = 143.235 \cdot AF$
+
+### Question 4 : SAV et Marge
+
+Le coût du SAV est proportionnel à $F(t) = 1 - R(t)$. Pour une garantie de 5 ans en conditions normales, le fabricant doit calculer $F_0(5 \text{ ans})$ avec les paramètres $\beta_0, \eta_0$ pour provisionner les remplacements.
+
+# Exercice 3 : Vérin hydraulique (Modèle de Cox)
+
+### Question 1 : Régression log-linéaire
+
+```{r}
+data_v <- read.csv("../data/td_2/verin.csv")
+data_v$temp_inv <- 1 / (data_v$temp + 273.15)
+
+fit_cox <- coxph(Surv(time, fail) ~ temp_inv + press, data = data_v)
+summary(fit_cox)
+
+```
+
+**Analyse des coefficients :**
+
+* **Pression (`press`)** : Coefficient positif ($3.147 \times 10^{-3}$) avec $p < 0.001$. L'effet est très significatif : une augmentation de la pression accroît le risque de défaillance.
+* **Température (`temp_inv`)** : Le coefficient est négatif, ce qui est cohérent (une baisse de $1/\theta$ signifie une hausse de température, augmentant le risque). Toutefois, $p = 0.0919$, l'effet est significatif au seuil de 10% mais pas de 5%.
+
+### Question 2 : Courbe de fiabilité opérationnelle
+
+```{r}
+cond_norm <- data.frame(temp_inv = 1/(25 + 273.15), press = 310)
+surv_norm <- survfit(fit_cox, newdata = cond_norm)
+plot(surv_norm, main="Fiabilité du vérin (25°C, 310 bars)", 
+     xlab="Temps (heures)", ylab="R(t)", col="blue", lwd=2)
+grid()
+
+```
+
+### Question 3 : Variation du taux de défaillance
+
+Estimation de l'augmentation du taux de défaillance entre les conditions de test ($\theta_0 = 20^\circ C, P_0 = 80$ bars) et opérationnelles ($25^\circ C, 310$ bars).
+
+```{r}
+coefs <- coef(fit_cox)
+hr <- exp(coefs[1]*(1/298.15 - 1/293.15) + coefs[2]*(310 - 80))
+cat("Le taux de défaillance est multiplié par :", hr)
+
+```
+
+**Analyse :** Le passage aux conditions opérationnelles multiplie le taux de défaillance par environ **2.14**. Cette augmentation est principalement pilotée par l'écart important de pression ($+230$ bars), le modèle de Cox quantifiant précisément ce sur-risque par rapport aux tests initiaux.

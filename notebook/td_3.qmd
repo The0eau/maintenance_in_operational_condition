@@ -1,0 +1,218 @@
+---
+title: "TD : Systèmes à états multiples et Modèles de dégradation"
+aauthor: "Theau Aguet"
+date: "`r Sys.Date()`"
+format:
+  html:
+    embed-resources: true
+    theme: 
+      light: lux
+      dark: darkly
+    toc: true
+    toc-location: left
+    number-sections: true
+    code-fold: true
+    code-summary: "Voir le code R"
+    code-copy: true
+    grid:
+      sidebar-width: 250px
+      body-width: 900px
+    highlight-style: dracula
+---
+
+```{r setup}
+#| label: load-packages
+#| include: false
+library(survival)
+library(flexsurv)
+library(ggplot2)
+
+```
+
+# Introduction
+
+Ce notebook présente la résolution détaillée des exercices portant sur les processus de dégradation, les modèles de chocs et les chaînes de Markov appliqués à la fiabilité.
+
+# Exercice 1 : Train d'atterrissage (Dégradation cumulée)
+
+**Énoncé :** Un train d'atterrissage résiste à une pression cumulée de $102\text{ kg/cm}^2$. Les atterrissages d'urgence (chocs) suivent une loi normale $X \sim \mathcal{N}(\mu=50, \sigma=15)$. La fréquence est de $0.004$ atterrissage/an.
+
+### Question 1 : Modèle de dégradation
+
+Le modèle approprié est un **modèle de chocs cumulés** (processus de Poisson composé). La dégradation totale au temps $t$, $D(t)$, est la somme des chocs subis :
+
+
+$$D(t) = \sum_{i=1}^{N(t)} X_i$$
+
+
+Où $N(t)$ est un processus de Poisson de paramètre $\lambda t$ avec $\lambda = 0.004$.
+
+### Question 2 : Fiabilité à 10 ans
+
+La fiabilité est la probabilité que la dégradation cumulée reste sous le seuil : $R(t) = P(D(t) < 102)$.
+À $t=10$, l'espérance du nombre de chocs est $E[N(10)] = 0.04$.
+
+* $P(N=0) = e^{-0.04} \approx 0.9608$. La fiabilité est de 1 (pas de choc).
+* $P(N=1) = 0.04 e^{-0.04} \approx 0.0384$. On calcule $P(X_1 < 102) = \Phi(\frac{102-50}{15}) \approx 0.9997$.
+* $P(N=2) = \frac{0.04^2}{2}e^{-0.04} \approx 0.0008$. Pour deux chocs, la somme suit $\mathcal{N}(100, \sqrt{2}\cdot 15)$, soit $P(\sum X_i < 102) \approx 0.537$.
+
+$$R(10) \approx 0.9608 + (0.0384 \times 0.9997) + (0.0008 \times 0.537) \approx \mathbf{0.9992}$$
+
+# Exercice 2 : Serveur informatique (Chocs et CCF)
+
+### Question 1 : Modèle de chocs et paramètres
+
+* $\nu$ : Taux de périodes de trafic intense ($1 \text{ j}^{-1}$).
+* $p$ : Probabilité de défaillance individuelle par choc ($0.3/100 = 0.003$).
+Le temps avant défaillance par choc suit une loi exponentielle de taux $\lambda_{choc} = \nu \cdot p = \mathbf{0.003 \text{ j}^{-1}}$.
+
+### Question 3 : Justification du modèle Binomial de CCF
+
+Le modèle de défaillances de cause commune (CCF) binomial est pertinent car les unités sont identiques, partagent le même environnement et subissent le même stress externe (le trafic), avec une probabilité de défaillance supposée indépendante entre unités pour un choc donné.
+
+### Question 4 : Taux global et Fiabilité
+
+Avec $\lambda_{int} = 1/620 \approx 0.00161 \text{ j}^{-1}$ :
+
+
+$$\lambda_{total} = \lambda_{int} + \lambda_{choc} = 0.00161 + 0.003 = \mathbf{0.00461 \text{ j}^{-1}}$$
+
+$$R(t) = e^{-0.00461 t}$$
+
+# Exercice 3 : Capteur de température (Modèle Gamma)
+
+### Question 1 : Modèle à choc cumulé
+
+On utilise un **processus de dégradation Gamma**. La dégradation accumulée $D(t)$ suit une loi Gamma dont les paramètres évoluent avec les surchauffes.
+
+### Question 2 : Estimation et Simulation
+
+```{r}
+#| label: exercice-3-sensor
+#| fig-cap: "Analyse de la dégradation cumulée : Comparaison Modèle vs Données"
+
+sensor_data <- read.csv("../data/td_3/tempsensor.csv")
+
+# 1. Paramètres du choc (incrément de dégradation Gamma)
+# Rappel : E[X] = alpha/beta et Var(X) = alpha/beta^2
+alpha_gamma <- 8.5e-4
+beta_gamma <- 0.33
+
+# 2. Estimation de lambda (fréquence moyenne des surchauffes)
+# On calcule le taux par unité de temps pour chaque capteur puis on moyenne
+lambda_hat <- mean(sensor_data$nb.overheat / sensor_data$time)
+
+# 3. Simulation du processus de dégradation (Modèle à chocs cumulés)
+# On simule 1000 trajectoires sur un horizon T = 100 pour obtenir la distribution
+set.seed(123)
+sim_degrad <- replicate(1000, {
+  n_shocks <- rpois(1, lambda_hat * 100) 
+  sum(rgamma(n_shocks, shape = alpha_gamma, rate = beta_gamma))
+})
+
+# 4. Calcul de la dégradation réelle observée dans les données
+# On normalise la dégradation observée à T=100 pour permettre la comparaison
+obs_degrad_norm <- (sensor_data$nb.overheat / sensor_data$time) * 100 * (alpha_gamma / beta_gamma)
+
+# 5. Visualisation
+library(ggplot2)
+
+df_plot <- data.frame(
+  valeur = c(sim_degrad, obs_degrad_norm),
+  source = rep(c("Simulation (Modèle)", "Données (Observé)"), c(1000, nrow(sensor_data)))
+)
+
+ggplot(df_plot, aes(x = valeur, fill = source)) +
+  geom_density(alpha = 0.5) +
+  geom_vline(xintercept = 0.1, linetype = "dashed", color = "red") +
+  labs(title = "Comparaison de la densité de dégradation à T=100",
+       subtitle = paste("Seuil de recalibration à 0.1°C | Lambda estimé :", round(lambda_hat, 2)),
+       x = "Déviation cumulée (°C)",
+       y = "Densité") +
+  theme_minimal()
+
+# 6. Analyse statistique
+summary(sim_degrad)
+
+# Calcul de la probabilité de dépasser le seuil de recalibration (0.1°C) à T=100
+prob_recalib <- mean(sim_degrad > 0.1)
+cat("Probabilité de devoir recalibrer à T=100 :", round(prob_recalib * 100, 2), "%")
+
+```
+
+# Exercice 4 : Athlète (Chaîne de Markov Discrète)
+
+### Question 1 : Modélisation
+
+Les états sont : 1 (Optimal), 2 (Fatigue légère), 3 (Fatigue sévère), 4 (Blessée).
+
+```{r}
+#| label: exercice-4-markov
+# Matrice de transition
+P <- matrix(c(
+  0.70, 0.20, 0.08, 0.02,
+  0.50, 0.30, 0.15, 0.05,
+  0.00, 0.25, 0.65, 0.10,
+  0.00, 0.00, 0.20, 0.80 
+), nrow = 4, ncol = 4, byrow = TRUE)
+
+matrix_power <- function(M, n) {
+  res <- M
+  if (n > 1) for(i in 2:n) res <- res %*% M
+  return(res)
+}
+
+# État initial : pleine forme
+v0 <- c(1, 0, 0, 0)
+v8 <- v0 %*% matrix_power(P, 8)
+
+cat("Probabilité de blessure à 8 semaines :", round(v8[4], 4), "\n")
+cat("Probabilité de fatigue sévère à 8 semaines :", round(v8[3], 4), "\n")
+
+```
+
+### Question 4 : Disponibilité moyenne
+
+La disponibilité stationnaire est la somme des probabilités des états 1 et 2 dans le régime permanent ($\pi P = \pi$).
+
+# Exercice 5 : Radar Standby (Markov Continu)
+
+### Question 1 : Chaîne de Markov
+
+États : 2 (2 OK), 1 (1 OK, 1 en réparation), 0 (Panne totale).
+
+### Question 2 : Probabilités stationnaires
+
+Avec $\lambda = 1/35$ et $\mu = 2$, on résout le système d'équilibre :
+
+
+$$\begin{cases} \pi_2 \lambda = \pi_1 \mu \\ \pi_1 \lambda = \pi_0 \mu \\ \pi_2 + \pi_1 + \pi_0 = 1 \end{cases}$$
+
+```{r}
+#| label: exercice-5-radar
+lambda <- 1/35
+mu <- 2
+ratio <- lambda / mu
+
+pi2 <- 1 / (1 + ratio + ratio^2)
+pi1 <- ratio * pi2
+pi0 <- ratio^2 * pi2
+
+cat("Disponibilité (pi2 + pi1) :", round(pi2 + pi1, 6), "\n")
+
+```
+
+# Exercice 6 : Échangeurs thermiques
+
+### Question 1 & 2 : Représentation
+
+États : Parfait (P), Partiel (Pa), Sévère (S).
+**Analyse :** La loi lognormale pour la réparation n'étant pas markovienne (taux non constant), elle ne peut être intégrée directement dans une CTMC classique sans approximation (ex: méthode des phases ou utilisation de l'espérance $1/E[X]$).
+
+### Question 3 : Dépendance
+
+En cas de dégradation d'un échangeur, le taux de transition de l'autre est multiplié par un facteur d'accélération (1.5 ou 2), traduisant le report de charge.
+
+### Question 4 : Politique de maintenance
+
+L'analyse montre que le nettoyage préventif dès l'état "Partiellement obstrué" réduit la probabilité d'entrer dans l'état critique "Sévère", augmentant la disponibilité globale malgré des interventions plus fréquentes.
