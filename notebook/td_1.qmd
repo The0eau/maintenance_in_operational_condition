@@ -1,0 +1,257 @@
+---
+title: "TP Analyse de Données de Fiabilité"
+author: "Theau Aguet"
+date: "`r Sys.Date()`"
+format:
+  html:
+    embed-resources: true
+    theme: 
+      light: lux
+      dark: darkly
+    toc: true
+    toc-location: left
+    number-sections: true
+    code-fold: true
+    code-summary: "Voir le code R"
+    code-copy: true
+    grid:
+      sidebar-width: 250px
+      body-width: 900px
+    highlight-style: dracula
+---
+
+
+```{r}
+library(survival)
+library(fitdistrplus)
+```
+
+# EXERCICE 1.1 : Pompes hydrauliques
+
+## Valeurs ordonnées $t_{(i)}$
+
+Après tri des 50 données par ordre croissant :
+
+* 
+$t_{(1)} = 23.774$ 
+
+
+* 
+$t_{(5)} = 122.750$ 
+
+
+* 
+$t_{(10)} = 175.578$ 
+
+
+* 
+$t_{(50)} = 1032.227$ 
+
+
+
+## Estimation de la fiabilité $\hat{R}(t)$
+
+On utilise l'estimateur des rangs $\hat{R}(t_{(i)}) = \frac{n-i}{n}$ :
+
+* 
+$\hat{R}(t_{(1)}) = 49/50 = 0.98$ 
+
+
+* 
+$\hat{R}(t_{(5)}) = 45/50 = 0.90$ 
+
+
+* 
+$\hat{R}(t_{(10)}) = 40/50 = 0.80$ 
+
+
+* 
+$\hat{R}(t_{(50)}) = 0/50 = 0$ 
+
+
+
+## Intervalle de confiance à 95%
+
+Formule : 
+
+$$\hat{R} \pm 1.96 \sqrt{\frac{\hat{R}(1-\hat{R})}{n}}$$
+
+* En $t_{(1)}$ : $[0.941 ; [cite_start]1.000]$ 
+
+
+* En $t_{(5)}$ : $[0.817 ; [cite_start]0.983]$ 
+
+
+* En $t_{(10)}$ : $[0.689 ; [cite_start]0.911]$ 
+
+
+* En $t_{(50)}$ : $[0 ; [cite_start]0]$ (L'approximation normale ne s'applique pas aux bornes).
+
+
+
+## Censure à 500h
+
+L'instant $t_{(10)} = 175.578$ est inférieur à 500. Aucune censure n'est intervenue avant ce point. L'estimateur de Kaplan-Meier donne $\hat{R}_{KM}(t_{(10)}) = 0.80$. La valeur est identique car la censure n'impacte que les calculs pour $t > 500$.
+
+```{r}
+#| label: ex1-1
+# Chargement et tri
+data_pompe <- read.csv("../data/td_1/pompehydro.csv")
+t_sorted <- sort(data_pompe$Temps)
+n <- length(t_sorted)
+
+# Fiabilité empirique et IC
+R_hat <- (n - 1:n) / n
+indices <- c(1, 5, 10, 50)
+ic_95 <- 1.96 * sqrt((R_hat * (1 - R_hat)) / n)
+
+# Affichage des résultats
+res1.1 <- data.frame(t_i = t_sorted[indices], R_hat = R_hat[indices], 
+                     LB = pmax(0, R_hat[indices] - ic_95[indices]), 
+                     UB = pmin(1, R_hat[indices] + ic_95[indices]))
+print(res1.1)
+
+# Kaplan-Meier avec censure à 500h
+status <- ifelse(t_sorted <= 500, 1, 0)
+times_c <- pmin(t_sorted, 500)
+km_fit <- survfit(Surv(times_c, status) ~ 1)
+summary(km_fit, times = t_sorted[10])
+
+```
+
+# EXERCICE 1.2 : Épicerie
+
+L'estimateur approprié est celui de **Kaplan-Meier**. Il permet de traiter les données "censurées" (produits retirés car périmés avant d'être achetés). On calcule la survie à chaque instant $t_i$ où un achat (A) a lieu :
+
+$$S(t_i) = S(t_{i-1}) \times \left(1 - \frac{d_i}{n_i}\right)$$
+
+Où $d_i$ est le nombre d'achats à $t_i$ et $n_i$ le nombre de produits encore en rayon juste avant $t_i$.
+
+```{r}
+#| label: ex1-2
+# Utiliser read.csv2 ou spécifier dec = "," pour les fichiers européens
+data_epi <- read.csv("../data/td_1/epicerie.csv", dec = ",", check.names = TRUE)
+
+# On vérifie les noms exacts générés par R
+# (Probablement "temps.passé.en.rayon" et "produit.acheté")
+
+# Création de l'indicateur d'événement
+# Ici, produit.acheté == 0 signifie que l'événement "Achat" a eu lieu (donnée non censurée)
+data_epi$event <- ifelse(data_epi$produit.acheté == 0, 1, 0)
+
+# Création de l'objet de survie et du modèle de Kaplan-Meier
+km_epi <- survfit(Surv(temps.passé.en.rayon, event) ~ 1, data = data_epi)
+
+# Affichage du graphique
+plot(km_epi, 
+     main="Courbe de survie (Kaplan-Meier) - Épicerie", 
+     xlab="Jours en rayon", 
+     ylab="Probabilité de non-achat (Fiabilité)",
+     col="darkblue", 
+     lwd=2,
+     conf.int=TRUE) # Ajoute les bandes de confiance, c'est plus pro !
+
+```
+
+# EXERCICE 1.3 : Résistance chauffante
+
+La distribution la plus pertinente est **Weibull**. Les données (autour de 1.8 mois avec peu de dispersion) suggèrent un phénomène d'usure. Une loi exponentielle impliquerait un taux de défaillance constant (hasard pur), ce qui est rare pour du matériel chauffant qui subit une dégradation thermique. Une loi de Weibull avec $\beta > 1$ modélisera mieux ce vieillissement.
+
+```{r}
+#| label: ex1-3
+durees <- c(1.806, 2.274, 1.925, 1.280, 1.993, 2.104, 1.822, 1.491, 1.680, 1.650)
+
+# Comparaison des modèles
+fit_w <- fitdist(durees, "weibull")
+fit_e <- fitdist(durees, "exp")
+gofstat(list(fit_w, fit_e)) 
+
+```
+
+# EXERCICE 1.4 : Transistors
+
+## Estimation de $\lambda$ (Maximum de Vraisemblance)
+
+Pour une loi exponentielle, $\hat{\lambda} = \frac{n}{\sum t_i}$.
+Somme des 40 durées de vie $\approx 10\,192\,718$ heures.
+$\hat{\lambda} \approx 3.92 \times 10^{-6} \, h^{-1}$.
+
+## Expressions pour Weibull ($\alpha, \beta$)
+
+La log-vraisemblance est :
+
+
+$$L = n\ln\beta - n\beta\ln\alpha + (\beta-1)\sum\ln t_i - \sum\left(\frac{t_i}{\alpha}\right)^\beta$$
+
+
+
+* 
+$\hat{\alpha} = \left( \frac{1}{n} \sum_{i=1}^n t_i^{\hat{\beta}} \right)^{1/\hat{\beta}}$ 
+
+
+* 
+$\hat{\beta}$ est solution de : $\frac{1}{\hat{\beta}} + \frac{1}{n}\sum \ln t_i - \frac{\sum t_i^{\hat{\beta}} \ln t_i}{\sum t_i^{\hat{\beta}}} = 0$.
+
+
+
+```{r}
+#| label: ex1-4
+data_trans <- read.csv("../data/td_1/transistor.csv")
+
+# 1. Estimation Exponentielle
+lambda_hat <- 1 / mean(data_trans$TTF)
+print(paste("Lambda chapeau :", lambda_hat))
+
+# 2. Estimation Weibull
+fit_wei_trans <- fitdist(data_trans$TTF, "weibull")
+summary(fit_wei_trans)
+
+```
+
+# EXERCICE 1.5 : Test statistique
+
+## Test et Région critique
+
+On teste $H_0 : \lambda = \lambda_0 = 55 \times 10^{-5}$ contre $H_1 : \lambda > \lambda_0$. Sous $H_0$, le nombre de défaillances $K$ sur un temps total $T$ suit une loi de Poisson $\mathcal{P}(\lambda_0 T)$.
+
+* Temps total $T = 4800$ heures.
+
+
+* Espérance $E = \lambda_0 T = 2.64$.
+
+
+* Région critique : Rejet de $H_0$ si $K \geq k_{crit}$ tel que $P(K \geq k_{crit} | H_0) \leq 0.05$.
+
+
+
+## Décision
+
+On observe $K = 4$.
+Calcul de la p-valeur : $P(K \geq 4) \approx 0.27$.
+$0.27 > 0.05$, donc on ne rejette pas $H_0$. L'affirmation du fabricant est jugée légitime.
+
+## Erreur et Enseignement
+
+Accepter un lot défectueux ($\lambda = 180 \times 10^{-5}$) est une **erreur de seconde espèce ($\beta$)**.
+Le test actuel a une puissance faible. Avec $\lambda = 180 \times 10^{-5}$, l'espérance est de $8.64$.
+
+**Recommandation :** Augmenter la durée des tests ou le nombre de circuits testés.
+
+```{r}
+#| label: ex1-5
+lambda0 <- 55e-5
+T_total <- 20 * 10 * 24
+mu0 <- lambda0 * T_total
+
+# Question 2 : p-valeur pour K=4
+p_value <- 1 - ppois(3, mu0)
+print(paste("P-valeur :", p_value))
+
+# Question 3 : Calcul de beta (erreur type II) pour lambda = 180e-5
+lambda1 <- 180e-5
+mu1 <- lambda1 * T_total
+k_crit <- qpois(0.95, mu0) + 1 
+beta_err <- ppois(k_crit - 1, mu1)
+print(paste("Probabilité d'erreur beta :", beta_err))
+
+```
