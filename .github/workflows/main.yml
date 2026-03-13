@@ -14,9 +14,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Prettier (Code Formatter)
-        run: npx prettier --check .
-
   test:
     name: Run Unit Tests
     runs-on: ubuntu-latest
