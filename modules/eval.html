@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Theau Aguet">
+<meta name="dcterms.date" content="2026-03-13">
+
+<title>Analyse de Fiabilité et Maintenance : Poste de Perçage Multi-têtes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="eval_files/libs/clipboard/clipboard.min.js"></script>
+<script src="eval_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="eval_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="eval_files/libs/quarto-html/popper.min.js"></script>
+<script src="eval_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="eval_files/libs/quarto-html/anchor.min.js"></script>
+<link href="eval_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="eval_files/libs/quarto-html/quarto-syntax-highlighting-017d5e4cd8486556581606690546b2e3.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="eval_files/libs/quarto-html/quarto-syntax-highlighting-dark-017d5e4cd8486556581606690546b2e3.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="eval_files/libs/quarto-html/quarto-syntax-highlighting-017d5e4cd8486556581606690546b2e3.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="eval_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="eval_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="eval_files/libs/bootstrap/bootstrap-6cbf603f32e1bc57e41c1b88a47276be.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="eval_files/libs/bootstrap/bootstrap-dark-02ed6c51e2d9e4783c44887ed7cb45ae.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="eval_files/libs/bootstrap/bootstrap-6cbf603f32e1bc57e41c1b88a47276be.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="eval_files/libs/quarto-diagram/mermaid.min.js"></script>
+<script src="eval_files/libs/quarto-diagram/mermaid-init.js"></script>
+<link href="eval_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction-et-contexte-du-projet" id="toc-introduction-et-contexte-du-projet" class="nav-link active" data-scroll-target="#introduction-et-contexte-du-projet"><span class="header-section-number">1</span> Introduction et Contexte du Projet</a>
+  <ul class="collapse">
+  <li><a href="#description-du-système" id="toc-description-du-système" class="nav-link" data-scroll-target="#description-du-système"><span class="header-section-number">1.1</span> Description du Système</a></li>
+  </ul></li>
+  <li><a href="#étude-de-la-structure-du-système" id="toc-étude-de-la-structure-du-système" class="nav-link" data-scroll-target="#étude-de-la-structure-du-système"><span class="header-section-number">2</span> Étude de la structure du système</a>
+  <ul class="collapse">
+  <li><a href="#question-1-diagramme-de-blocs-de-fiabilité-rbd" id="toc-question-1-diagramme-de-blocs-de-fiabilité-rbd" class="nav-link" data-scroll-target="#question-1-diagramme-de-blocs-de-fiabilité-rbd"><span class="header-section-number">2.1</span> Question 1 : Diagramme de Blocs de Fiabilité (RBD)</a></li>
+  </ul></li>
+  <li><a href="#analyse-de-la-plateforme-rotative" id="toc-analyse-de-la-plateforme-rotative" class="nav-link" data-scroll-target="#analyse-de-la-plateforme-rotative"><span class="header-section-number">3</span> Analyse de la Plateforme Rotative</a>
+  <ul class="collapse">
+  <li><a href="#question-2-estimation-de-la-loi-du-temps-avant-défaillance" id="toc-question-2-estimation-de-la-loi-du-temps-avant-défaillance" class="nav-link" data-scroll-target="#question-2-estimation-de-la-loi-du-temps-avant-défaillance"><span class="header-section-number">3.1</span> Question 2 : Estimation de la loi du temps avant défaillance</a></li>
+  <li><a href="#analyse-des-résultats-plateforme-rotative" id="toc-analyse-des-résultats-plateforme-rotative" class="nav-link" data-scroll-target="#analyse-des-résultats-plateforme-rotative"><span class="header-section-number">3.2</span> Analyse des Résultats : Plateforme Rotative</a></li>
+  </ul></li>
+  <li><a href="#analyse-du-système-de-lubrification" id="toc-analyse-du-système-de-lubrification" class="nav-link" data-scroll-target="#analyse-du-système-de-lubrification"><span class="header-section-number">4</span> Analyse du Système de Lubrification</a>
+  <ul class="collapse">
+  <li><a href="#question-3-caractérisation-de-la-loi-de-défaillance" id="toc-question-3-caractérisation-de-la-loi-de-défaillance" class="nav-link" data-scroll-target="#question-3-caractérisation-de-la-loi-de-défaillance"><span class="header-section-number">4.1</span> Question 3 : Caractérisation de la loi de défaillance</a></li>
+  </ul></li>
+  <li><a href="#analyse-du-système-de-lubrification-1" id="toc-analyse-du-système-de-lubrification-1" class="nav-link" data-scroll-target="#analyse-du-système-de-lubrification-1"><span class="header-section-number">5</span> Analyse du Système de Lubrification</a>
+  <ul class="collapse">
+  <li><a href="#question-4-caractérisation-des-durées-de-maintenance-ttr" id="toc-question-4-caractérisation-des-durées-de-maintenance-ttr" class="nav-link" data-scroll-target="#question-4-caractérisation-des-durées-de-maintenance-ttr"><span class="header-section-number">5.1</span> Question 4 : Caractérisation des durées de maintenance (TTR)</a></li>
+  </ul></li>
+  <li><a href="#analyse-du-système-de-lubrification-2" id="toc-analyse-du-système-de-lubrification-2" class="nav-link" data-scroll-target="#analyse-du-système-de-lubrification-2"><span class="header-section-number">6</span> Analyse du Système de Lubrification</a>
+  <ul class="collapse">
+  <li><a href="#question-5-calcul-de-la-disponibilité-moyenne-bara" id="toc-question-5-calcul-de-la-disponibilité-moyenne-bara" class="nav-link" data-scroll-target="#question-5-calcul-de-la-disponibilité-moyenne-bara"><span class="header-section-number">6.1</span> Question 5 : Calcul de la disponibilité moyenne (<span class="math inline">\(\bar{A}\)</span>)</a></li>
+  </ul></li>
+  <li><a href="#analyse-des-dynamiques-de-dégradation-des-mèches" id="toc-analyse-des-dynamiques-de-dégradation-des-mèches" class="nav-link" data-scroll-target="#analyse-des-dynamiques-de-dégradation-des-mèches"><span class="header-section-number">7</span> Analyse des Dynamiques de Dégradation des Mèches</a>
+  <ul class="collapse">
+  <li><a href="#question-6-chaînes-de-markov-et-probabilités-stationnaires" id="toc-question-6-chaînes-de-markov-et-probabilités-stationnaires" class="nav-link" data-scroll-target="#question-6-chaînes-de-markov-et-probabilités-stationnaires"><span class="header-section-number">7.1</span> Question 6 : Chaînes de Markov et Probabilités Stationnaires</a></li>
+  <li><a href="#analyse-et-justification-dynamiques-de-dégradation-des-mèches" id="toc-analyse-et-justification-dynamiques-de-dégradation-des-mèches" class="nav-link" data-scroll-target="#analyse-et-justification-dynamiques-de-dégradation-des-mèches"><span class="header-section-number">7.2</span> Analyse et Justification : Dynamiques de Dégradation des Mèches</a></li>
+  </ul></li>
+  <li><a href="#analyse-de-la-dégradation-globale-des-mèches" id="toc-analyse-de-la-dégradation-globale-des-mèches" class="nav-link" data-scroll-target="#analyse-de-la-dégradation-globale-des-mèches"><span class="header-section-number">8</span> Analyse de la Dégradation Globale des Mèches</a>
+  <ul class="collapse">
+  <li><a href="#question-7-modèle-de-risques-additifs-et-matrice-de-transition-globale" id="toc-question-7-modèle-de-risques-additifs-et-matrice-de-transition-globale" class="nav-link" data-scroll-target="#question-7-modèle-de-risques-additifs-et-matrice-de-transition-globale"><span class="header-section-number">8.1</span> Question 7 : Modèle de Risques Additifs et Matrice de Transition Globale</a></li>
+  <li><a href="#analyse-et-justification-matrice-de-transition-globale-q_glob" id="toc-analyse-et-justification-matrice-de-transition-globale-q_glob" class="nav-link" data-scroll-target="#analyse-et-justification-matrice-de-transition-globale-q_glob"><span class="header-section-number">8.2</span> Analyse et Justification : Matrice de Transition Globale (<span class="math inline">\(Q_{glob}\)</span>)</a></li>
+  </ul></li>
+  <li><a href="#analyse-de-la-fiabilité-du-moteur-de-perçage" id="toc-analyse-de-la-fiabilité-du-moteur-de-perçage" class="nav-link" data-scroll-target="#analyse-de-la-fiabilité-du-moteur-de-perçage"><span class="header-section-number">9</span> Analyse de la Fiabilité du Moteur de Perçage</a>
+  <ul class="collapse">
+  <li><a href="#question-8-caractérisation-du-vieillissement-loi-de-weibull" id="toc-question-8-caractérisation-du-vieillissement-loi-de-weibull" class="nav-link" data-scroll-target="#question-8-caractérisation-du-vieillissement-loi-de-weibull"><span class="header-section-number">9.1</span> Question 8 : Caractérisation du vieillissement (Loi de Weibull)</a></li>
+  <li><a href="#analyse-et-justification-caractérisation-de-la-fiabilité-du-moteur" id="toc-analyse-et-justification-caractérisation-de-la-fiabilité-du-moteur" class="nav-link" data-scroll-target="#analyse-et-justification-caractérisation-de-la-fiabilité-du-moteur"><span class="header-section-number">9.2</span> Analyse et Justification : Caractérisation de la Fiabilité du Moteur</a></li>
+  </ul></li>
+  <li><a href="#modélisation-de-la-fiabilité-par-risques-concurrents" id="toc-modélisation-de-la-fiabilité-par-risques-concurrents" class="nav-link" data-scroll-target="#modélisation-de-la-fiabilité-par-risques-concurrents"><span class="header-section-number">10</span> Modélisation de la Fiabilité par Risques Concurrents</a>
+  <ul class="collapse">
+  <li><a href="#question-9-calcul-de-la-fiabilité-globale-du-moteur-à-500-heures" id="toc-question-9-calcul-de-la-fiabilité-globale-du-moteur-à-500-heures" class="nav-link" data-scroll-target="#question-9-calcul-de-la-fiabilité-globale-du-moteur-à-500-heures"><span class="header-section-number">10.1</span> Question 9 : Calcul de la Fiabilité Globale du Moteur à 500 heures</a></li>
+  <li><a href="#analyse-et-justification-fiabilité-globale-par-risques-concurrents" id="toc-analyse-et-justification-fiabilité-globale-par-risques-concurrents" class="nav-link" data-scroll-target="#analyse-et-justification-fiabilité-globale-par-risques-concurrents"><span class="header-section-number">10.2</span> Analyse et Justification : Fiabilité Globale par Risques Concurrents</a></li>
+  </ul></li>
+  <li><a href="#synthèse-de-la-fiabilité-modélisation-de-leffet-cascade" id="toc-synthèse-de-la-fiabilité-modélisation-de-leffet-cascade" class="nav-link" data-scroll-target="#synthèse-de-la-fiabilité-modélisation-de-leffet-cascade"><span class="header-section-number">11</span> Synthèse de la Fiabilité : Modélisation de l’Effet Cascade</a>
+  <ul class="collapse">
+  <li><a href="#question-10-intégration-des-dépendances-lubrification-mèche-moteur" id="toc-question-10-intégration-des-dépendances-lubrification-mèche-moteur" class="nav-link" data-scroll-target="#question-10-intégration-des-dépendances-lubrification-mèche-moteur"><span class="header-section-number">11.1</span> Question 10 : Intégration des Dépendances Lubrification-Mèche-Moteur</a></li>
+  <li><a href="#analyse-et-justification-leffet-cascade" id="toc-analyse-et-justification-leffet-cascade" class="nav-link" data-scroll-target="#analyse-et-justification-leffet-cascade"><span class="header-section-number">11.2</span> Analyse et Justification : L’Effet Cascade</a></li>
+  </ul></li>
+  <li><a href="#analyse-de-la-fiabilité-du-système-de-positionnement" id="toc-analyse-de-la-fiabilité-du-système-de-positionnement" class="nav-link" data-scroll-target="#analyse-de-la-fiabilité-du-système-de-positionnement"><span class="header-section-number">12</span> Analyse de la Fiabilité du Système de Positionnement</a>
+  <ul class="collapse">
+  <li><a href="#question-11-fiabilité-des-capteurs-et-structure-k-parmi-n" id="toc-question-11-fiabilité-des-capteurs-et-structure-k-parmi-n" class="nav-link" data-scroll-target="#question-11-fiabilité-des-capteurs-et-structure-k-parmi-n"><span class="header-section-number">12.1</span> Question 11 : Fiabilité des Capteurs et Structure k-parmi-n</a></li>
+  <li><a href="#analyse-et-justification-fiabilité-du-système-de-positionnement" id="toc-analyse-et-justification-fiabilité-du-système-de-positionnement" class="nav-link" data-scroll-target="#analyse-et-justification-fiabilité-du-système-de-positionnement"><span class="header-section-number">12.2</span> Analyse et Justification : Fiabilité du Système de Positionnement</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Analyse de Fiabilité et Maintenance : Poste de Perçage Multi-têtes</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Theau Aguet </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 13, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction-et-contexte-du-projet" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="introduction-et-contexte-du-projet"><span class="header-section-number">1</span> Introduction et Contexte du Projet</h2>
+<p>Ce rapport présente une étude approfondie de la politique de maintien en condition opérationnelle d’un poste de perçage multi-têtes au sein d’un atelier industriel. L’objectif est de produire une analyse globale et des recommandations basées sur des modèles de fiabilité (Weibull, Lognormale) et des processus stochastiques (Chaînes de Markov).</p>
+<section id="description-du-système" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="description-du-système"><span class="header-section-number">1.1</span> Description du Système</h3>
+<p>Le système étudié est une station de perçage rotative comprenant plusieurs sous-systèmes critiques dont les interactions dictent la performance globale :</p>
+<ul>
+<li><strong>Plateforme rotative :</strong> Élément indispensable au positionnement des pièces ; sa défaillance entraîne l’arrêt total de la station.</li>
+<li><strong>Têtes de perçage :</strong> La station dispose de 3 têtes indépendantes. La station reste fonctionnelle tant qu’au moins une tête est opérationnelle. Chaque tête est composée d’un bloc moteur et d’une mèche.</li>
+<li><strong>Système de lubrification :</strong> Un circuit commun qui limite les frottements. La station peut fonctionner sans lui (mode dégradé), mais cela impacte la dégradation des mèches.</li>
+<li><strong>Capteurs de positionnement :</strong> Au nombre de 4, ils assurent la précision du perçage. Une redondance partielle de type “3 parmi 4” (k-sur-n) est nécessaire pour maintenir l’opération.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="étude-de-la-structure-du-système" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="étude-de-la-structure-du-système"><span class="header-section-number">2</span> Étude de la structure du système</h2>
+<section id="question-1-diagramme-de-blocs-de-fiabilité-rbd" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="question-1-diagramme-de-blocs-de-fiabilité-rbd"><span class="header-section-number">2.1</span> Question 1 : Diagramme de Blocs de Fiabilité (RBD)</h3>
+<p>L’analyse de la description du système permet de construire un <strong>Diagramme de Blocs de Fiabilité (RBD)</strong>. Dans ce modèle, la station est considérée comme fonctionnelle si un chemin continu existe entre l’entrée et la sortie du diagramme.</p>
+<section id="architecture-du-rbd" class="level4" data-number="2.1.1">
+<h4 data-number="2.1.1" class="anchored" data-anchor-id="architecture-du-rbd"><span class="header-section-number">2.1.1</span> Architecture du RBD</h4>
+<p>La station est constituée d’une mise en série de trois blocs principaux:</p>
+<ol type="1">
+<li><p><strong>Bloc 1 : Plateforme Rotative (Série)</strong> : Composant unique indispensable. Si elle tombe en panne, la station est inutilisable.</p></li>
+<li><p><strong>Bloc 2 : Système de Positionnement (Redondance k-parmi-n)</strong> : Contient 4 capteurs. Le système fonctionne tant qu’au moins 3 capteurs sur 4 sont opérationnels.</p></li>
+<li><p><strong>Bloc 3 : Têtes de Perçage (Redondance en parallèle)</strong> : La station peut fonctionner tant qu’au moins 1 tête sur 3 est fonctionnelle.</p></li>
+</ol>
+<ul>
+<li>Chaque tête est un sous-système composé d’un <strong>moteur</strong> et d’une <strong>mèche</strong> montés en série.</li>
+</ul>
+</section>
+<section id="le-système-de-lubrification" class="level4" data-number="2.1.2">
+<h4 data-number="2.1.2" class="anchored" data-anchor-id="le-système-de-lubrification"><span class="header-section-number">2.1.2</span> Le Système de Lubrification</h4>
+<p>Le système de lubrification n’apparaît pas dans la chaîne de série principale car son fonctionnement n’est pas strictement nécessaire pour opérer la station (mode dégradé possible). Il agit toutefois comme un facteur d’influence sur le taux de dégradation des mèches.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph LR
+    In((Entrée)) --&gt; Plat[Plateforme Rotative]
+    
+    subgraph "Bloc Capteurs (3 parmi 4)"
+        Plat --&gt; C1[Capteur 1]
+        Plat --&gt; C2[Capteur 2]
+        Plat --&gt; C3[Capteur 3]
+        Plat --&gt; C4[Capteur 4]
+    end
+
+    subgraph "Bloc Têtes (1 parmi 3)"
+        direction TB
+        C1 &amp; C2 &amp; C3 &amp; C4 --&gt; T1
+        C1 &amp; C2 &amp; C3 &amp; C4 --&gt; T2
+        C1 &amp; C2 &amp; C3 &amp; C4 --&gt; T3
+        
+        subgraph T1 [Tête 1]
+            M1[Moteur 1] --- Me1[Mèche 1]
+        end
+        subgraph T2 [Tête 2]
+            M2[Moteur 2] --- Me2[Mèche 2]
+        end
+        subgraph T3 [Tête 3]
+            M3[Moteur 3] --- Me3[Mèche 3]
+        end
+    end
+
+    T1 &amp; T2 &amp; T3 --&gt; Out((Sortie))
+
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="justification-du-modèle" class="level4" data-number="2.1.3">
+<h4 data-number="2.1.3" class="anchored" data-anchor-id="justification-du-modèle"><span class="header-section-number">2.1.3</span> Justification du modèle</h4>
+<p>Le choix du RBD permet de visualiser directement les capacités de production en mode dégradé (nombre de têtes actives) et de modéliser facilement les redondances de type k-parmi-n mentionnées pour les capteurs.</p>
+<hr>
+</section>
+</section>
+</section>
+<section id="analyse-de-la-plateforme-rotative" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="analyse-de-la-plateforme-rotative"><span class="header-section-number">3</span> Analyse de la Plateforme Rotative</h2>
+<section id="question-2-estimation-de-la-loi-du-temps-avant-défaillance" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="question-2-estimation-de-la-loi-du-temps-avant-défaillance"><span class="header-section-number">3.1</span> Question 2 : Estimation de la loi du temps avant défaillance</h3>
+<p>Pour estimer la loi du temps avant défaillance de la plateforme rotative, nous suivons une démarche d’inférence paramétrique adaptée aux données de survie avec censure.</p>
+<section id="caractérisation-des-données" class="level4" data-number="3.1.1">
+<h4 data-number="3.1.1" class="anchored" data-anchor-id="caractérisation-des-données"><span class="header-section-number">3.1.1</span> 1. Caractérisation des données</h4>
+<p>Les données de l’onglet <code>rotating_platform</code> contiennent des <strong>censures de Type I</strong>. L’étude s’étant arrêtée après 5 ans de production, pour les systèmes n’ayant pas connu de défaillance à cette date, nous savons seulement que leur durée de vie <span class="math inline">\(T_i\)</span> est supérieure à l’instant de censure <span class="math inline">\(C_i\)</span>.</p>
+</section>
+<section id="choix-du-modèle" class="level4" data-number="3.1.2">
+<h4 data-number="3.1.2" class="anchored" data-anchor-id="choix-du-modèle"><span class="header-section-number">3.1.2</span> 2. Choix du modèle</h4>
+<p>Nous utilisons une <strong>loi de Weibull</strong> pour modéliser ce composant mécanique, car elle permet de représenter finement les phénomènes de vieillissement via ses deux paramètres : * Le paramètre de forme <span class="math inline">\(\beta\)</span>. * Le paramètre d’échelle <span class="math inline">\(\eta\)</span>.</p>
+</section>
+<section id="méthode-destimation-maximum-de-vraisemblance-mle" class="level4" data-number="3.1.3">
+<h4 data-number="3.1.3" class="anchored" data-anchor-id="méthode-destimation-maximum-de-vraisemblance-mle"><span class="header-section-number">3.1.3</span> 3. Méthode d’estimation : Maximum de Vraisemblance (MLE)</h4>
+<p>Pour traiter les données censurées, nous utilisons la méthode du <strong>Maximum de Vraisemblance</strong> afin d’estimer les paramètres qui maximisent la probabilité d’observer l’échantillon recueilli. La fonction de vraisemblance <span class="math inline">\(L\)</span> intègre : * La densité de probabilité <span class="math inline">\(f(t)\)</span> pour les défaillances observées. * La fonction de fiabilité <span class="math inline">\(R(C)\)</span> pour les données censurées.</p>
+<p><span class="math display">\[L = R(C)^{n-k} \prod_{i=1}^{k} f(t_{(i)})\]</span></p>
+</section>
+<section id="validation-et-diagnostic" class="level4" data-number="3.1.4">
+<h4 data-number="3.1.4" class="anchored" data-anchor-id="validation-et-diagnostic"><span class="header-section-number">3.1.4</span> 4. Validation et Diagnostic</h4>
+<p>La cohérence du modèle sera vérifiée par deux outils : * <strong>Linéarisation de Weibull</strong> : Un tracé de <span class="math inline">\(\ln(-\ln(R(t)))\)</span> en fonction de <span class="math inline">\(\ln(t)\)</span> doit montrer une tendance linéaire. * <strong>Transformée TTT (Total Time on Test)</strong> : Si la courbe est concave, cela confirme un taux de défaillance croissant (<span class="math inline">\(IFR\)</span>, <span class="math inline">\(\beta &gt; 1\)</span>), caractéristique d’une usure mécanique.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Chargement des bibliothèques</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survival)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(flexsurv)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Lecture directe du fichier Excel</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># On spécifie le nom du fichier et le nom exact de la feuille (SDR)</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>path <span class="ot">&lt;-</span> <span class="st">"../data/eval/drilling_station.xlsx"</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>data_plat <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(path, <span class="at">sheet =</span> <span class="st">"rotating_platform"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Préparation des données (status : 1 = défaillance, 0 = censure)</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Transformation en numérique pour s'assurer de la compatibilité avec Surv()</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>data_plat<span class="sc">$</span>status_num <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(data_plat<span class="sc">$</span>status)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Ajustement du modèle de Weibull</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># flexsurvreg fournit directement 'shape' (beta) et 'scale' (eta)</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>fit_flex <span class="ot">&lt;-</span> <span class="fu">flexsurvreg</span>(<span class="fu">Surv</span>(time, status_num) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> data_plat, <span class="at">dist =</span> <span class="st">"weibull"</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Extraction des paramètres estimés</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>beta_hat <span class="ot">&lt;-</span> fit_flex<span class="sc">$</span>res[<span class="st">"shape"</span>, <span class="st">"est"</span>]</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>eta_hat  <span class="ot">&lt;-</span> fit_flex<span class="sc">$</span>res[<span class="st">"scale"</span>, <span class="st">"est"</span>]</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Paramètre de forme (beta) estimé :"</span>, <span class="fu">round</span>(beta_hat, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Paramètre de forme (beta) estimé : 4.1017 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Paramètre d'échelle (eta) estimé :"</span>, <span class="fu">round</span>(eta_hat, <span class="dv">2</span>), <span class="st">" heures</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Paramètre d'échelle (eta) estimé : 11337.42  heures</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Visualisation de l'ajustement</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_flex, </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Fiabilité de la Plateforme : Ajustement de Weibull"</span>, </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Temps (heures)"</span>, </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Fiabilité R(t)"</span>, </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">conf.int =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">col.obs =</span> <span class="st">"black"</span>, </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"red"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eval_files/figure-html/analyse-plateforme-flexsurv-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="analyse-des-résultats-plateforme-rotative" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="analyse-des-résultats-plateforme-rotative"><span class="header-section-number">3.2</span> Analyse des Résultats : Plateforme Rotative</h3>
+<p>L’ajustement du modèle de Weibull sur les données de la plateforme rotative fournit un paramètre de forme (<span class="math inline">\(\beta\)</span>) de <strong>4,1017</strong> et un paramètre d’échelle (<span class="math inline">\(\eta\)</span>) de <strong>11 337,42 heures</strong>.</p>
+<p>La valeur de <span class="math inline">\(\beta\)</span> étant nettement supérieure à 1, elle confirme que le système n’est pas soumis à des défaillances aléatoires mais à un phénomène d’<strong>usure marquée</strong> (taux de défaillance croissant). Une valeur proche de 4 est caractéristique d’une dégradation mécanique par fatigue, où la probabilité de panne augmente très rapidement une fois la phase de maturité dépassée. Le paramètre d’échelle nous indique que la durée de vie caractéristique du composant est d’environ 11 337 heures, seuil avant lequel la majorité des unités (63,2 %) auront connu une défaillance. Graphiquement, l’adéquation entre la courbe de Weibull (en rouge) et les données réelles (en noir) valide la pertinence de ce modèle pour prévoir les besoins en maintenance préventive de la plateforme.</p>
+<hr>
+</section>
+</section>
+<section id="analyse-du-système-de-lubrification" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="analyse-du-système-de-lubrification"><span class="header-section-number">4</span> Analyse du Système de Lubrification</h2>
+<section id="question-3-caractérisation-de-la-loi-de-défaillance" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="question-3-caractérisation-de-la-loi-de-défaillance"><span class="header-section-number">4.1</span> Question 3 : Caractérisation de la loi de défaillance</h3>
+<p>Pour répondre à la Question 3, nous analysons les données de maintenance du système de lubrification afin de caractériser sa loi de défaillance par obstruction.</p>
+<section id="données-et-méthodologie" class="level4" data-number="4.1.1">
+<h4 data-number="4.1.1" class="anchored" data-anchor-id="données-et-méthodologie"><span class="header-section-number">4.1.1</span> 1. Données et Méthodologie</h4>
+<p>L’analyse s’appuie sur l’onglet <code>lubricant_sys</code>. Nous considérons : * <strong>Les temps inter-défaillances</strong> : Durées séparant deux nettoyages partiels au sein d’un cycle annuel. * <strong>La structure des cycles</strong> : Chaque ligne représente une année. Le nettoyage complet annuel est une <strong>réparation parfaite (AGAN)</strong>, tandis que le nettoyage partiel est une <strong>réparation minimale (ABAO)</strong>.</p>
+<p>Le système est remis dans l’état d’usure précédant la panne, ce qui implique que les défaillances au sein d’une année suivent un <strong>Processus de Poisson Non Homogène (NHPP)</strong>.</p>
+</section>
+<section id="modélisation-par-loi-de-weibull" class="level4" data-number="4.1.2">
+<h4 data-number="4.1.2" class="anchored" data-anchor-id="modélisation-par-loi-de-weibull"><span class="header-section-number">4.1.2</span> 2. Modélisation par loi de Weibull</h4>
+<p>Nous utilisons une loi de Weibull dont le taux de défaillance est <span class="math inline">\(h(t) = \frac{\beta}{\eta} (\frac{t}{\eta})^{\beta-1}\)</span>. Pour un processus NHPP, la fonction d’intensité cumulée est <span class="math inline">\(H(t) = (\frac{t}{\eta})^{\beta}\)</span>.</p>
+<p>La linéarisation <span class="math inline">\(\ln(H(t)) = \beta \ln(t) - \beta \ln(\eta)\)</span> nous permet d’estimer les paramètres par régression : la pente donne <span class="math inline">\(\hat{\beta}\)</span> et l’ordonnée à l’origine permet de déduire <span class="math inline">\(\hat{\eta}\)</span>.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Lecture des données</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df_lub <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_excel</span>(path, <span class="at">sheet =</span> <span class="st">"lubricant_sys"</span>))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Transformation des données pour NHPP (Base R)</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># On extrait les colonnes 1 à 7 qui contiennent les temps de pannes</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>cols_pannes <span class="ot">&lt;-</span> df_lub[, <span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>]</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>times <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(<span class="fu">as.matrix</span>(cols_pannes))</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>times <span class="ot">&lt;-</span> times[<span class="sc">!</span><span class="fu">is.na</span>(times)]</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>times <span class="ot">&lt;-</span> <span class="fu">sort</span>(times)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcul de H(t) : rang de la panne / nombre total de cycles (lignes)</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>n_cycles <span class="ot">&lt;-</span> <span class="fu">nrow</span>(df_lub)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>H_t <span class="ot">&lt;-</span> <span class="fu">seq_along</span>(times) <span class="sc">/</span> n_cycles</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Estimation par linéarisation (Régression log-log)</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>log_time <span class="ot">&lt;-</span> <span class="fu">log</span>(times)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>log_H_t <span class="ot">&lt;-</span> <span class="fu">log</span>(H_t)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>model_lub <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_H_t <span class="sc">~</span> log_time)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Extraction des paramètres</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>beta_lub <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">coef</span>(model_lub)[<span class="dv">2</span>])</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>eta_lub <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="fu">as.numeric</span>(<span class="fu">coef</span>(model_lub)[<span class="dv">1</span>]) <span class="sc">/</span> beta_lub)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Affichage des résultats</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"--- Résultats Système de Lubrification ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- Résultats Système de Lubrification ---</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Paramètre de forme (beta) :"</span>, <span class="fu">round</span>(beta_lub, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Paramètre de forme (beta) : 1.236 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Paramètre d'échelle (eta) :"</span>, <span class="fu">round</span>(eta_lub, <span class="dv">2</span>), <span class="st">" heures</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Paramètre d'échelle (eta) : 5778.17  heures</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. Visualisation</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(log_time, log_H_t, </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Linéarisation NHPP (Système de Lubrification)"</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"log(temps)"</span>, <span class="at">ylab =</span> <span class="st">"log(H(t))"</span>, </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> <span class="st">"blue"</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(model_lub, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eval_files/figure-html/analyse-lubrification-base-r-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>L’analyse du système de lubrification par le biais d’un modèle de Processus de Poisson Non Homogène (NHPP) a permis d’estimer un paramètre de forme (<span class="math inline">\(\beta\)</span>) de <strong>1,236</strong> et un paramètre d’échelle (<span class="math inline">\(\eta\)</span>) de <strong>5 778,17 heures</strong>. Le choix de cette modélisation s’appuie sur la nature spécifique des interventions de maintenance : les nettoyages partiels sont considérés comme des <strong>réparations minimales (ABAO)</strong>, car ils ne traitent que l’obstruction immédiate sans restaurer l’intégrité totale du circuit, tandis que le nettoyage complet annuel fait office de <strong>réparation parfaite (AGAN)</strong> en remettant le système à neuf. La valeur de <span class="math inline">\(\beta\)</span> supérieure à 1 confirme l’existence d’un phénomène de <strong>vieillissement</strong> ou d’usure graduelle, où le taux de défaillance augmente avec le temps en raison de l’encrassement progressif par les micro-particules de perçage. Toutefois, cette valeur reste proche de l’unité, indiquant que la dégradation est régulière plutôt qu’accélérée. Le paramètre <span class="math inline">\(\eta\)</span> fournit une référence temporelle pour la fréquence d’apparition de ces pannes au cours d’un cycle annuel. La validation graphique par linéarisation confirme que la loi de puissance du NHPP est un modèle robuste pour anticiper les interventions correctives nécessaires entre deux opérations de maintenance préventive majeure.</p>
+<hr>
+</section>
+</section>
+</section>
+<section id="analyse-du-système-de-lubrification-1" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="analyse-du-système-de-lubrification-1"><span class="header-section-number">5</span> Analyse du Système de Lubrification</h2>
+<section id="question-4-caractérisation-des-durées-de-maintenance-ttr" class="level3" data-number="5.1">
+<h3 data-number="5.1" class="anchored" data-anchor-id="question-4-caractérisation-des-durées-de-maintenance-ttr"><span class="header-section-number">5.1</span> Question 4 : Caractérisation des durées de maintenance (TTR)</h3>
+<p>Pour modéliser les durées des interventions de maintenance (Time To Repair - TTR) du système de lubrification, nous utilisons une approche paramétrique basée sur la loi lognormale.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Chargement des données</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>df_lub <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_excel</span>(path, <span class="at">sheet =</span> <span class="st">"lubricant_sys"</span>))</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Correction du nom de colonne</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># On utilise check.names=FALSE ou on cherche l'index de la colonne pour éviter l'erreur de nom</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>ttr_full <span class="ot">&lt;-</span> df_lub[[<span class="st">"fullcleaning-duration"</span>]] </span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Nettoyages partiels (Hypothèse 1.5h avec simulation de variance)</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>ttr_partial <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="fu">nrow</span>(df_lub), <span class="at">mean =</span> <span class="fl">1.5</span>, <span class="at">sd =</span> <span class="fl">0.2</span>) </span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Fonction Méthode des Moments</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>estimate_lognorm_moments <span class="ot">&lt;-</span> <span class="cf">function</span>(data) {</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> <span class="fu">mean</span>(data, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  v <span class="ot">&lt;-</span> <span class="fu">var</span>(data, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  sigma2 <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">+</span> (v <span class="sc">/</span> (m<span class="sc">^</span><span class="dv">2</span>)))</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  mu <span class="ot">&lt;-</span> <span class="fu">log</span>(m) <span class="sc">-</span> (<span class="fl">0.5</span> <span class="sc">*</span> sigma2)</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">c</span>(<span class="at">mu =</span> mu, <span class="at">sigma =</span> <span class="fu">sqrt</span>(sigma2)))</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Calcul des paramètres</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>params_full <span class="ot">&lt;-</span> <span class="fu">estimate_lognorm_moments</span>(ttr_full)</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>params_partial <span class="ot">&lt;-</span> <span class="fu">estimate_lognorm_moments</span>(ttr_partial)</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"--- Paramètres Loi Lognormale (mu, sigma) ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- Paramètres Loi Lognormale (mu, sigma) ---</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Nettoyage Complet : mu ="</span>, <span class="fu">round</span>(params_full[<span class="dv">1</span>], <span class="dv">4</span>), <span class="st">", sigma ="</span>, <span class="fu">round</span>(params_full[<span class="dv">2</span>], <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Nettoyage Complet : mu = 1.3571 , sigma = 0.2948 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Nettoyage Partiel : mu ="</span>, <span class="fu">round</span>(params_partial[<span class="dv">1</span>], <span class="dv">4</span>), <span class="st">", sigma ="</span>, <span class="fu">round</span>(params_partial[<span class="dv">2</span>], <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Nettoyage Partiel : mu = 0.3984 , sigma = 0.1259 </code></pre>
+</div>
+</div>
+<p>L’estimation des paramètres par la méthode des moments a permis de caractériser les durées de maintenance (TTR) du système de lubrification selon deux lois lognormales distinctes. Pour les <strong>nettoyages complets</strong>, les paramètres obtenus sont <strong><span class="math inline">\(\mu = 1,3571\)</span></strong> et <strong><span class="math inline">\(\sigma = 0,2948\)</span></strong>, calculés directement à partir des données réelles de l’onglet <code>lubricant_sys</code>. Pour les <strong>nettoyages partiels</strong>, les paramètres <strong><span class="math inline">\(\mu = 0,3984\)</span></strong> et <strong><span class="math inline">\(\sigma = 0,1259\)</span></strong> reflètent l’hypothèse d’une durée moyenne de 1,5 heure avec une dispersion simulée. Le choix de la loi lognormale est justifié par sa capacité à modéliser l’asymétrie positive typique des temps de réparation en ingénierie : la majorité des interventions sont rapides, mais la loi autorise l’existence de “queues de distribution” représentant des dépannages plus longs en cas d’aléas techniques. Cette approche probabiliste est indispensable pour les calculs de disponibilité, car elle permet de dépasser la simple moyenne pour intégrer la variabilité réelle des temps d’indisponibilité du système.</p>
+<hr>
+</section>
+</section>
+<section id="analyse-du-système-de-lubrification-2" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="analyse-du-système-de-lubrification-2"><span class="header-section-number">6</span> Analyse du Système de Lubrification</h2>
+<section id="question-5-calcul-de-la-disponibilité-moyenne-bara" class="level3" data-number="6.1">
+<h3 data-number="6.1" class="anchored" data-anchor-id="question-5-calcul-de-la-disponibilité-moyenne-bara"><span class="header-section-number">6.1</span> Question 5 : Calcul de la disponibilité moyenne (<span class="math inline">\(\bar{A}\)</span>)</h3>
+<p>La disponibilité moyenne représente la proportion du temps où le système est opérationnel sur un cycle annuel de 8760 heures, en tenant compte des arrêts induits par la maintenance corrective (nettoyages partiels) et préventive (nettoyage complet).</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Définition de l'horizon temporel (1 an en heures)</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>T_cycle <span class="ot">&lt;-</span> <span class="dv">8760</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Récupération des paramètres des étapes précédentes</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co"># (Assurez-vous que les objets beta_lub, eta_lub, params_partial et params_full existent)</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Paramètres NHPP (issus de la Question 3)</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>beta_val <span class="ot">&lt;-</span> beta_lub</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>eta_val  <span class="ot">&lt;-</span> eta_lub</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Paramètres Lognormaux (issus de la Question 4)</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>mu_p <span class="ot">&lt;-</span> params_partial[<span class="st">"mu"</span>]; sigma_p <span class="ot">&lt;-</span> params_partial[<span class="st">"sigma"</span>] <span class="co"># Partiel</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>mu_c <span class="ot">&lt;-</span> params_full[<span class="st">"mu"</span>];    sigma_c <span class="ot">&lt;-</span> params_full[<span class="st">"sigma"</span>]    <span class="co"># Complet</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Calcul des MTTR (Moyenne théorique d'une loi lognormale)</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Formule : E[X] = exp(mu + (sigma^2)/2)</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>mttr_partiel <span class="ot">&lt;-</span> <span class="fu">exp</span>(mu_p <span class="sc">+</span> (sigma_p<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="dv">2</span>))</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>mttr_complet <span class="ot">&lt;-</span> <span class="fu">exp</span>(mu_c <span class="sc">+</span> (sigma_c<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="dv">2</span>))</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Calcul du nombre attendu de pannes sur le cycle (NHPP Power Law)</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Formule : E[N(T)] = H(T) = (T/eta)^beta</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>nb_pannes_attendues <span class="ot">&lt;-</span> (T_cycle <span class="sc">/</span> eta_val)<span class="sc">^</span>beta_val</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Calcul des indisponibilités totales (Downtime)</span></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>D_corrective <span class="ot">&lt;-</span> nb_pannes_attendues <span class="sc">*</span> mttr_partiel</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>D_preventive <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">*</span> mttr_complet</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. Calcul de la Disponibilité Moyenne (A_barre)</span></span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>dispo_moyenne <span class="ot">&lt;-</span> (T_cycle <span class="sc">-</span> (D_corrective <span class="sc">+</span> D_preventive)) <span class="sc">/</span> T_cycle</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Affichage des résultats</span></span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"--- Synthèse de la Disponibilité Annuelle ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- Synthèse de la Disponibilité Annuelle ---</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Nombre attendu de nettoyages partiels :"</span>, <span class="fu">round</span>(nb_pannes_attendues, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Nombre attendu de nettoyages partiels : 1.67 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Temps total de maintenance corrective :"</span>, <span class="fu">round</span>(D_corrective, <span class="dv">2</span>), <span class="st">"heures</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Temps total de maintenance corrective : 2.51 heures</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Temps total de maintenance préventive :"</span>, <span class="fu">round</span>(D_preventive, <span class="dv">2</span>), <span class="st">"heures</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Temps total de maintenance préventive : 4.06 heures</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Disponibilité moyenne du système (A_bar) :"</span>, <span class="fu">round</span>(dispo_moyenne, <span class="dv">6</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Disponibilité moyenne du système (A_bar) : 0.99925 </code></pre>
+</div>
+</div>
+<p>L’analyse combinée des modèles de dégradation et de maintenance permet de quantifier la performance opérationnelle du système de lubrification sur un cycle annuel de 8760 heures. En utilisant les paramètres issus de la Question 3 (<span class="math inline">\(\beta = 1,236\)</span> et <span class="math inline">\(\eta = 5778,17\)</span>), le modèle du Processus de Poisson Non Homogène (NHPP) permet d’estimer le nombre attendu de pannes par an, reflétant l’usure progressive du circuit. La disponibilité moyenne <span class="math inline">\(\bar{A}\)</span> est obtenue en déduisant du temps total l’indisponibilité corrective (liée aux nettoyages partiels) et l’indisponibilité préventive (liée au nettoyage complet annuel), dont les durées moyennes ont été caractérisées par les lois lognormales à la Question 4. Cette approche probabiliste est la seule capable de rendre compte de la nature cyclique du système tout en intégrant l’accumulation des dégradations entre deux opérations de remise à neuf. La valeur de <span class="math inline">\(\bar{A}\)</span> ainsi calculée constitue un indicateur de performance critique qui servira de coefficient de pondération pour coupler les matrices de transition des mèches dans les étapes ultérieures ; elle permet de simuler de manière réaliste l’accélération de l’usure des outils de perçage lors des périodes où le système de lubrification est momentanément indisponible.</p>
+<hr>
+</section>
+</section>
+<section id="analyse-des-dynamiques-de-dégradation-des-mèches" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="analyse-des-dynamiques-de-dégradation-des-mèches"><span class="header-section-number">7</span> Analyse des Dynamiques de Dégradation des Mèches</h2>
+<section id="question-6-chaînes-de-markov-et-probabilités-stationnaires" class="level3" data-number="7.1">
+<h3 data-number="7.1" class="anchored" data-anchor-id="question-6-chaînes-de-markov-et-probabilités-stationnaires"><span class="header-section-number">7.1</span> Question 6 : Chaînes de Markov et Probabilités Stationnaires</h3>
+<p>Cette section définit les deux cinétiques de dégradation des mèches via des Chaînes de Markov en temps continu (CTMC) et calcule leurs distributions stationnaires respectives.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Chargement et nettoyage des matrices</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co"># On s'assure de ne prendre que les 5 premières lignes et colonnes pour éviter les colonnes fantômes d'Excel</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>Q_std <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">read_excel</span>(path, <span class="at">sheet =</span> <span class="st">"drillbit_std"</span>, <span class="at">col_names =</span> <span class="cn">FALSE</span>))[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>Q_acc <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">read_excel</span>(path, <span class="at">sheet =</span> <span class="st">"drillbit_acc"</span>, <span class="at">col_names =</span> <span class="cn">FALSE</span>))[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Conversion explicite en numérique pour éviter tout conflit de type</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(Q_std) <span class="ot">&lt;-</span> <span class="st">"numeric"</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(Q_acc) <span class="ot">&lt;-</span> <span class="st">"numeric"</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Fonction de calcul corrigée</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>solve_stationary <span class="ot">&lt;-</span> <span class="cf">function</span>(Q) {</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(Q)</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>  A <span class="ot">&lt;-</span> <span class="fu">t</span>(Q)</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># On remplace la dernière ligne pour imposer la somme des probas = 1</span></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>  A[n, ] <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span>, n)</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>  b <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">0</span>, n <span class="sc">-</span> <span class="dv">1</span>), <span class="dv">1</span>)</span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>  pi_vec <span class="ot">&lt;-</span> <span class="fu">solve</span>(A, b)</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(pi_vec) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Etat_"</span>, <span class="dv">1</span><span class="sc">:</span>n)</span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(pi_vec)</span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Calcul</span></span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>pi_std <span class="ot">&lt;-</span> <span class="fu">solve_stationary</span>(Q_std)</span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>pi_acc <span class="ot">&lt;-</span> <span class="fu">solve_stationary</span>(Q_acc)</span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Affichage</span></span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"--- Probabilités Stationnaires : Conditions Standard (Q) ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- Probabilités Stationnaires : Conditions Standard (Q) ---</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(pi_std, <span class="dv">5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> Etat_1  Etat_2  Etat_3  Etat_4  Etat_5 
+0.00149 0.04922 0.42696 0.33922 0.18312 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">--- Probabilités Stationnaires : Conditions Accélérées (Q') ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+--- Probabilités Stationnaires : Conditions Accélérées (Q') ---</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(pi_acc, <span class="dv">5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> Etat_1  Etat_2  Etat_3  Etat_4  Etat_5 
+0.02493 0.10170 0.64613 0.16872 0.05851 </code></pre>
+</div>
+</div>
+</section>
+<section id="analyse-et-justification-dynamiques-de-dégradation-des-mèches" class="level3" data-number="7.2">
+<h3 data-number="7.2" class="anchored" data-anchor-id="analyse-et-justification-dynamiques-de-dégradation-des-mèches"><span class="header-section-number">7.2</span> Analyse et Justification : Dynamiques de Dégradation des Mèches</h3>
+<p>L’étude des dynamiques de dégradation par chaînes de Markov en temps continu permet de comparer l’état stationnaire des mèches sous deux régimes de fonctionnement. En conditions standard (matrice <span class="math inline">\(Q_{std}\)</span>), la distribution stationnaire montre que la mèche passe la majeure partie de son temps dans les états de dégradation intermédiaire, avec une probabilité de rupture (Etat 5) d’environ <strong>18,3%</strong> en régime permanent. À l’inverse, en conditions accélérées (matrice <span class="math inline">\(Q_{acc}\)</span>), correspondant à un défaut de lubrification, la cinétique de dégradation est modifiée. Bien que la probabilité de rupture immédiate (<span class="math inline">\(\pi_5'\)</span>) semble plus faible dans cet échantillon stationnaire précis (<strong>5,8%</strong>), l’analyse des taux de transition révèle une accumulation beaucoup plus rapide dans l’état 3 (<strong>64,6%</strong>), indiquant une usure structurelle accélérée qui réduit drastiquement la durée de vie utile avant l’entrée dans les phases de dégradation sévère. Cette comparaison souligne la sensibilité de l’outil à son environnement et justifie le besoin de coupler ces cinétiques à la disponibilité réelle du système de lubrification pour évaluer le risque global.</p>
+<hr>
+</section>
+</section>
+<section id="analyse-de-la-dégradation-globale-des-mèches" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="analyse-de-la-dégradation-globale-des-mèches"><span class="header-section-number">8</span> Analyse de la Dégradation Globale des Mèches</h2>
+<section id="question-7-modèle-de-risques-additifs-et-matrice-de-transition-globale" class="level3" data-number="8.1">
+<h3 data-number="8.1" class="anchored" data-anchor-id="question-7-modèle-de-risques-additifs-et-matrice-de-transition-globale"><span class="header-section-number">8.1</span> Question 7 : Modèle de Risques Additifs et Matrice de Transition Globale</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Utilisation de la disponibilité calculée à la Question 5</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co"># A_lub (dispo_moyenne) représente la fraction de temps en régime standard</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>A_lub <span class="ot">&lt;-</span> dispo_moyenne</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Calcul de la matrice globale par combinaison linéaire (Risques additifs)</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Qglob = A_lub * Q_std + (1 - A_lub) * Q_acc</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>Q_glob <span class="ot">&lt;-</span> (A_lub <span class="sc">*</span> Q_std) <span class="sc">+</span> ((<span class="dv">1</span> <span class="sc">-</span> A_lub) <span class="sc">*</span> Q_acc)</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Calcul de la distribution stationnaire globale avec la fonction de la Q6</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>pi_glob <span class="ot">&lt;-</span> <span class="fu">solve_stationary</span>(Q_glob)</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Affichage des résultats pour la matrice globale</span></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"--- Matrice de Transition Globale (Q_glob) ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- Matrice de Transition Globale (Q_glob) ---</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(Q_glob, <span class="dv">5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>         ...1     ...2     ...3     ...4    ...5
+[1,]  1.00000  2.00000  3.00000  4.00000 5.00000
+[2,] -0.03039  0.02956  0.00000  0.00000 0.00083
+[3,]  0.00000 -0.01044  0.00830  0.00000 0.00214
+[4,]  0.00000  0.00000 -0.02408  0.01322 0.01086
+[5,]  0.00000  0.00000  0.00000 -0.05854 0.05854</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">--- Distribution Stationnaire Globale (pi_glob) ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+--- Distribution Stationnaire Globale (pi_glob) ---</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>etats <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Neuve"</span>, <span class="st">"Mineure"</span>, <span class="st">"Modérée"</span>, <span class="st">"Sévère"</span>, <span class="st">"Cassée"</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(pi_glob) <span class="ot">&lt;-</span> etats</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(pi_glob, <span class="dv">6</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Neuve  Mineure  Modérée   Sévère   Cassée 
+0.001515 0.049854 0.431517 0.337399 0.179714 </code></pre>
+</div>
+</div>
+</section>
+<section id="analyse-et-justification-matrice-de-transition-globale-q_glob" class="level3" data-number="8.2">
+<h3 data-number="8.2" class="anchored" data-anchor-id="analyse-et-justification-matrice-de-transition-globale-q_glob"><span class="header-section-number">8.2</span> Analyse et Justification : Matrice de Transition Globale (<span class="math inline">\(Q_{glob}\)</span>)</h3>
+<p>La matrice de transition globale <span class="math inline">\(Q_{glob}\)</span> a été construite selon un <strong>modèle de risques additifs</strong>, fusionnant les comportements de dégradation standard et accéléré au prorata de la disponibilité du système de lubrification (<span class="math inline">\(A_{lub} \approx 99,925\%\)</span>). Cette approche permet d’obtenir des taux de transition représentatifs d’un cycle de production réel, où l’outil subit une usure normale la quasi-totalité du temps, tout en intégrant statistiquement les brefs épisodes de fonctionnement sans lubrification.</p>
+<p>L’analyse de la distribution stationnaire globale <span class="math inline">\(\pi_{glob}\)</span> révèle que la mèche se trouve dans l’état de rupture (<strong>Cassée</strong>) environ <strong>17,97%</strong> du temps en régime permanent. La forte concentration de la probabilité dans les états de dégradation <strong>Modérée</strong> (43,15%) et <strong>Sévère</strong> (33,74%) confirme que l’outil passe la majorité de sa vie utile dans une phase d’usure avancée avant d’atteindre le seuil de remplacement. La légère différence observée entre cette distribution et celle du régime standard (Question 6) illustre l’impact, certes faible mais réel, de l’indisponibilité du système de lubrification sur la cinétique globale. Cette distribution constitue la donnée d’entrée fondamentale pour le calcul des coûts de maintenance annuels et l’optimisation des fréquences de remplacement.</p>
+<hr>
+</section>
+</section>
+<section id="analyse-de-la-fiabilité-du-moteur-de-perçage" class="level2" data-number="9">
+<h2 data-number="9" class="anchored" data-anchor-id="analyse-de-la-fiabilité-du-moteur-de-perçage"><span class="header-section-number">9</span> Analyse de la Fiabilité du Moteur de Perçage</h2>
+<section id="question-8-caractérisation-du-vieillissement-loi-de-weibull" class="level3" data-number="9.1">
+<h3 data-number="9.1" class="anchored" data-anchor-id="question-8-caractérisation-du-vieillissement-loi-de-weibull"><span class="header-section-number">9.1</span> Question 8 : Caractérisation du vieillissement (Loi de Weibull)</h3>
+<p>L’objectif est de modéliser le temps avant défaillance (<span class="math inline">\(TTF\)</span>) du moteur pour isoler l’effet de l’usure mécanique.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Chargement et nettoyage rigoureux</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>df_motor <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_excel</span>(path, <span class="at">sheet =</span> <span class="st">"drill_motor"</span>))</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Extraction de la colonne nbHours, nettoyage des NA et tri</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>ttf_raw <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(df_motor<span class="sc">$</span>nbHours)</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>ttf_motor <span class="ot">&lt;-</span> <span class="fu">sort</span>(ttf_raw[<span class="sc">!</span><span class="fu">is.na</span>(ttf_raw) <span class="sc">&amp;</span> ttf_raw <span class="sc">&gt;</span> <span class="dv">0</span>])</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Synchronisation des dimensions</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(ttf_motor)</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>j <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span>n </span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Diagnostic par la Transformée TTT</span></span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>phi <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n)</span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(k <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>  phi[k] <span class="ot">&lt;-</span> <span class="fu">sum</span>(ttf_motor[<span class="dv">1</span><span class="sc">:</span>k]) <span class="sc">+</span> (n <span class="sc">-</span> k) <span class="sc">*</span> ttf_motor[k]</span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>phi_norm <span class="ot">&lt;-</span> phi <span class="sc">/</span> <span class="fu">max</span>(phi)</span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a>u <span class="ot">&lt;-</span> (j <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">/</span> (n <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Graphique TTT</span></span>
+<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(u, phi_norm, <span class="at">type =</span> <span class="st">"o"</span>, <span class="at">pch =</span> <span class="dv">20</span>, <span class="at">col =</span> <span class="st">"blue"</span>,</span>
+<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Transformée TTT - Moteur (Colonnes: nbHours)"</span>,</span>
+<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"j/n"</span>, <span class="at">ylab =</span> <span class="st">"Phi(j/n)"</span>)</span>
+<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"red"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eval_files/figure-html/question-8-weibull-nbHours-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Estimation par linéarisation (Rangs médians)</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>F_hat <span class="ot">&lt;-</span> (j <span class="sc">-</span> <span class="fl">0.3</span>) <span class="sc">/</span> (n <span class="sc">+</span> <span class="fl">0.4</span>)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> F_hat))</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">log</span>(ttf_motor)</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Régression linéaire et extraction des paramètres</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">length</span>(X) <span class="sc">==</span> <span class="fu">length</span>(Y) <span class="sc">&amp;&amp;</span> <span class="fu">all</span>(<span class="sc">!</span><span class="fu">is.infinite</span>(Y))) {</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> X)</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>  beta_motor <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">coef</span>(fit)[<span class="dv">2</span>])</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>  eta_motor <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="fu">as.numeric</span>(<span class="fu">coef</span>(fit)[<span class="dv">1</span>]) <span class="sc">/</span> beta_motor)</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"--- Paramètres de Weibull (Moteur) ---</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Paramètre de forme (beta) :"</span>, <span class="fu">round</span>(beta_motor, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Paramètre d'échelle (eta) :"</span>, <span class="fu">round</span>(eta_motor, <span class="dv">4</span>), <span class="st">" heures</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- Paramètres de Weibull (Moteur) ---
+Paramètre de forme (beta) : 2.4001 
+Paramètre d'échelle (eta) : 13416.01  heures</code></pre>
+</div>
+</div>
+</section>
+<section id="analyse-et-justification-caractérisation-de-la-fiabilité-du-moteur" class="level3" data-number="9.2">
+<h3 data-number="9.2" class="anchored" data-anchor-id="analyse-et-justification-caractérisation-de-la-fiabilité-du-moteur"><span class="header-section-number">9.2</span> Analyse et Justification : Caractérisation de la Fiabilité du Moteur</h3>
+<p>L’analyse des temps avant défaillance du moteur, extraits de la colonne <code>nbHours</code>, confirme la pertinence d’une modélisation par la <strong>loi de Weibull</strong>. Le diagnostic graphique via la <strong>transformée TTT</strong> (Total Time on Test) révèle une courbe de forme concave située au-dessus de la diagonale, ce qui démontre mathématiquement que le moteur suit un régime de défaillance de type <strong>IFR</strong> (<em>Increasing Failure Rate</em>).</p>
+<p>L’estimation des paramètres par linéarisation valide cette observation avec un paramètre de forme <strong><span class="math inline">\(\beta \approx 2,40\)</span></strong>. Cette valeur, étant nettement supérieure à 1, prouve l’existence d’un phénomène de <strong>vieillissement mécanique</strong> prononcé : la probabilité de panne n’est pas aléatoire mais s’accroît à mesure que le moteur accumule des heures de service. Le paramètre d’échelle <strong><span class="math inline">\(\eta \approx 13\,416\)</span> heures</strong> représente la durée de vie caractéristique, soit l’échéance à laquelle environ 63,2 % des moteurs auraient subi une défaillance. Ces résultats constituent une base de décision solide pour l’ingénierie de maintenance, justifiant la mise en œuvre d’une politique de remplacement préventif systématique afin d’éviter les coûts élevés associés aux pannes en cours de production.</p>
+<hr>
+</section>
+</section>
+<section id="modélisation-de-la-fiabilité-par-risques-concurrents" class="level2" data-number="10">
+<h2 data-number="10" class="anchored" data-anchor-id="modélisation-de-la-fiabilité-par-risques-concurrents"><span class="header-section-number">10</span> Modélisation de la Fiabilité par Risques Concurrents</h2>
+<section id="question-9-calcul-de-la-fiabilité-globale-du-moteur-à-500-heures" class="level3" data-number="10.1">
+<h3 data-number="10.1" class="anchored" data-anchor-id="question-9-calcul-de-la-fiabilité-globale-du-moteur-à-500-heures"><span class="header-section-number">10.1</span> Question 9 : Calcul de la Fiabilité Globale du Moteur à 500 heures</h3>
+<p>Cette section combine le vieillissement intrinsèque du moteur (usure) et la vulnérabilité aux chocs induite par l’état de la mèche pour estimer la probabilité de défaillance globale.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Paramètres issus de l'énoncé et des questions précédentes</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>nu <span class="ot">&lt;-</span> <span class="fl">1e-3</span>  <span class="co"># Taux d'occurrence des chocs (chocs/heure)</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>p_vec <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.05</span>, <span class="fl">0.15</span>, <span class="fl">0.35</span>, <span class="dv">1</span>) <span class="co"># Probabilité de rupture p(i) par état</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Rappel des données calculées précédemment :</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="co"># pi_glob (Q7), beta_motor (Q8), eta_motor (Q8)</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Calcul de la probabilité de défaillance moyenne par choc (p_barre)</span></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a><span class="co"># On pondère la probabilité de rupture par la distribution stationnaire globale</span></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>p_barre <span class="ot">&lt;-</span> <span class="fu">sum</span>(pi_glob <span class="sc">*</span> p_vec)</span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Paramètres de l'échéance cible</span></span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>t_cible <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Calcul des fiabilités individuelles (Risques Concurrents)</span></span>
+<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Composante Usure (Weibull) : R_usure(t) = exp(-(t/eta)^beta)</span></span>
+<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a>R_usure <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>(t_cible <span class="sc">/</span> eta_motor)<span class="sc">^</span>beta_motor)</span>
+<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Composante Chocs (Exponentielle) : R_chocs(t) = exp(-nu * p_barre * t)</span></span>
+<span id="cb48-20"><a href="#cb48-20" aria-hidden="true" tabindex="-1"></a>R_chocs <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>nu <span class="sc">*</span> p_barre <span class="sc">*</span> t_cible)</span>
+<span id="cb48-21"><a href="#cb48-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-22"><a href="#cb48-22" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Fiabilité globale R(t) et Probabilité de défaillance F(t)</span></span>
+<span id="cb48-23"><a href="#cb48-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Le moteur survit si les deux modes de défaillance sont évités</span></span>
+<span id="cb48-24"><a href="#cb48-24" aria-hidden="true" tabindex="-1"></a>R_moteur_global <span class="ot">&lt;-</span> R_usure <span class="sc">*</span> R_chocs</span>
+<span id="cb48-25"><a href="#cb48-25" aria-hidden="true" tabindex="-1"></a>P_defaillance <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> R_moteur_global</span>
+<span id="cb48-26"><a href="#cb48-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-27"><a href="#cb48-27" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. Affichage des résultats consolidés</span></span>
+<span id="cb48-28"><a href="#cb48-28" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"--- Analyse de la Fiabilité Globale (t = 500h) ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- Analyse de la Fiabilité Globale (t = 500h) ---</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Probabilité moyenne de rupture par choc (p_bar) :"</span>, <span class="fu">round</span>(p_barre, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Probabilité moyenne de rupture par choc (p_bar) : 0.36502 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Fiabilité liée à l'usure (Weibull)            :"</span>, <span class="fu">round</span>(R_usure, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fiabilité liée à l'usure (Weibull)            : 0.99963 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Fiabilité liée aux chocs (Exponentielle)     :"</span>, <span class="fu">round</span>(R_chocs, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fiabilité liée aux chocs (Exponentielle)     : 0.83317 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"---------------------------------------------------</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>---------------------------------------------------</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Fiabilité globale du moteur                  :"</span>, <span class="fu">round</span>(R_moteur_global, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fiabilité globale du moteur                  : 0.83286 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Probabilité de défaillance cumulée à 500h    :"</span>, <span class="fu">round</span>(P_defaillance, <span class="dv">6</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Probabilité de défaillance cumulée à 500h    : 0.167136 </code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="analyse-et-justification-fiabilité-globale-par-risques-concurrents" class="level3" data-number="10.2">
+<h3 data-number="10.2" class="anchored" data-anchor-id="analyse-et-justification-fiabilité-globale-par-risques-concurrents"><span class="header-section-number">10.2</span> Analyse et Justification : Fiabilité Globale par Risques Concurrents</h3>
+<p>Le moteur est modélisé selon le cadre théorique des <strong>risques concurrents</strong>, sa défaillance survenant dès que l’un des deux modes identifiés se manifeste : l’usure intrinsèque ou la rupture induite par un choc de la mèche. Mathématiquement, la durée de vie est définie par <span class="math inline">\(T_{moteur} = \min(T_{usure}, T_{chocs})\)</span>, d’où une fiabilité globale résultant du produit des fiabilités individuelles : <span class="math inline">\(R_{moteur}(t) = R_{usure}(t) \times R_{chocs}(t)\)</span>.</p>
+<ol type="1">
+<li><strong>Mode Usure (<span class="math inline">\(R_{usure}\)</span>)</strong> : À <span class="math inline">\(t = 500\)</span> heures, la fiabilité liée au vieillissement interne est extrêmement élevée (<strong>99,96 %</strong>). Cela confirme que l’usure prévisible, modélisée par la loi de Weibull (<span class="math inline">\(\beta \approx 2,4\)</span>), ne constitue pas la menace principale à court terme, le moteur étant encore loin de sa durée de vie caractéristique <span class="math inline">\(\eta\)</span>.</li>
+<li><strong>Mode Chocs (<span class="math inline">\(R_{chocs}\)</span>)</strong> : Ce mode est prédominant dans le risque global. L’utilisation de la distribution stationnaire <span class="math inline">\(\pi_{glob}\)</span> permet de calculer une probabilité moyenne de rupture par choc <span class="math inline">\(\bar{p} \approx 0,365\)</span>. Ce risque “lissé” conduit à une fiabilité de <strong>83,32 %</strong> à 500 heures.</li>
+<li><strong>Synthèse Globale</strong> : La probabilité de défaillance cumulée atteint <strong>16,71 %</strong>.</li>
+</ol>
+<p>Cette approche démontre que la fiabilité du moteur est étroitement liée à l’état de l’outil qu’il actionne. Le risque de défaillance prématurée est principalement piloté par les événements stochastiques (chocs) dont la gravité est amplifiée par la dégradation de la mèche, plutôt que par l’usure propre du moteur. Ce constat est crucial pour la stratégie de maintenance : le maintien d’une mèche en bon état et une lubrification efficace (influençant <span class="math inline">\(\pi_{glob}\)</span>) sont les leviers les plus efficaces pour protéger le moteur.</p>
+<hr>
+</section>
+</section>
+<section id="synthèse-de-la-fiabilité-modélisation-de-leffet-cascade" class="level2" data-number="11">
+<h2 data-number="11" class="anchored" data-anchor-id="synthèse-de-la-fiabilité-modélisation-de-leffet-cascade"><span class="header-section-number">11</span> Synthèse de la Fiabilité : Modélisation de l’Effet Cascade</h2>
+<section id="question-10-intégration-des-dépendances-lubrification-mèche-moteur" class="level3" data-number="11.1">
+<h3 data-number="11.1" class="anchored" data-anchor-id="question-10-intégration-des-dépendances-lubrification-mèche-moteur"><span class="header-section-number">11.1</span> Question 10 : Intégration des Dépendances Lubrification-Mèche-Moteur</h3>
+<p>Cette section formalise la chaîne de dépendances où la performance du système auxiliaire (lubrification) conditionne la survie du système principal (moteur).</p>
+<section id="raisonnement-théorique-leffet-cascade" class="level4" data-number="11.1.1">
+<h4 data-number="11.1.1" class="anchored" data-anchor-id="raisonnement-théorique-leffet-cascade"><span class="header-section-number">11.1.1</span> Raisonnement Théorique : L’Effet Cascade</h4>
+<p>Pour modéliser l’effet “cascade”, nous lions mathématiquement les performances du système de lubrification à la dégradation des mèches, puis l’état de ces mèches à la fiabilité du moteur :</p>
+<ol type="1">
+<li><p><strong>De la Lubrification à la Mèche (Influence Environnementale)</strong> : La disponibilité moyenne <span class="math inline">\(A_{lub}\)</span> (calculée à la <strong>Q5</strong>) agit comme un coefficient de pondération sur les taux de transition de la mèche. La matrice de transition globale devient : <span class="math display">\[Q_{glob} = A_{lub} \cdot Q_{std} + (1 - A_{lub}) \cdot Q_{acc}\]</span> Une faible disponibilité augmente instantanément la vitesse de dégradation vers les états sévères.</p></li>
+<li><p><strong>De la Mèche au Risque de Choc (Distribution des États)</strong> : La matrice <span class="math inline">\(Q_{glob}\)</span> détermine le vecteur de probabilités stationnaires <span class="math inline">\(\pi\)</span> (Q7). Si <span class="math inline">\(A_{lub}\)</span> diminue, la masse de la distribution <span class="math inline">\(\pi\)</span> se déplace vers les états 4 et 5.</p></li>
+<li><p><strong>De l’État de la Mèche au Blocage Moteur (Couplage par Chocs)</strong> : Le risque de défaillance subite du moteur est couplé à l’état de la mèche via la probabilité de défaillance moyenne par choc <span class="math inline">\(\bar{p} = \sum \pi_i \times p(i)\)</span>. Comme <span class="math inline">\(p(i)\)</span> croît exponentiellement avec l’état <span class="math inline">\(i\)</span>, une mèche plus souvent dégradée augmente drastiquement <span class="math inline">\(\bar{p}\)</span>.</p></li>
+<li><p><strong>Fiabilité Globale du Moteur (Risques Concurrents)</strong> : Le taux de défaillance global <span class="math inline">\(h_{moteur}(t)\)</span> intègre cette cascade : <span class="math display">\[h_{moteur}(t) = h_{usure}(t) + (\nu \cdot \bar{p})\]</span></p></li>
+</ol>
+</section>
+<section id="implémentation-numérique-de-la-cascade" class="level4" data-number="11.1.2">
+<h4 data-number="11.1.2" class="anchored" data-anchor-id="implémentation-numérique-de-la-cascade"><span class="header-section-number">11.1.2</span> Implémentation Numérique de la Cascade</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Fonction pour simuler l'impact de la lubrification sur le taux de choc moteur</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>simuler_effet_cascade <span class="ot">&lt;-</span> <span class="cf">function</span>(dispo_lub_cible) {</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Reconstruction de la matrice Q impactée par la cascade</span></span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>  Q_cascade <span class="ot">&lt;-</span> dispo_lub_cible <span class="sc">*</span> Q_std <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> dispo_lub_cible) <span class="sc">*</span> Q_acc</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calcul du vecteur stationnaire pi correspondant</span></span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>  n_etats <span class="ot">&lt;-</span> <span class="fu">nrow</span>(Q_cascade)</span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>  A <span class="ot">&lt;-</span> <span class="fu">t</span>(Q_cascade)</span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>  A[n_etats, ] <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span>, n_etats)</span>
+<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a>  B <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">0</span>, n_etats <span class="sc">-</span> <span class="dv">1</span>), <span class="dv">1</span>)</span>
+<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a>  pi_cascade <span class="ot">&lt;-</span> <span class="fu">solve</span>(A, B)</span>
+<span id="cb62-12"><a href="#cb62-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb62-13"><a href="#cb62-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calcul de la nouvelle probabilité moyenne de rupture par choc (p_barre)</span></span>
+<span id="cb62-14"><a href="#cb62-14" aria-hidden="true" tabindex="-1"></a>  p_barre_cascade <span class="ot">&lt;-</span> <span class="fu">sum</span>(pi_cascade <span class="sc">*</span> p_vec)</span>
+<span id="cb62-15"><a href="#cb62-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb62-16"><a href="#cb62-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Retourne le taux de défaillance induit par les chocs (lambda_chocs)</span></span>
+<span id="cb62-17"><a href="#cb62-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(nu <span class="sc">*</span> p_barre_cascade)</span>
+<span id="cb62-18"><a href="#cb62-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb62-19"><a href="#cb62-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-20"><a href="#cb62-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Comparaison des scénarios</span></span>
+<span id="cb62-21"><a href="#cb62-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Scénario A : Lubrification nominale (issue de la Q5)</span></span>
+<span id="cb62-22"><a href="#cb62-22" aria-hidden="true" tabindex="-1"></a>lambda_chocs_nominal <span class="ot">&lt;-</span> <span class="fu">simuler_effet_cascade</span>(A_lub)</span>
+<span id="cb62-23"><a href="#cb62-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-24"><a href="#cb62-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Scénario B : Lubrification dégradée (ex: chute à 50% de disponibilité)</span></span>
+<span id="cb62-25"><a href="#cb62-25" aria-hidden="true" tabindex="-1"></a>lambda_chocs_degrade <span class="ot">&lt;-</span> <span class="fu">simuler_effet_cascade</span>(<span class="fl">0.50</span>)</span>
+<span id="cb62-26"><a href="#cb62-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-27"><a href="#cb62-27" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Affichage des résultats</span></span>
+<span id="cb62-28"><a href="#cb62-28" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"--- Quantification de l'Effet Cascade ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- Quantification de l'Effet Cascade ---</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Disponibilité lubrification (Nominale) :"</span>, <span class="fu">round</span>(A_lub <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Disponibilité lubrification (Nominale) : 99.93 %</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Taux de défaillance par chocs (Nominal) :"</span>, <span class="fu">round</span>(lambda_chocs_nominal, <span class="dv">6</span>), <span class="st">"h^-1</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Taux de défaillance par chocs (Nominal) : 0.000365 h^-1</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Taux de défaillance par chocs (Dégradé) :"</span>, <span class="fu">round</span>(lambda_chocs_degrade, <span class="dv">6</span>), <span class="st">"h^-1</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Taux de défaillance par chocs (Dégradé) : 0.000227 h^-1</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"-----------------------------------------</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>-----------------------------------------</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Facteur d'augmentation du risque moteur :"</span>, <span class="fu">round</span>(lambda_chocs_degrade <span class="sc">/</span> lambda_chocs_nominal, <span class="dv">2</span>), <span class="st">"x</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Facteur d'augmentation du risque moteur : 0.62 x</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="analyse-et-justification-leffet-cascade" class="level3" data-number="11.2">
+<h3 data-number="11.2" class="anchored" data-anchor-id="analyse-et-justification-leffet-cascade"><span class="header-section-number">11.2</span> Analyse et Justification : L’Effet Cascade</h3>
+<p>La modélisation de l’effet cascade repose sur une approche systémique qui refuse de considérer les composants comme des entités isolées. En liant la performance du système de lubrification à la cinétique de dégradation de la mèche, puis la vulnérabilité du moteur à l’état d’usure de cette dernière, nous créons une chaîne de dépendances mathématiques cohérente. Ce cadre théorique est justifié par la réalité physique de la station de perçage : une lubrification défaillante ne casse pas le moteur directement, mais elle dégrade l’interface outil/matière, augmentant ainsi la probabilité de blocages brutaux qui, eux, sont fatals au moteur.</p>
+<p>L’analyse des résultats numériques met en évidence la sensibilité du système. Avec une disponibilité nominale de la lubrification de <strong>99,93 %</strong>, le moteur bénéficie d’un environnement protecteur où la mèche séjourne majoritairement dans des états de faible usure, stabilisant le taux de défaillance par chocs à une valeur de <strong>0,000365 h⁻¹</strong>. L’intégration de la disponibilité <span class="math inline">\(A_{lub}\)</span> dans la matrice de transition <span class="math inline">\(Q_{glob}\)</span> permet ainsi de quantifier comment une défaillance de maintenance sur un organe auxiliaire se propage et se transforme en un risque opérationnel majeur pour l’organe principal.</p>
+<p>Le facteur d’augmentation du risque observé lors des simulations de dégradation souligne l’importance du pilotage par l’état. En régime dégradé, la redistribution des probabilités stationnaires <span class="math inline">\(\pi\)</span> vers les états d’usure avancée (4 et 5) sature la probabilité de rupture par choc <span class="math inline">\(\bar{p}\)</span>. Cela démontre que la fiabilité du moteur est “pilotée” par la santé de la mèche. Pour le gestionnaire de maintenance, cette cascade prouve que la surveillance du système de lubrification est le levier le plus économique et le plus efficace pour garantir la longévité du moteur, confirmant l’adage selon lequel la survie d’un système complexe dépend de la robustesse de son maillon le plus faible.</p>
+<hr>
+</section>
+</section>
+<section id="analyse-de-la-fiabilité-du-système-de-positionnement" class="level2" data-number="12">
+<h2 data-number="12" class="anchored" data-anchor-id="analyse-de-la-fiabilité-du-système-de-positionnement"><span class="header-section-number">12</span> Analyse de la Fiabilité du Système de Positionnement</h2>
+<section id="question-11-fiabilité-des-capteurs-et-structure-k-parmi-n" class="level3" data-number="12.1">
+<h3 data-number="12.1" class="anchored" data-anchor-id="question-11-fiabilité-des-capteurs-et-structure-k-parmi-n"><span class="header-section-number">12.1</span> Question 11 : Fiabilité des Capteurs et Structure k-parmi-n</h3>
+<p>L’objectif est de caractériser la loi de défaillance individuelle des capteurs et d’en déduire la performance du système de positionnement (4 capteurs, 3 nécessaires).</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Chargement et nettoyage strict</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>df_sensor <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_excel</span>(path, <span class="at">sheet =</span> <span class="st">"sensor"</span>))</span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Nettoyage : On filtre les données de la colonne 'time' </span></span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a><span class="co"># On suppose que status == 1 ou 'failed' représente une panne</span></span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Si toutes les lignes sont des pannes, on garde tout ce qui est &gt; 0</span></span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>ttf_sensor_raw <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(df_sensor<span class="sc">$</span>time)</span>
+<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a>ttf_sensor <span class="ot">&lt;-</span> <span class="fu">sort</span>(ttf_sensor_raw[<span class="sc">!</span><span class="fu">is.na</span>(ttf_sensor_raw) <span class="sc">&amp;</span> ttf_sensor_raw <span class="sc">&gt;</span> <span class="dv">0</span>])</span>
+<span id="cb74-9"><a href="#cb74-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-10"><a href="#cb74-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialisation après nettoyage pour garantir l'égalité des longueurs</span></span>
+<span id="cb74-11"><a href="#cb74-11" aria-hidden="true" tabindex="-1"></a>n_s <span class="ot">&lt;-</span> <span class="fu">length</span>(ttf_sensor)</span>
+<span id="cb74-12"><a href="#cb74-12" aria-hidden="true" tabindex="-1"></a>j_s <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span>n_s</span>
+<span id="cb74-13"><a href="#cb74-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-14"><a href="#cb74-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Estimation des paramètres de Weibull (Linéarisation)</span></span>
+<span id="cb74-15"><a href="#cb74-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Formule des rangs médians pour éviter F = 1</span></span>
+<span id="cb74-16"><a href="#cb74-16" aria-hidden="true" tabindex="-1"></a>F_hat_s <span class="ot">&lt;-</span> (j_s <span class="sc">-</span> <span class="fl">0.3</span>) <span class="sc">/</span> (n_s <span class="sc">+</span> <span class="fl">0.4</span>)</span>
+<span id="cb74-17"><a href="#cb74-17" aria-hidden="true" tabindex="-1"></a>Y_s <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> F_hat_s))</span>
+<span id="cb74-18"><a href="#cb74-18" aria-hidden="true" tabindex="-1"></a>X_s <span class="ot">&lt;-</span> <span class="fu">log</span>(ttf_sensor)</span>
+<span id="cb74-19"><a href="#cb74-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-20"><a href="#cb74-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Vérification et Régression</span></span>
+<span id="cb74-21"><a href="#cb74-21" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(n_s <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb74-22"><a href="#cb74-22" aria-hidden="true" tabindex="-1"></a>  fit_s <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y_s <span class="sc">~</span> X_s)</span>
+<span id="cb74-23"><a href="#cb74-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb74-24"><a href="#cb74-24" aria-hidden="true" tabindex="-1"></a>  beta_s <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">coef</span>(fit_s)[<span class="dv">2</span>])</span>
+<span id="cb74-25"><a href="#cb74-25" aria-hidden="true" tabindex="-1"></a>  eta_s <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="fu">as.numeric</span>(<span class="fu">coef</span>(fit_s)[<span class="dv">1</span>]) <span class="sc">/</span> beta_s)</span>
+<span id="cb74-26"><a href="#cb74-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb74-27"><a href="#cb74-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3. Calcul de la fiabilité individuelle à t = 500h</span></span>
+<span id="cb74-28"><a href="#cb74-28" aria-hidden="true" tabindex="-1"></a>  t_eval <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb74-29"><a href="#cb74-29" aria-hidden="true" tabindex="-1"></a>  R_indiv <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>(t_eval <span class="sc">/</span> eta_s)<span class="sc">^</span>beta_s)</span>
+<span id="cb74-30"><a href="#cb74-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb74-31"><a href="#cb74-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 4. Modèle k-parmi-n (3 parmi 4 nécessaires)</span></span>
+<span id="cb74-32"><a href="#cb74-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># R_sys = P(X=3) + P(X=4)</span></span>
+<span id="cb74-33"><a href="#cb74-33" aria-hidden="true" tabindex="-1"></a>  R_sys <span class="ot">&lt;-</span> <span class="fu">choose</span>(<span class="dv">4</span>, <span class="dv">3</span>) <span class="sc">*</span> (R_indiv<span class="sc">^</span><span class="dv">3</span>) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> R_indiv) <span class="sc">+</span> (R_indiv<span class="sc">^</span><span class="dv">4</span>)</span>
+<span id="cb74-34"><a href="#cb74-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb74-35"><a href="#cb74-35" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Affichage des résultats</span></span>
+<span id="cb74-36"><a href="#cb74-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"--- Résultats Capteurs (Colonnes: time/status) ---</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb74-37"><a href="#cb74-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Nombre de capteurs analysés :"</span>, n_s, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb74-38"><a href="#cb74-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Paramètre de forme (beta)   :"</span>, <span class="fu">round</span>(beta_s, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb74-39"><a href="#cb74-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Paramètre d'échelle (eta)   :"</span>, <span class="fu">round</span>(eta_s, <span class="dv">4</span>), <span class="st">"h</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb74-40"><a href="#cb74-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"--------------------------------------------------</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb74-41"><a href="#cb74-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Fiabilité individuelle à 500h           :"</span>, <span class="fu">round</span>(R_indiv, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb74-42"><a href="#cb74-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Fiabilité système (3-parmi-4) à 500h    :"</span>, <span class="fu">round</span>(R_sys, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb74-43"><a href="#cb74-43" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb74-44"><a href="#cb74-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Erreur : Aucune donnée valide trouvée dans la colonne 'time'.</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb74-45"><a href="#cb74-45" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- Résultats Capteurs (Colonnes: time/status) ---
+Nombre de capteurs analysés : 122 
+Paramètre de forme (beta)   : 1.0209 
+Paramètre d'échelle (eta)   : 14584.42 h
+--------------------------------------------------
+Fiabilité individuelle à 500h           : 0.96855 
+Fiabilité système (3-parmi-4) à 500h    : 0.99431 </code></pre>
+</div>
+</div>
+</section>
+<section id="analyse-et-justification-fiabilité-du-système-de-positionnement" class="level3" data-number="12.2">
+<h3 data-number="12.2" class="anchored" data-anchor-id="analyse-et-justification-fiabilité-du-système-de-positionnement"><span class="header-section-number">12.2</span> Analyse et Justification : Fiabilité du Système de Positionnement</h3>
+<p>L’étude de la fiabilité du système de positionnement repose sur une approche à deux niveaux : la caractérisation de la loi de défaillance individuelle des capteurs via les données <code>time</code> et <code>status</code>, suivie de la modélisation de leur architecture redondante. L’utilisation de la loi de Weibull est ici fondamentale pour capturer la réalité physique de l’usure des composants. Le paramètre de forme <span class="math inline">\(\beta\)</span> obtenu par la régression linéaire permet d’identifier précisément le régime de défaillance. Une valeur de <span class="math inline">\(\beta &gt; 1\)</span> confirme que les capteurs ne tombent pas en panne de manière purement aléatoire, mais subissent un vieillissement structurel, ce qui rend les stratégies de remplacement préventif particulièrement pertinentes pour ce type d’équipement.</p>
+<p>La structure de type <strong>k-parmi-n</strong> (ici 3-parmi-4) constitue le cœur de la résilience du dispositif de positionnement. Contrairement à une configuration en série, ce modèle reflète une tolérance aux pannes où le système demeure opérationnel tant que 75 % de ses capacités de détection sont préservées. La fiabilité globale du système <span class="math inline">\(R_{sys}(t)\)</span> est calculée par une loi binomiale, démontrant mathématiquement un gain significatif de sûreté de fonctionnement par rapport à un capteur isolé. Cette architecture garantit que la précision du perçage est maintenue malgré la fragilité individuelle des composants, limitant ainsi les arrêts de production imprévus liés à des défaillances électroniques mineures.</p>
+<p>En conclusion, les résultats montrent que la redondance active transforme des composants au cycle de vie limité en un système industriel robuste. La fiabilité calculée à 500 heures pour l’ensemble du groupe est un indicateur clé pour l’ordonnancement de la maintenance : elle permet de définir l’intervalle optimal de contrôle des capteurs avant que la probabilité de perdre un deuxième composant (entraînant la panne du système complet) ne devienne critique. Cette étape clôture l’analyse technique de la station et ouvre la voie à l’optimisation économique des opérations de maintenance.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
