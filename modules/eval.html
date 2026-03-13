@@ -419,6 +419,9 @@ window.Quarto = {
 <p></p><figure class="figure"><p></p>
 <div>
 <pre class="mermaid mermaid-js">graph LR
+    %% Définition des styles
+    classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px;
+    
     In((Entrée)) --&gt; Plat[Plateforme Rotative]
     
     subgraph "Bloc Capteurs (3 parmi 4)"
@@ -430,6 +433,8 @@ window.Quarto = {
 
     subgraph "Bloc Têtes (1 parmi 3)"
         direction TB
+        
+        %% Connexions Capteurs vers Têtes
         C1 &amp; C2 &amp; C3 &amp; C4 --&gt; T1
         C1 &amp; C2 &amp; C3 &amp; C4 --&gt; T2
         C1 &amp; C2 &amp; C3 &amp; C4 --&gt; T3
@@ -446,6 +451,9 @@ window.Quarto = {
     end
 
     T1 &amp; T2 &amp; T3 --&gt; Out((Sortie))
+
+    %% Application du style noir aux flèches (liens)
+    linkStyle default stroke:#000,stroke-width:2px;
 
 </pre>
 </div>
