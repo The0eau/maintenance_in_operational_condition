@@ -63,6 +63,9 @@ Le système de lubrification n'apparaît pas dans la chaîne de série principal
 
 ```{mermaid}
 graph LR
+    %% Définition des styles
+    classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px;
+    
     In((Entrée)) --> Plat[Plateforme Rotative]
     
     subgraph "Bloc Capteurs (3 parmi 4)"
@@ -74,6 +77,8 @@ graph LR
 
     subgraph "Bloc Têtes (1 parmi 3)"
         direction TB
+        
+        %% Connexions Capteurs vers Têtes
         C1 & C2 & C3 & C4 --> T1
         C1 & C2 & C3 & C4 --> T2
         C1 & C2 & C3 & C4 --> T3
@@ -90,6 +95,9 @@ graph LR
     end
 
     T1 & T2 & T3 --> Out((Sortie))
+
+    %% Application du style noir aux flèches (liens)
+    linkStyle default stroke:#000,stroke-width:2px;
 
 ```
 
