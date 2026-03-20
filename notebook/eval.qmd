@@ -240,41 +240,47 @@ L'analyse des résultats montre une cohérence remarquable avec la réalité phy
 
 ### QUESTION 4 : Ajustement du modèle de Poisson Non-Homogène (NHPP)
 
+Pour évaluer l'indisponibilité générée par la maintenance du système de lubrification, nous caractérisons les durées d'intervention (TTR) par des lois log-normales. Cette loi est particulièrement adaptée aux temps de réparation car elle modélise naturellement des processus qui ne peuvent être négatifs et qui présentent une traîne à droite (rares interventions très longues).
+- Nettoyage complet : L'ajustement est réalisé par maximum de vraisemblance sur les données réelles de l'industriel.
+- Nettoyage partiel : En l'absence de données brutes, nous avons construit une loi théorique centrée sur l'espérance de 1,5 heure mentionnée dans l'énoncé, en y associant une faible variabilité ($\sigma = 0,1$) pour refléter la répétitivité de cette tâche mineure.
+
 ```{r}
 # 1. Nettoyage Complet (Full Cleaning)
-# Extraction des données de la colonne correspondante
-ttr_full_data <- df_lub$`fullcleaning-duration`
-ttr_full_data <- ttr_full_data[!is.na(ttr_full_data)]
+# Utilisation du nom de colonne exact du fichier
+ttr_full_data <- df_lub$fullcleaning_duration
+ttr_full_data <- as.numeric(ttr_full_data[!is.na(ttr_full_data)])
 
-# Ajustement d'une loi lognormale par Maximum de Vraisemblance
+# Ajustement d'une loi lognormale
+# flexsurvreg est parfait ici pour extraire meanlog et sdlog
 fit_full <- flexsurvreg(Surv(ttr_full_data) ~ 1, dist = "lnorm")
 
-# Extraction des paramètres pour le nettoyage complet
+# Extraction des paramètres
 mu_full    <- fit_full$res["meanlog", "est"]
 sigma_full <- fit_full$res["sdlog", "est"]
+# Calcul de l'espérance mathématique (MTTR)
 mttr_full  <- exp(mu_full + (sigma_full^2 / 2))
 
 # 2. Nettoyage Partiel (Partial Cleaning)
-# L'énoncé indique "1h30 environ" (1.5h). 
-# Pour définir une loi lognormale sans données brutes, on fixe l'espérance à 1.5
-# et on choisit un écart-type logarithmique (ex: 0.1) pour représenter la faible variabilité.
+# Cible : 1h30 = 1.5h
 target_mttr_p <- 1.5
-sigma_partial <- 0.1 
+sigma_partial <- 0.1 # Hypothèse de variabilité faible
+# Calcul de mu pour que l'espérance soit exactement 1.5
 mu_partial    <- log(target_mttr_p) - (sigma_partial^2 / 2)
-mttr_partial  <- exp(mu_partial + (sigma_partial^2 / 2))
 
 # 3. Affichage des résultats
-cat("--- CARACTÉRISATION DES TTR (RÉSULTATS) ---\n")
-cat("Nettoyage Complet (basé sur les données) :\n")
-cat("  - Paramètre mu    :", round(mu_full, 4), "\n")
-cat("  - Paramètre sigma :", round(sigma_full, 4), "\n")
-cat("  - MTTR estimé     :", round(mttr_full, 2), "heures\n\n")
+cat("--- CARACTÉRISATION DES DURÉES DE MAINTENANCE (TTR) ---\n")
+cat("Nettoyage Complet (Données réelles) :\n")
+cat("  - Paramètre mu (meanlog)    :", round(mu_full, 4), "\n")
+cat("  - Paramètre sigma (sdlog)   :", round(sigma_full, 4), "\n")
+cat("  - MTTR (Espérance)          :", round(mttr_full, 2), "heures\n\n")
 
-cat("Nettoyage Partiel (basé sur l'énoncé 1.5h) :\n")
-cat("  - Paramètre mu    :", round(mu_partial, 4), "\n")
-cat("  - Paramètre sigma :", round(sigma_partial, 4), "\n")
-cat("  - MTTR utilisé    :", round(mttr_partial, 2), "heures\n")
+cat("Nettoyage Partiel (Estimation énoncé) :\n")
+cat("  - Paramètre mu (meanlog)    :", round(mu_partial, 4), "\n")
+cat("  - Paramètre sigma (sdlog)   :", round(sigma_partial, 4), "\n")
+cat("  - MTTR (Cible)              :", round(exp(mu_partial + (sigma_partial^2/2)), 2), "heures\n")
 ```
+
+Les paramètres obtenus valident les estimations initiales de l'industriel tout en apportant une précision statistique nécessaire à la modélisation future. Le nettoyage complet présente un MTTR de 4,05 heures ($\mu = 1,3595, \sigma = 0,2838$), confirmant que cette opération majeure nécessite un arrêt de station d'une demi-journée environ. Pour le nettoyage partiel, les paramètres calculés ($\mu = 0,4005, \sigma = 0,1$) garantissent une espérance mathématique strictement égale à 1,5 heure. Ces deux modèles de durées, couplés à la loi de défaillance (Weibull) établie précédemment, permettront de simuler avec précision le coût annuel total de maintenance et l'impact du système de lubrification sur la disponibilité globale de la station.
 
 ### Question 5 : Calcul de la disponibilité moyenne ($\bar{A}$)
 
