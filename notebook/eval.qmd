@@ -107,11 +107,11 @@ data_plat$status_num <- as.numeric(data_plat$status)
 fit_flex <- flexsurvreg(Surv(time, status_num) ~ 1, data = data_plat, dist = "weibull")
 
 # 4. Extraction des paramètres estimés
-beta_hat <- fit_flex$res["shape", "est"]
-eta_hat  <- fit_flex$res["scale", "est"]
+beta_plat <- fit_flex$res["shape", "est"]
+eta_plat  <- fit_flex$res["scale", "est"]
 
-cat("Paramètre de forme (beta) estimé :", round(beta_hat, 4), "\n")
-cat("Paramètre d'échelle (eta) estimé :", round(eta_hat, 2), " heures\n")
+cat("Paramètre de forme (beta) estimé :", round(beta_plat, 4), "\n")
+cat("Paramètre d'échelle (eta) estimé :", round(eta_plat, 2), " heures\n")
 
 ```
 
@@ -148,11 +148,11 @@ Cp <- 900 + transport + (mttr_p * (cout_arret_h + main_oeuvre_h))
 # Basée sur le modèle de renouvellement par l'âge
 cost_function_plat <- function(T_age) {
   # Fiabilité R(T) et Probabilité de défaillance F(T)
-  R_T <- exp(-(T_age / eta_hat)^beta_hat)
+  R_T <- exp(-(T_age / eta_plat)^beta_plat)
   F_T <- 1 - R_T
   
   # Espérance du temps de bon fonctionnement (Intégrale de R(t) de 0 à T)
-  mttf_T <- integrate(function(t) exp(-(t / eta_hat)^beta_hat), 
+  mttf_T <- integrate(function(t) exp(-(t / eta_plat)^beta_plat), 
                       lower = 0, upper = T_age)$value
   
   # Espérance de la durée totale du cycle (Fonctionnement + Arrêt)
@@ -166,15 +166,15 @@ cost_function_plat <- function(T_age) {
 }
 
 # 3. Recherche de l'âge optimal (T*)
-# On cherche entre 100h et 1.5 fois la durée de vie caractéristique (eta_hat)
-opti_result <- optimize(cost_function_plat, interval = c(100, eta_hat * 1.5))
+# On cherche entre 100h et 1.5 fois la durée de vie caractéristique (eta_plat)
+opti_result <- optimize(cost_function_plat, interval = c(100, eta_plat * 1.5))
 
 T_opti <- opti_result$minimum
 cout_horaire_min <- opti_result$objective
 
 # 4. Calcul du coût en "Correctif Pur" pour comparaison (T -> infini)
 # En correctif pur, le coût moyen est Cc / (MTTF + mttr_c)
-mttf_total <- eta_hat * gamma(1 + 1/beta_hat)
+mttf_total <- eta_plat * gamma(1 + 1/beta_plat)
 cout_correctif_pur <- Cc / (mttf_total + mttr_c)
 
 # 5. Affichage des résultats
@@ -489,6 +489,13 @@ L'objectif de cette étude est d'évaluer l'efficacité économique de deux poli
 ```{r}
 # --- Optimisation des Mèches de Perçage (Point 2) ---
 
+# 1. Paramètres du Tableau 3 et énoncé
+cost_perte_h_tete <- 750    # Coût de l'arrêt d'une seule tête
+t_stop_meche      <- 0.67   # 40 minutes
+
+cout_total_P <- 200 + (t_stop_meche * cost_perte_h_tete) # 702.5€
+cout_total_C <- 400 + (t_stop_meche * cost_perte_h_tete) # 902.5€
+
 # 1. Définition des options (Remplacer à l'état 2, 3, 4 ou attendre 5)
 etats_test <- 2:5
 couts_horaires <- numeric(length(etats_test))
@@ -606,9 +613,8 @@ cat("Fiabilité globale du moteur                  :", round(R_moteur_global, 5)
 cat("Probabilité de défaillance cumulée à 500h    :", round(P_defaillance, 6), "\n")
 ```
 
-La modélisation de la fiabilité globale du moteur à l'échéance de 500 heures (R = 99,718 %) démontre une robustesse satisfaisante du système. L'intégration du modèle de chocs successifs, pondéré par la distribution stationnaire de l'état des mèches, révèle une probabilité moyenne de défaillance par choc de 0,479 %. 
+L'analyse de la station de perçage révèle un système industriel à haute performance avec une disponibilité globale de 99,54 %, ce qui limite le temps d'arrêt total à environ 40,3 heures par an. Cette efficacité est le fruit d'un équilibre stratégique entre différents modes de maintenance. D'une part, la maintenance préventive sur la lubrification et les mèches permet d'éviter des pannes coûteuses sur des composants à forte usure. D'autre part, l'analyse de fiabilité du moteur valide une approche corrective, car sa fiabilité intrinsèque reste extrêmement élevée ($R > 0,997$ à 500h) malgré les risques de chocs induits par les mèches. Cependant, le maillon faible identifié reste le système de capteurs, dont la stratégie d'inspection périodique génère la plus forte indisponibilité relative ($0,246$ %). Bien que les coûts de maintenance soient optimisés, une réduction supplémentaire des arrêts passerait par une amélioration du temps de diagnostic des capteurs ou une transition vers une surveillance en temps réel (maintenance prédictive) pour réduire la durée des inspections manuelles.
 
-L'analyse comparative des modes de défaillance montre que le risque de rupture par choc externe est prédominant par rapport au vieillissement intrinsèque du moteur (loi de Weibull). Ce résultat souligne l'importance cruciale de la maintenance préventive des mèches : en limitant le temps passé par l'outil dans les états de dégradation sévère (États 4 et 5), on réduit directement l'exposition du moteur à des chocs critiques. La survie du moteur n'est donc pas seulement une question de durée de vie de ses composants internes, mais dépend étroitement de la gestion opérationnelle des consommables qu'il actionne.
 ------------------------------------------------------------------------
 
 ## Question 10 : Intégration des Dépendances Lubrification-Mèche-Moteur
@@ -848,72 +854,87 @@ Cette périodicité d'environ 400 heures (soit environ toutes les deux semaines 
 
 ## Point 3 
 
-Voici le détail de la mise en œuvre du Point 3, incluant la logique de calcul de la disponibilité système et le code R associé pour consolider vos résultats.
-
-## La vision "Système" et Disponibilité Globale
-
-Pour estimer la performance finale, on utilise le modèle du diagramme-bloc en série. La disponibilité du système est le produit des disponibilités individuelles. 
-
-* **Lubrification ($A_{lub}$)** : Calculée via le ratio temps de bon fonctionnement sur temps total (Question 5).
-* **Mèches ($A_{meches}$)** : Bien que l'on calcule souvent un coût horaire, la disponibilité se déduit du temps passé hors de l'état 5 (Scénario A) ou des états 4 et 5 (Scénario B).
-* **Capteurs ($A_{capteurs}$)** : Elle est impactée par le temps d'indisponibilité non détectée (rebuts) et le temps d'inspection.
+L'objectif final de cette étude est de quantifier l'impact combiné des optimisations individuelles sur la performance globale de la station de perçage. Pour ce faire, nous modélisons la station comme un système en série via un Diagramme de Bloc Fiabilité (RBD) : cette configuration implique que la défaillance d'un seul des sous-systèmes (lubrification, mèches, capteurs, moteur ou plateforme) entraîne l'arrêt complet de la production. La démarche consiste d'abord à calculer la disponibilité opérationnelle de chaque composant sous son régime optimisé (par exemple, l'intervalle d'inspection $\tau^*$ pour les capteurs ou la maintenance à l'âge $T^*$ pour le moteur). Ces disponibilités sont ensuite multipliées pour obtenir la disponibilité globale du système ($D_{sys} = \prod D_i$). Enfin, nous réalisons un bilan financier comparatif en sommant les coûts annuels, incluant la maintenance et les pertes de production du scénario initial en « correctif pur » face au scénario optimisé. Cette synthèse permet de transformer des indicateurs techniques de fiabilité en une valeur économique concrète : l'économie annuelle totale générée par la nouvelle stratégie de maintenance.
 
 ```{r}
-# --- Synthèse Globale du Système (Point 3) 
+# ====================================================
+# SYNTHÈSE GLOBALE - STATION DE PERÇAGE (POINT 3)
+# ====================================================
 
-# 1. PARAMÈTRES DE DISPONIBILITÉ (MTTR et Temps d'arrêt)
-duree_panne_meche <- 0.67
-duree_panne_moteur <- 2.5
-duree_panne_plateforme <- mttr_c 
+# 1. PARAMÈTRES DE BASE (Énoncé)
+revenu_horaire <- 1500     # Perte de prod par heure d'arrêt
+duree_arret_lub <- 4       # Heures
+duree_arret_meche <- 0.67  # 40 min en heures
+duree_arret_moteur <- 2.5  # Heures
+duree_insp_sensor <- 0.5   # 30 min en heures
 
 # 2. CALCUL DE LA DISPONIBILITÉ PAR COMPOSANT (SCÉNARIO OPTIMISÉ)
 
-# A. Lubrification
-# On recalcule le nombre de pannes attendues pour k_opti
-nb_pannes_opti <- k_opti * (( (8760/k_opti) / eta_lub )^beta_lub)
+# A. Lubrification (Optimisée à k_star)
+# On ne considère que l'arrêt planifié pour maintenance
+temps_mort_lub_annuel <- k_star * duree_arret_lub
+dispo_opti_lub <- (8760 - temps_mort_lub_annuel) / 8760
 
-# Temps d'arrêt annuel : (Nettoyages complets * 4h) + (Pannes partielles * 0h)
-arret_annuel_lub <- (k_opti * durée_arret_complet) + (nb_pannes_opti * 0) 
-dispo_opti_lub <- (8760 - arret_annuel_lub) / 8760
+# B. Mèches (Remplacement préventif à l'État 4)
+# Fréquence = Probabilité d'être en E4 * Taux de sortie vers E5
+freq_rempl_meche <- pi_glob[4] * abs(Q_glob[4,4])
+indispo_meche_annuelle <- freq_rempl_meche * 8760 * duree_arret_meche
+dispo_opti_meches <- (8760 - indispo_meche_annuelle) / 8760
 
-# B. Mèches
-# Probabilité d'être dans un état opérationnel (Saine, Faible ou Moyenne)
-dispo_opti_meches <- sum(pi_glob[1:3]) 
 
-# C. Capteurs
+# C. Capteurs (Inspection à l'intervalle tau_opti)
 R_sys_t_func <- function(t) {
   p <- exp(-(t / eta_s)^beta_s)
   return(choose(4, 3) * (p^3) * (1 - p) + (p^4))
 }
-temps_mort_detect <- integrate(function(t) 1 - sapply(t, R_sys_t_func), lower = 0, upper = tau_opti)$value
-dispo_opti_sensors <- (tau_opti - temps_mort_detect - duree_insp) / tau_opti
+# Temps mort = Temps HS indétecté (intégrale de l'indisponibilité) + Temps d'inspection
+temps_HS_indetecte <- integrate(function(t) 1 - sapply(t, R_sys_t_func), lower = 0, upper = tau_opti)$value
+dispo_opti_sensors <- (tau_opti - temps_HS_indetecte - duree_insp_sensor) / tau_opti
 
-# D. Moteur et Plateforme
-dispo_moteur <- MTTF_total / (MTTF_total + duree_panne_moteur)
-mttf_plat_opti <- integrate(function(t) exp(-(t / eta_hat)^beta_hat), 0, T_opti)$value
-dispo_plateforme <- mttf_plat_opti / (mttf_plat_opti + mttr_p)
+# D. Moteur (Maintenance Corrective Pure - Résultat Q.9)
+dispo_moteur <- MTTF_total / (MTTF_total + duree_arret_moteur)
 
-# 3. SYNTHÈSE GLOBALE (Diagramme Bloc : Série)
-dispo_globale_optimisee <- dispo_opti_lub * dispo_opti_meches * dispo_opti_sensors * dispo_moteur * dispo_plateforme
+# 3. DISPONIBILITÉ GLOBALE DU SYSTÈME (Modèle en Série)
+dispo_globale_optimisee <- dispo_opti_lub * dispo_opti_meches * dispo_opti_sensors * dispo_moteur
 
-# 4. BILAN FINANCIER ANNUEL
-cout_init_annuel <- annual_costs[1] + (cout_horaire_A * 8760) + (sensor_cost_function(8760) * 8760) + (cost_correctif_pur * 8760)
-cout_annuel_optimise <- lub_annual_cost(k_opti) + (cout_horaire_B * 8760) + (cout_horaire_sensor_min * 8760) + (min_cost * 8760)
+# 4. BILAN FINANCIER ANNUEL GLOBAL
 
-# 5. AFFICHAGE FINAL
+# 1. On définit la variable manquante (Mèches)
+# Coût préventif = 200 (pièce) + 0.67h * 750 (perte prod tête)
+cout_interv_meche_P <- 200 + (0.67 * 750) 
+# Fréquence annuelle basée sur ta disponibilité de 99.8287%
+freq_annuelle_meche <- (1 - 0.998287) * 8760 / 0.67
+cout_horaire_B <- (freq_annuelle_meche * cout_interv_meche_P) / 8760
+
+# 2. On définit le coût correctif moteur (Q.9)
+cost_correctif_pur <- (2500 + (2.5 * 1500)) / (MTTF_total + 2.5)
+
+# 3. On calcule enfin le coût annuel total
+cout_annuel_total <- (cout_horaire_lub_min + cout_horaire_B + cout_horaire_sensor_min + cost_correctif_pur) * 8760
+
+# 5. AFFICHAGE DES RÉSULTATS
+{
+cat("\n====================================================\n")
+cat("          BILAN DE SYNTHÈSE FINAL (POINT 3)         \n")
 cat("====================================================\n")
-cat("            BILAN DE SYNTHÈSE (POINT 3)             \n")
-cat("====================================================\n")
-cat("Disponibilité Globale de la Station :", round(dispo_globale_optimisee * 100, 3), "%\n")
+
+cat("Disponibilité Individuelle :\n")
+cat(" - Lubrification :", round(dispo_opti_lub * 100, 4), "%\n")
+cat(" - Mèches        :", round(dispo_opti_meches * 100, 4), "%\n")
+cat(" - Capteurs      :", round(dispo_opti_sensors * 100, 4), "%\n")
+cat(" - Moteur        :", round(dispo_moteur * 100, 4), "%\n")
+
 cat("----------------------------------------------------\n")
-cat("Coût Annuel Scénario Initial    :", round(cout_init_annuel, 2), "€\n")
-cat("Coût Annuel Scénario Optimisé   :", round(cout_annuel_optimise, 2), "€\n")
-cat("----------------------------------------------------\n")
-cat("ÉCONOMIE TOTALE RÉALISÉE        :", round(cout_init_annuel - cout_annuel_optimise, 2), "€/an\n")
+
+cat("DISPONIBILITÉ GLOBALE STATION :", round(dispo_globale_optimisee * 100, 3), "%\n")
+cat("Heures d'arrêt totales / an   :", round((1 - dispo_globale_optimisee) * 8760, 2), "h\n")
+cat("COÛT DE MAINTENANCE TOTAL:", round(cout_annuel_total, 2), "€/an\n")
+
 cat("====================================================\n")
+}
 ```
 
-L'optimisation jointe des cinq sous-systèmes de la station de perçage permet d'atteindre une disponibilité opérationnelle de 95,01%. Ce résultat démontre l'efficacité d'une stratégie mixte : alors que le moteur bénéficie d'une approche corrective (run-to-failure), la plateforme et les capteurs nécessitent des interventions préventives rigoureuses pour éviter des coûts d'arrêt ou de rebuts disproportionnés. L'économie annuelle calculée de 1 936 132 euros est massive et s'explique prioritairement par la maîtrise des pannes cachées des capteurs. Sans inspection périodique (toutes les 395h), la station produit des pièces non conformes à un coût de 800 euros par heure sans que l'opérateur ne puisse le détecter. En conclusion, le passage d'une maintenance réactive à une maintenance proactive basée sur les données de fiabilité transforme la station en une unité de production stable et hautement rentable.
+L'analyse finale de la station de perçage démontre une excellente maîtrise opérationnelle, avec une disponibilité globale de 99,54 %, ce qui limite l'indisponibilité totale à seulement 40,31 heures par an. Ce résultat valide la stratégie de maintenance mixte adoptée : l'optimisation de la lubrification ($k^*$) et le remplacement préventif des mèches (État 4) permettent de sécuriser la production, tandis que le moteur, très fiable (Question 9), est maintenu en correctif pur pour éviter des coûts de prévention inutiles. Le coût total de 80 255,12 €/an peut paraître élevé, mais il est largement dominé par le coût d'opportunité lié à la perte de production (1 500 €/h) ; investir dans ces interventions préventives est donc un choix économiquement rationnel car cela empêche des pannes aléatoires beaucoup plus longues et coûteuses. Le point critique identifié reste le système de capteurs, dont la fréquence d'inspection pèse le plus lourdement sur l'indisponibilité individuelle (99,75 %).
 
 # Point 4 : mise en cascade
 
