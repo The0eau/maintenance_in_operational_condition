@@ -284,111 +284,102 @@ Les paramètres obtenus valident les estimations initiales de l'industriel tout 
 
 ### Question 5 : Calcul de la disponibilité moyenne ($\bar{A}$)
 
-La disponibilité moyenne représente la proportion du temps où le système est opérationnel sur un cycle annuel de 8760 heures, en tenant compte des arrêts induits par la maintenance corrective (nettoyages partiels) et préventive (nettoyage complet).
-
-
-Le raisonnement débute par le passage du domaine logarithmique au domaine temporel physique. On utilise l'espérance mathématique de la loi lognormale pour transformer les paramètres $\mu$ et $\sigma$ (issus de la méthode des moments) en **durées moyennes de réparation** ($MTTR$) exprimées en heures. $$MTTR = \exp\left(\mu + \frac{\sigma^2}{2}\right)$$
-
-
-On modélise ensuite l'occurrence des défaillances sur un cycle annuel. Puisque les nettoyages partiels ne restaurent pas le système à neuf (réparations minimales), on utilise la fonction d'intensité cumulée du **Processus de Poisson Non Homogène** pour calculer le nombre attendu de pannes ($H(T)$) sur 8 760 heures. $$H(T) = \left( \frac{T}{\eta} \right)^\beta$$
-
-L'indisponibilité totale est la somme de deux composantes : \* **Indisponibilité corrective :** Le produit du nombre de pannes attendu par la durée moyenne d'un nettoyage partiel. \* **Indisponibilité préventive :** La durée du nettoyage complet annuel (une seule occurrence par cycle).
-
-Enfin, on calcule le ratio du temps de bon fonctionnement sur le temps total du cycle. Cette valeur $\bar{A}$ représente la proportion du temps où le système de lubrification remplit sa fonction. $$\bar{A} = \frac{T_{total} - (D_{corrective} + D_{preventive})}{T_{total}}$$
-
-Ce coefficient $\bar{A}$ sert de **pivot probabiliste** : il permet de pondérer les matrices de transition des mèches. En période d'indisponibilité ($1-\bar{A}$), le modèle bascule sur un régime d'usure accélérée ($Q'$), simulant ainsi l'impact réel des défaillances de lubrification sur la durée de vie des outils de perçage.
+L'objectif de cette étape est d'estimer la disponibilité moyenne ($\bar{A}$) du service de lubrification sur un cycle annuel de 8760 heures. Ce paramètre est crucial car il détermine la proportion du temps où les mèches de perçage sont protégées contre l'usure thermique accélérée. Notre démarche repose sur la quantification de deux types d'indisponibilités : d'une part, les nettoyages partiels suite à des obstructions, dont la fréquence est estimée par un processus de Poisson non-homogène (NHPP) basé sur les paramètres de Weibull ($\beta, \eta$) car les réparations sont considérées comme minimales (modèle ABAO) ; d'autre part, l'opération de nettoyage complet annuel qui constitue une maintenance préventive systématique (modèle AGAN). En combinant le nombre attendu de pannes avec les durées de remise en état (TTR) calculées précédemment, nous pouvons déduire le temps total d'arrêt du circuit et, par extension, sa disponibilité opérationnelle.
 
 ```{r}
 #| label: question-5-disponibilite-corrigee
 #| message: false
 #| warning: false
+#| label: question-5-disponibilite
 
-# 1. Horizon temporel annuel
-T_cycle <- 8760
+# 1. Horizon temporel (1 an en heures)
+T_cycle <- 8760 
 
-# 2. Rappel des paramètres (Utilisation des noms de la Q4)
-# mttr_full (4.06h) et mttr_partial (1.5h)
-# beta_lub (1.7282) et eta_lub (8298) issus de la Q3
-
-# 3. Nombre attendu de défaillances (Intensité cumulée NHPP)
+# 2. Calcul du nombre de pannes attendues (Intensité cumulée NHPP)
+# Utilise beta_lub et eta_lub de la Question 3
 nb_pannes_attendues <- (T_cycle / eta_lub)^beta_lub
 
-# 4. Temps total où la lubrification est INACTIVE (Indisponibilité)
-# Le système ne lubrifie pas pendant :
-# - Les nettoyages partiels (correctif ABAO)
-# - Le nettoyage complet annuel (préventif AGAN)
-indisponibilite_lub_corrective <- nb_pannes_attendues * mttr_partial
-indisponibilite_lub_preventive <- 1 * mttr_full
+# 3. Calcul des indisponibilités annuelles cumulées
+# Temps perdu par les nettoyages partiels (nb pannes * MTTR partiel)
+indispo_corrective <- nb_pannes_attendues * exp(mu_partial + (sigma_partial^2 / 2))
 
-total_indisponibilite_lub <- indisponibilite_lub_corrective + indisponibilite_lub_preventive
+# Temps perdu par le nettoyage complet annuel (1 intervention * MTTR full)
+indispo_preventive <- 1 * mttr_full
 
-# 5. Calcul de A_barre (Disponibilité moyenne du service de lubrification)
-dispo_moyenne_lub <- (T_cycle - total_indisponibilite_lub) / T_cycle
+total_indispo <- indispo_corrective + indispo_preventive
 
-# 6. Affichage
+# 4. Calcul de la disponibilité moyenne (A_barre)
+dispo_moyenne_lub <- (T_cycle - total_indispo) / T_cycle
+
+# 5. Affichage des résultats
 cat("--- SYNTHÈSE DISPONIBILITÉ LUBRIFICATION ---\n")
-cat("Nombre de pannes attendues :", round(nb_pannes_attendues, 2), "\n")
-cat("Temps sans lubrification (Correctif) :", round(indisponibilite_lub_corrective, 2), "h\n")
-cat("Temps sans lubrification (Préventif) :", round(indisponibilite_lub_preventive, 2), "h\n")
+cat("Nombre de pannes (obstructions) attendues :", round(nb_pannes_attendues, 2), "\n")
+cat("Total indisponibilité annuelle du circuit :", round(total_indispo, 2), "heures\n")
 cat("--------------------------------------------\n")
-cat("DISPONIBILITÉ MOYENNE (A_barre) :", round(dispo_moyenne_lub, 6), "\n")
+cat("DISPONIBILITÉ MOYENNE (A_barre)           :", round(dispo_moyenne_lub, 6), "\n")
+cat("Proportion du temps lubrifié              :", round(dispo_moyenne_lub * 100, 2), "%\n")
 ```
 
-L'étude du système de lubrification sur un cycle annuel de 8 760 heures démontre une robustesse industrielle remarquable, avec une disponibilité moyenne de 99,9235 %. L'ajustement du modèle de Poisson Non-Homogène (NHPP) permet de caractériser précisément l'usure du système grâce à un paramètre de forme beta = 1,2751, révélant une dégradation progressive et une légère accélération du taux de défaillance au cours du temps. Avec un paramètre d'échelle eta = 5618, le système subit en moyenne 1,76 panne curative par an. Sur le plan de la maintenance, l'indisponibilité totale reste très maîtrisée à seulement 6,7 heures par an, dont 4,06 heures dédiées à l'arrêt préventif (nettoyage complet) et 2,64 heures aux interventions correctives (nettoyages partiels). Ce haut niveau de disponibilité garantit que les mèches de perçage opèrent sous protection lubrifiante la quasi-totalité du temps, tout en fournissant le coefficient A_barre nécessaire pour modéliser l'impact critique du faible pourcentage de temps d'usure accélérée sur la durée de vie des outils.
+Les résultats confirment la très haute performance du plan de maintenance actuel pour le système de lubrification. Avec un nombre de pannes attendu de 1,95 par an, le circuit ne subit en moyenne que deux obstructions majeures au cours d'un cycle annuel de production. L'indisponibilité totale cumulée, incluant le nettoyage préventif complet, s'élève à seulement 6,98 heures par an. Cela se traduit par une disponibilité moyenne de 99,92 %. D'un point de vue industriel, ce chiffre indique que le système remplit parfaitement sa fonction de soutien : le risque que les têtes de perçage fonctionnent sans lubrifiant est inférieur à 0,1 % du temps total. Cette valeur extrêmement élevée suggère que la stratégie actuelle (correctif au fil de l'eau et préventif annuel) est optimale et qu'un investissement supplémentaire pour accroître la fiabilité du circuit de lubrification ne serait pas rentable au regard du gain de disponibilité marginal.
 
 ------------------------------------------------------------------------
 
 ## Point 2
 
-Le système de lubrification subit un encrassement progressif ($\beta > 1$), ce qui augmente la fréquence des pannes (nettoyages partiels) au fil du temps. Actuellement, un seul nettoyage complet est effectué par an ($k=1$). L'enjeu est de déterminer si multiplier ces interventions lourdes (politique préventive **AGAN**) permet de réduire le coût global en limitant le nombre de pannes imprévues (politique corrective **ABAO**) et l'indisponibilité associée.
-
-L'arbitrage se fait entre :
-* **Le coût d'un nettoyage complet** : 900 € de maintenance + 8h d'arrêt de production (soit $8 \times 1500 = 12\,000$ € d'indisponibilité).
-* **Le coût des nettoyages partiels** : 250 € par intervention + 1,5h d'arrêt moyen par panne.
+L'objectif de cette étude est de déterminer la fréquence optimale de maintenance préventive ($k$ nettoyages complets par an) afin de minimiser le coût total d'exploitation du système de lubrification. Le modèle de coût intègre deux composantes contradictoires : le coût du préventif (fixé à 6 900 € par intervention, incluant les 4h de perte de production à 1 500 €/h) et le coût du correctif (250 € par nettoyage partiel, sans arrêt de station). Puisque les nettoyages partiels sont des réparations minimales, nous utilisons la loi de Poisson non-homogène (NHPP) pour estimer l'occurrence des pannes entre deux nettoyages complets. L'optimisation consiste à trouver la valeur de $k$ qui minimise la somme de ces coûts sur un horizon annuel de 8 760 heures.
 
 ```{r}
-# --- Optimisation du Système de Lubrification (Point 2 - Corrigé) ---
+# --- Optimisation de la Fréquence de Maintenance (Lubrification) ---
 
-# 1. Paramètres économiques et techniques (Tableau 2)
-cout_h_non_prod <- 1500
-cout_intervention_complet <- 900
-cout_intervention_partiel <- 250
+# 1. Paramètres (Tableau 2)
+cost_prod_h <- 1500
+cost_full   <- 900    # Préventif
+t_stop_full <- 4      # Arrêt station
+cost_part   <- 250    # Correctif
+t_stop_part <- 0      # Pas d'arrêt station selon Tableau 2
 
-durée_arret_complet <- 4 # Tableau 2
-durée_arret_partiel <- 0 # Tableau 2 : "Temps d'arrêt moyen : 0"
-
-# 2. Fonction de coût annuel basée sur le modèle NHPP
-lub_annual_cost <- function(k) {
-  # Durée d'un sous-cycle entre deux nettoyages complets
-  T_sous_cycle <- 8760 / k
+# 2. Fonction de coût annuel global
+# k : nombre de nettoyages complets par an
+lub_total_annual_cost <- function(k) {
+  # Durée d'un cycle entre deux nettoyages parfaits (en heures)
+  T_cycle <- 8760 / k
   
-  # Nombre de pannes (nettoyages partiels) attendues par sous-cycle (NHPP)
-  n_pannes_sous_cycle <- (T_sous_cycle / eta_lub)^beta_lub
+  # Coût d'une opération préventive (Full)
+  # Inclut les pièces et la perte de production
+  Cp <- cost_full + (t_stop_full * cost_prod_h)
   
-  # Coût d'un sous-cycle :
-  # [Maintenance Préventive + Perte de Production] + [Pannes * (Maintenance Corrective + 0h Perte)]
-  cout_prev <- cout_intervention_complet + (durée_arret_complet * cout_h_non_prod)
-  cout_corr <- n_pannes_sous_cycle * (cout_intervention_partiel + (durée_arret_partiel * cout_h_non_prod))
+  # Espérance du nombre de pannes par cycle (Intensité cumulée NHPP)
+  # On utilise beta_lub et eta_lub calculés en Q3
+  E_N <- (T_cycle / eta_lub)^beta_lub
   
-  # Coût total annuel (k cycles par an)
-  return((cout_prev + cout_corr) * k)
+  # Coût des pannes sur un cycle (Correctif)
+  # Note : t_stop_part = 0, donc pas de perte de production ici
+  Cc_total <- E_N * (cost_part + (t_stop_part * cost_prod_h))
+  
+  # Coût annuel = (Coût préventif + Coût correctifs cumulés) * nombre de cycles
+  return((Cp + Cc_total) * k)
 }
 
-# 3. Calcul de l'optimum
-k_values <- 1:10
-annual_costs <- sapply(k_values, lub_annual_cost)
-k_opti <- k_values[which.min(annual_costs)]
+# 3. Recherche de l'optimum (k peut être un nombre réel pour plus de précision)
+opti_k <- optimize(lub_total_annual_cost, interval = c(0.5, 12))
 
-# 4. Affichage
-cat("--- Résultats Optimisation Lubrification (Données Tableaux) ---\n")
-cat("Coût pour k=1 (actuel) :", round(annual_costs[1], 2), "€\n")
-cat("Fréquence optimale k* :", k_opti, "nettoyage(s) par an\n")
-cat("Nombre total de pannes attendues à k* :", round(((8760/k_opti)/eta_lub)^beta_lub * k_opti, 2), "\n")
+k_star <- opti_k$minimum
+cost_min <- opti_k$objective
+
+# 4. Comparaison avec la politique actuelle (k=1)
+cost_current <- lub_total_annual_cost(1)
+
+# 5. Affichage
+cat("--- RÉSULTATS OPTIMISATION SYSTÈME LUBRIFICATION ---\n")
+cat("Fréquence optimale (k*)       :", round(k_star, 2), "nettoyages/an\n")
+cat("Intervalle entre nettoyages   :", round(8760/k_star, 0), "heures\n")
+cat("Coût annuel à l'optimum       :", round(cost_min, 2), "€\n")
+cat("Coût politique actuelle (k=1) :", round(cost_current, 2), "€\n")
+cat("Gain annuel espéré            :", round(cost_current - cost_min, 2), "€\n")
 ```
 
-L'étude technico-économique basée sur les données du Tableau 2 confirme que la stratégie actuelle (k=1) est la plus efficiente. Le coût annuel total est estimé à 7 340,48 euros. Cette somme se décompose en un coût fixe de 6 900 euros lié au nettoyage complet annuel (incluant 6 000 euros de perte de production pour les 4 heures d'arrêt station) et un coût variable de 440,48 euros lié aux 1,76 pannes correctives attendues.
+L'objectif de cette étude est de déterminer la fréquence optimale de maintenance préventive ($k$ nettoyages complets par an) afin de minimiser le coût total d'exploitation du système de lubrification. Le modèle de coût intègre deux composantes contradictoires : le coût du préventif (fixé à 6 900 € par intervention, incluant les 4h de perte de production à 1 500 €/h) et le coût du correctif (250 € par nettoyage partiel, sans arrêt de station). Puisque les nettoyages partiels sont des réparations minimales, nous utilisons la loi de Poisson non-homogène (NHPP) pour estimer l'occurrence des pannes entre deux nettoyages complets. L'optimisation consiste à trouver la valeur de $k$ qui minimise la somme de ces coûts sur un horizon annuel de 8 760 heures.
 
-La fréquence optimale k* = 1 s'explique par le fait que le nettoyage partiel n'entraîne aucune perte de production (0h d'arrêt). Dès lors, le coût d'une défaillance (250 euros) reste dérisoire face au coût d'un arrêt programmé supplémentaire (6 900 euros). Il est donc économiquement préférable de subir les rares pannes du système de lubrification plutôt que d'augmenter la fréquence des maintenances préventives. Cette stratégie n'est viable que parce que la dégradation (beta = 1,27) reste modérée sur l'horizon annuel.
 ------------------------------------------------------------------------
 
 # Analyse de la Dégradation Globale des Mèches
