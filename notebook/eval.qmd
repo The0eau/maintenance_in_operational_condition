@@ -21,40 +21,16 @@ format:
 
 # Introduction et Contexte du Projet
 
-Ce rapport présente une étude approfondie de la politique de maintien en condition opérationnelle d'un poste de perçage multi-têtes au sein d'un atelier industriel. L'objectif est de produire une analyse globale et des recommandations basées sur des modèles de fiabilité (Weibull, Lognormale) et des processus stochastiques (Chaînes de Markov).
 
 ## Description du Système
 
-Le système étudié est une station de perçage rotative comprenant plusieurs sous-systèmes critiques dont les interactions dictent la performance globale :
-
-- **Plateforme rotative :** Élément indispensable au positionnement des pièces ; sa défaillance entraîne l'arrêt total de la station.
-- **Têtes de perçage :** La station dispose de 3 têtes indépendantes. La station reste fonctionnelle tant qu'au moins une tête est opérationnelle. Chaque tête est composée d'un bloc moteur et d'une mèche.
-- **Système de lubrification :** Un circuit commun qui limite les frottements. La station peut fonctionner sans lui (mode dégradé), mais cela impacte la dégradation des mèches.
-- **Capteurs de positionnement :** Au nombre de 4, ils assurent la précision du perçage. Une redondance partielle de type "3 parmi 4" (k-sur-n) est nécessaire pour maintenir l'opération.
 
 ------------------------------------------------------------------------
 
 # Analyse Individuelle des Sous-systèmes
 
-## Question 1 : Diagramme de Blocs de Fiabilité (RBD)
-
-L'analyse de la description du système permet de construire un **Diagramme de Blocs de Fiabilité (RBD)**. Dans ce modèle, la station est considérée comme fonctionnelle si un chemin continu existe entre l'entrée et la sortie du diagramme.
-
-### Architecture du RBD
-
-La station est constituée d'une mise en série de trois blocs principaux:
-
-1.  **Bloc 1 : Plateforme Rotative (Série)** : Composant unique indispensable. Si elle tombe en panne, la station est inutilisable.
-
-2.  **Bloc 2 : Système de Positionnement (Redondance k-parmi-n)** : Contient 4 capteurs. Le système fonctionne tant qu'au moins 3 capteurs sur 4 sont opérationnels.
-
-3.  **Bloc 3 : Têtes de Perçage (Redondance en parallèle)** : La station peut fonctionner tant qu'au moins 1 tête sur 3 est fonctionnelle.
-
-- Chaque tête est un sous-système composé d'un **moteur** et d'une **mèche** montés en série.
-
-### Le Système de Lubrification
-
-Le système de lubrification n'apparaît pas dans la chaîne de série principale car son fonctionnement n'est pas strictement nécessaire pour opérer la station (mode dégradé possible). Il agit toutefois comme un facteur d'influence sur le taux de dégradation des mèches.
+La station de perçage est modélisée par un Diagramme de Blocs de Fiabilité (RBD) constitué de trois blocs fonctionnels principaux disposés en série, car la défaillance d'un seul de ces blocs entraîne l'arrêt total de la production. 
+Le premier bloc représente la plateforme rotative, composant critique unique. Le second bloc est un système de positionnement en redondance partielle de type $k$ parmi $n$ ($3/4$), signifiant que la station reste opérationnelle tant qu'au moins trois capteurs sur quatre sont fonctionnels. Enfin, le troisième bloc modélise les trois têtes de perçage en parallèle : la station fonctionne tant qu'au moins une tête est active (redondance $1/3$). Chaque tête est elle-même une mise en série d'un moteur et d'une mèche, où la panne de l'un neutralise la tête concernée. Le système de lubrification, bien qu'influençant l'usure thermique, est exclu de la chaîne de disponibilité directe puisque l'énoncé confirme la possibilité d'un fonctionnement en mode dégradé sans ce dernier.
 
 ```{mermaid}
 graph LR
@@ -96,10 +72,6 @@ graph LR
 
 ```
 
-### Justification du modèle
-
-Le choix du RBD permet de visualiser directement les capacités de production en mode dégradé (nombre de têtes actives) et de modéliser facilement les redondances de type k-parmi-n mentionnées pour les capteurs.
-
 ------------------------------------------------------------------------
 
 
@@ -109,17 +81,7 @@ Le choix du RBD permet de visualiser directement les capacités de production en
 
 ### Question 2 : Estimation de la loi du temps avant défaillance
 
-Pour estimer la loi du temps avant défaillance de la plateforme rotative, nous suivons une démarche d'inférence paramétrique adaptée aux données de survie avec censure.
-
-Les données de l'onglet `rotating_platform` contiennent des **censures de Type I**. L'étude s'étant arrêtée après 5 ans de production, pour les systèmes n'ayant pas connu de défaillance à cette date, nous savons seulement que leur durée de vie $T_i$ est supérieure à l'instant de censure $C_i$.
-
-Nous utilisons une **loi de Weibull** pour modéliser ce composant mécanique, car elle permet de représenter finement les phénomènes de vieillissement via ses deux paramètres : \* Le paramètre de forme $\beta$. \* Le paramètre d'échelle $\eta$.
-
-Pour traiter les données censurées, nous utilisons la méthode du **Maximum de Vraisemblance** afin d'estimer les paramètres qui maximisent la probabilité d'observer l'échantillon recueilli. La fonction de vraisemblance $L$ intègre : \* La densité de probabilité $f(t)$ pour les défaillances observées. \* La fonction de fiabilité $R(C)$ pour les données censurées.
-
-$$L = R(C)^{n-k} \prod_{i=1}^{k} f(t_{(i)})$$
-
-La cohérence du modèle sera vérifiée par deux outils : \* **Linéarisation de Weibull** : Un tracé de $\ln(-\ln(R(t)))$ en fonction de $\ln(t)$ doit montrer une tendance linéaire. \* **Transformée TTT (Total Time on Test)** : Si la courbe est concave, cela confirme un taux de défaillance croissant ($IFR$, $\beta > 1$), caractéristique d'une usure mécanique.
+Afin d'estimer la loi de probabilité régissant le temps avant défaillance de la plateforme rotative, nous utilisons une analyse de survie basée sur la distribution de Weibull. Ce modèle est privilégié en fiabilité industrielle car il permet de caractériser précisément la nature du taux de défaillance (jeunesse, hasard ou usure) à travers son paramètre de forme $\beta$. L'échantillon fourni contient 47 observations, dont plusieurs données censurées à droite (status = 0), correspondant aux équipements toujours en fonctionnement lors du relevé. L'utilisation de la bibliothèque flexsurv permet d'ajuster ce modèle par la méthode du Maximum de Vraisemblance (MLE), garantissant une estimation robuste des paramètres d'échelle ($\eta$) et de forme ($\beta$) tout en intégrant l'incertitude liée aux données censurées.
 
 ```{r}
 #| label: analyse-plateforme-flexsurv
@@ -158,72 +120,77 @@ Avec un paramètre de forme $\beta = 4,1017$, le système subit une **usure méc
 
 ## Point 2
 
-Après avoir caractérisé la loi de défaillance (Point 1), l'objectif ici est de déterminer la stratégie de maintenance optimale. Étant donné que $\beta = 4,1017$, le système vieillit fortement. Il est donc mathématiquement rentable de remplacer la plateforme de manière **préventive** avant qu'elle ne tombe en panne.
-
-### Optimisation du Remplacement Préventif
-
-L'enjeu est de trouver l'âge de remplacement optimal $T^*$ qui minimise le **coût moyen par unité de temps** $C(T)$. Ce modèle repose sur un arbitrage entre :
-1.  **Le coût de la maintenance corrective ($C_c$)** : Très élevé car la panne est imprévue, nécessite un expert extérieur, un transport d'urgence (200€) et immobilise la station pendant 14h ($14 \times 1500€/h$).
-2.  **Le coût de la maintenance préventive ($C_p$)** : Plus faible car l'arrêt est planifié (6h au lieu de 14h) et les pièces sont moins chères ($900€$ au lieu de $1300€$).
+L'objectif est de déterminer l'âge optimal de remplacement ($T^*$) permettant de minimiser le coût moyen d'exploitation par unité de temps. Pour ce faire, nous comparons deux scénarios : une maintenance corrective (intervention après panne, coûteuse en temps d'arrêt et en logistique) et une maintenance préventive (intervention planifiée, plus rapide et moins onéreuse).Le calcul intègre les coûts directs (pièces, main-d'œuvre et transport) ainsi que les coûts indirects liés à la non-production (1500 €/h). Les durées d'intervention étant aléatoires, nous calculons d'abord leurs espérances à partir des lois log-normales fournies ($E[X] = e^{\mu + \sigma^2/2}$). En utilisant les paramètres de Weibull ($\beta, \eta$) estimés précédemment, nous modélisons la fonction de coût global. L'optimum recherché représente le point d'équilibre où le coût des remplacements préventifs fréquents compense la réduction du risque de pannes correctives majeures.
 
 
 ```{r}
 # --- Point (2) : Optimisation de la Maintenance (Plateforme) ---
 
-# --- Paramètres conformes à l'énoncé ---
-cout_arret_h <- 1500
-transport <- 200
-main_oeuvre_h <- 100
+# 1. Paramètres économiques et logistiques
+cout_arret_h   <- 1500
+transport      <- 200
+main_oeuvre_h  <- 100
 
 # Calcul des durées moyennes d'arrêt (Espérances des lois log-normales)
-# Formule : exp(mu + sigma^2 / 2)
-mttr_c <- exp(2.28 + (0.24^2 / 2)) # env. 10.06h
-mttr_p <- exp(1 + (0.55^2 / 2))    # env. 3.16h
+# Formule : E[X] = exp(mu + sigma^2 / 2)
+mttr_c <- exp(2.28 + (0.24^2 / 2)) # Moyenne temps correctif (~10.06h)
+mttr_p <- exp(1 + (0.55^2 / 2))    # Moyenne temps préventif (~3.16h)
 
-# Coût Correctif (Cc)
-Cc <- 1300 + transport + (mttr_c * (cout_arret_h+main_oeuvre_h) )
+# Coût total d'une intervention Corrective (Cc)
+# (Pièces + Transport + Main d'œuvre + Perte de production)
+Cc <- 1300 + transport + (mttr_c * (cout_arret_h + main_oeuvre_h))
 
-# Coût Préventif (Cp)
-Cp <- 900 + transport + (mttr_p * (cout_arret_h+main_oeuvre_h))
+# Coût total d'une intervention Préventive (Cp)
+# (Pièces + Transport + Main d'œuvre + Perte de production)
+Cp <- 900 + transport + (mttr_p * (cout_arret_h + main_oeuvre_h))
 
 # 2. Fonction de coût moyen par unité de temps C(T)
-# Utilise les paramètres beta_hat et eta_hat calculés au Point (1)
+# Basée sur le modèle de renouvellement par l'âge
 cost_function_plat <- function(T_age) {
-  # Fiabilité à l'instant T
+  # Fiabilité R(T) et Probabilité de défaillance F(T)
   R_T <- exp(-(T_age / eta_hat)^beta_hat)
-  # Probabilité de défaillance avant T
   F_T <- 1 - R_T
   
-  # Espérance du temps de bon fonctionnement (MTTF restreint à T)
-  # On intègre la fonction de fiabilité de 0 à T
+  # Espérance du temps de bon fonctionnement (Intégrale de R(t) de 0 à T)
   mttf_T <- integrate(function(t) exp(-(t / eta_hat)^beta_hat), 
                       lower = 0, upper = T_age)$value
   
-  # Coût moyen = Espérance du coût / Espérance du temps
-  return((Cp * R_T + Cc * F_T) / mttf_T)
+  # Espérance de la durée totale du cycle (Fonctionnement + Arrêt)
+  duree_cycle <- mttf_T + (mttr_p * R_T + mttr_c * F_T)
+  
+  # Espérance du coût du cycle
+  cout_cycle <- (Cp * R_T + Cc * F_T)
+  
+  # Coût moyen par unité de temps
+  return(cout_cycle / duree_cycle)
 }
 
-# 3. Recherche du minimum de la fonction
-# On cherche entre 1000h et la valeur de eta_hat
-opti_result <- optimize(cost_function_plat, interval = c(1000, 15000))
+# 3. Recherche de l'âge optimal (T*)
+# On cherche entre 100h et 1.5 fois la durée de vie caractéristique (eta_hat)
+opti_result <- optimize(cost_function_plat, interval = c(100, eta_hat * 1.5))
 
 T_opti <- opti_result$minimum
 cout_horaire_min <- opti_result$objective
 
-# 4. AFFICHAGE DES RÉSULTATS
-cat("--- OPTIMISATION DE LA PLATEFORME ROTATIVE ---\n")
-cat("Coût d'une panne corrective (Cc) :", Cc, "€\n")
-cat("Coût d'un remplacement préventif (Cp) :", Cp, "€\n")
-cat("----------------------------------------------\n")
-cat("Âge optimal de remplacement (T*) :", round(T_opti, 2), "heures\n")
-cat("Coût horaire minimum associé     :", round(cout_horaire_min, 4), "€/h\n")
-cat("Gain par rapport au correctif pur :", round(cost_function_plat(15000) - cout_horaire_min, 2), "€/h\n")
+# 4. Calcul du coût en "Correctif Pur" pour comparaison (T -> infini)
+# En correctif pur, le coût moyen est Cc / (MTTF + mttr_c)
+mttf_total <- eta_hat * gamma(1 + 1/beta_hat)
+cout_correctif_pur <- Cc / (mttf_total + mttr_c)
 
+# 5. Affichage des résultats
+cat("--- RÉSULTATS DE L'OPTIMISATION (PLATEFORME) ---\n")
+cat("MTTR Correctif estimé :", round(mttr_c, 2), "h\n")
+cat("MTTR Préventif estimé :", round(mttr_p, 2), "h\n\n")
+cat("Coût total d'une panne (Cc) :", round(Cc, 2), "€\n")
+cat("Coût d'un préventif (Cp)    :", round(Cp, 2), "€\n")
+cat("------------------------------------------------\n")
+cat("Âge optimal de remplacement (T*) :", round(T_opti, 0), "heures\n")
+cat("Coût horaire à l'optimum         :", round(cout_horaire_min, 4), "€/h\n")
+cat("Coût en politique corrective pure :", round(cout_correctif_pur, 4), "€/h\n")
+cat("Gain économique espéré           :", round(cout_correctif_pur - cout_horaire_min, 2), "€/h\n")
 ```
 
-L'étude technico-économique de la plateforme rotative met en évidence une forte opportunité d'optimisation par la maintenance préventive. Avec un paramètre de forme de Weibull beta d'environ 4,1, le composant présente un mode de défaillance par usure marquée, rendant le risque de panne statistiquement prévisible et évitable. L'analyse des coûts révèle une disproportion majeure entre une intervention corrective (17 599,75 euros) et une intervention préventive (6 159,43 euros), principalement due à la réduction du temps d'arrêt machine (d'environ 10h à 3h) et à la planification des ressources. 
-
-En minimisant la fonction de coût moyen par unité de temps, nous identifions un âge optimal de remplacement T* d'environ 7 428 heures. À cet instant, le système atteint le meilleur compromis entre l'exploitation maximale de la durée de vie du composant et la limitation du risque de défaillance coûteuse. L'adoption de cette politique permet d'abaisser le coût d'exploitation à 1,1152 euros/h, générant un gain de 0,55 euros/h par rapport à une politique de laisser-casser. À l'échelle de l'atelier de 10 stations, cette stratégie représente une économie annuelle substantielle d'environ 48 000 euros, tout en améliorant significativement la disponibilité opérationnelle du poste de perçage.
+L'analyse technico-économique de la plateforme rotative révèle un gisement d'optimisation significatif. On observe tout d'abord une disparité majeure entre les coûts de maintenance : une panne imprévue ($C_c \approx 17\ 600$ €) coûte près de trois fois plus cher qu'une intervention planifiée ($C_p \approx 6\ 160$ €), principalement en raison de l'impact de l'indisponibilité sur la production (MTTR de 10h contre 3h). Les résultats de l'optimisation recommandent de passer d'une politique de "correctif pur" à une politique de remplacement préventif systématique à un âge $T^ = 7\ 429$ heures*. Cette stratégie permet de réduire le coût horaire d'exploitation de 1,71 €/h à 1,11 €/h, soit une économie de 0,59 € par heure de fonctionnement. Rapporté à l'échelle de l'atelier (10 stations fonctionnant en continu), ce gain représente une économie annuelle substantielle d'environ 51 000 €, justifiant ainsi pleinement la mise en place d'un suivi rigoureux de l'âge des plateformes.
 
 ------------------------------------------------------------------------
 
@@ -249,42 +216,75 @@ La linéarisation $\ln(H(t)) = \beta \ln(t) - \beta \ln(\eta)$ nous permet d'est
 #| warning: false
 
 df_lub <- read_excel(path, sheet = "lubricant_sys")
+# 2. Extraction et nettoyage des Temps de Bon Fonctionnement (TBF)
+# On récupère toutes les colonnes qui contiennent les durées entre nettoyages partiels
+# (On exclut les colonnes de durée de nettoyage "fullcleaning-duration")
+tbf_cols <- grep("TBF", names(data_lub), value = TRUE)
+tbf_vector <- unlist(data_lub[, tbf_cols])
 
-T_L <- 8760 
-nb_lignes <- nrow(df_lub)
+# On retire les NA (cellules vides quand il y a eu moins de pannes dans l'année)
+tbf_clean <- as.numeric(tbf_vector[!is.na(tbf_vector)])
 
-# 1. Extraction et nettoyage des données
-# On récupère tous les instants de pannes présents dans les 7 premières colonnes
-instants_pannes <- df_lub[, 1:7]
-T_ij <- unlist(instants_pannes)
-T_ij <- T_ij[!is.na(T_ij) & T_ij > 0 & T_ij < T_L]
-n_total <- length(T_ij)
+# 3. Ajustement du modèle de Weibull
+# Note : Ici on utilise fitdistrplus car nous avons des durées pures (pas de censure)
+library(fitdistrplus)
+fit_lub <- fitdist(tbf_clean, "weibull")
 
-# 2. Estimation de Beta (Paramètre de forme)
-# Formule : Nombre total de pannes / Somme des ln(TL / Tij)
-beta_lub <- n_total / sum(log(T_L / T_ij))
+# 4. Extraction des paramètres
+beta_lub <- fit_lub$estimate["shape"] # Paramètre de forme
+eta_lub  <- fit_lub$estimate["scale"] # Paramètre d'échelle (vie caractéristique)
 
-# 3. Estimation de Eta (Paramètre d'échelle ajusté pour 50 cycles)
-# Formule pour m systèmes : TL / ( (n_total/m)^(1/beta) )
-eta_lub <- T_L / ( (n_total / nb_lignes)^(1/beta_lub) )
-
-# 4. Calcul de la disponibilité (Question 5)
-# On réutilise les MTTR calculés précédemment (1.5h et ~4.06h)
-nb_pannes_an_moyen <- (T_L / eta_lub)^beta_lub
-indispo_totale <- (nb_pannes_an_moyen * 1.5) + 4.06
-dispo_moyenne <- (T_L - indispo_totale) / T_L
-
-cat("--- RÉSULTATS DÉFINITIFS ---")
-cat("\nBêta (Forme)  :", round(beta_lub, 4))
-cat("\nÉchelle (Eta) :", round(eta_lub, 4))
-cat("\nNombre de pannes attendu par an :", round(nb_pannes_an_moyen, 2))
-cat("\nDisponibilité moyenne (A_barre) :", round(dispo_moyenne, 6))
+# 5. Affichage des résultats
+cat("====================================================\n")
+cat("RÉSULTATS QUESTION 3 : SYSTÈME DE LUBRIFICATION\n")
+cat("====================================================\n")
+cat("Paramètre de forme (beta) :", round(beta_lub, 4), "\n")
+cat("Paramètre d'échelle (eta) :", round(eta_lub, 2), "heures\n")
+cat("----------------------------------------------------\n")
 ```
 
 
 L'étude du système de lubrification par un modèle de Poisson Non-Homogène (NHPP) révèle un paramètre de forme **$\beta = 1,2751$**. Cette valeur, supérieure à 1, confirme l'existence d'un phénomène d'usure ou d'encrassement progressif du circuit, entraînant une accélération modérée de la fréquence des pannes au cours du temps. Avec un paramètre d'échelle **$\eta = 5618$**, le modèle projette un **nombre de pannes attendu de 1,76 par an**, un résultat en parfaite adéquation avec les observations historiques du site (comprises entre 1 et 3 interventions annuelles). 
 
 Sur le plan opérationnel, la combinaison de ces défaillances correctives et de la maintenance préventive annuelle aboutit à une **disponibilité moyenne extrêmement élevée de $\bar{A} = 0,999235$**. Bien que le système soit fonctionnel plus de 99,9 % du temps, ce résultat est loin d'être négligeable : il permet d'identifier précisément les 6,7 heures annuelles durant lesquelles la protection lubrifiante est absente. Ce coefficient $\bar{A}$ constitue désormais le pivot probabiliste essentiel pour modéliser l'usure composite des mèches de perçage, en permettant de basculer du régime de dégradation standard au régime accéléré lors des phases d'indisponibilité du système.
+
+### QUESTION 4 : Ajustement du modèle de Poisson Non-Homogène (NHPP)
+
+```{r}
+# 1. Nettoyage Complet (Full Cleaning)
+# Extraction des données de la colonne correspondante
+ttr_full_data <- df_lub$`fullcleaning-duration`
+ttr_full_data <- ttr_full_data[!is.na(ttr_full_data)]
+
+# Ajustement d'une loi lognormale par Maximum de Vraisemblance
+fit_full <- flexsurvreg(Surv(ttr_full_data) ~ 1, dist = "lnorm")
+
+# Extraction des paramètres pour le nettoyage complet
+mu_full    <- fit_full$res["meanlog", "est"]
+sigma_full <- fit_full$res["sdlog", "est"]
+mttr_full  <- exp(mu_full + (sigma_full^2 / 2))
+
+# 2. Nettoyage Partiel (Partial Cleaning)
+# L'énoncé indique "1h30 environ" (1.5h). 
+# Pour définir une loi lognormale sans données brutes, on fixe l'espérance à 1.5
+# et on choisit un écart-type logarithmique (ex: 0.1) pour représenter la faible variabilité.
+target_mttr_p <- 1.5
+sigma_partial <- 0.1 
+mu_partial    <- log(target_mttr_p) - (sigma_partial^2 / 2)
+mttr_partial  <- exp(mu_partial + (sigma_partial^2 / 2))
+
+# 3. Affichage des résultats
+cat("--- CARACTÉRISATION DES TTR (RÉSULTATS) ---\n")
+cat("Nettoyage Complet (basé sur les données) :\n")
+cat("  - Paramètre mu    :", round(mu_full, 4), "\n")
+cat("  - Paramètre sigma :", round(sigma_full, 4), "\n")
+cat("  - MTTR estimé     :", round(mttr_full, 2), "heures\n\n")
+
+cat("Nettoyage Partiel (basé sur l'énoncé 1.5h) :\n")
+cat("  - Paramètre mu    :", round(mu_partial, 4), "\n")
+cat("  - Paramètre sigma :", round(sigma_partial, 4), "\n")
+cat("  - MTTR utilisé    :", round(mttr_partial, 2), "heures\n")
+```
 
 ### Question 5 : Calcul de la disponibilité moyenne ($\bar{A}$)
 
