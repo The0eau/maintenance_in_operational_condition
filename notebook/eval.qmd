@@ -205,8 +205,6 @@ Pour caractériser la fiabilité du système de lubrification, nous nous appuyon
 ```{r}
 #| label: analyse-lubrification-correctif
 
-library(fitdistrplus)
-
 # 1. Lecture
 df_lub <- read_excel(path, sheet = "lubricant_sys")
 
@@ -220,11 +218,12 @@ tbf_vector <- as.numeric(unlist(df_lub[, tbf_cols]))
 tbf_clean <- tbf_vector[!is.na(tbf_vector) & tbf_vector > 0]
 
 
-# 4. Ajustement
-fit_lub <- fitdist(tbf_clean, "weibull")
+# 4. Ajustement avec flexsurvreg
+# On crée un objet de survie sans censure : Surv(tbf_clean)
+fit_lub_flex <- flexsurvreg(Surv(tbf_clean) ~ 1, dist = "weibull")
 
-beta_lub <- fit_lub$estimate["shape"]
-eta_lub  <- fit_lub$estimate["scale"]
+beta_lub <- fit_lub_flex$res["shape", "est"]
+eta_lub  <- fit_lub_flex$res["scale", "est"]
 
 cat("====================================================\n")
 cat("RÉSULTATS QUESTION 3 : SYSTÈME DE LUBRIFICATION\n")
@@ -874,6 +873,7 @@ duree_insp_sensor <- 0.5   # 30 min en heures
 # On ne considère que l'arrêt planifié pour maintenance
 temps_mort_lub_annuel <- k_star * duree_arret_lub
 dispo_opti_lub <- (8760 - temps_mort_lub_annuel) / 8760
+cout_horaire_lub_min <- cost_min / 8760
 
 # B. Mèches (Remplacement préventif à l'État 4)
 # Fréquence = Probabilité d'être en E4 * Taux de sortie vers E5
@@ -1013,6 +1013,9 @@ La stratégie de maintenance opportuniste repose sur l'idée que le coût le plu
 ```{r}
 # --- POINT 5 : MAINTENANCE GROUPÉE (OPPORTUNISTE) ---
 
+Q_trans_glob <- Q_glob[1:4, 1:4]
+mttf_glob <- sum(solve(-Q_trans_glob)[1, ])
+
 # 2. Paramètres de coûts et durées (Alignés sur l'énoncé)
 cout_heure_arret <- 1500  # Coût de production de la station complète
 duree_lub_seule   <- 4.0   # 4h selon tes données précédentes
@@ -1021,7 +1024,7 @@ duree_intervention_groupee <- 4.2  # On estime un gain (ex: seulement 12 min de 
 
 # 3. Calcul des fréquences annuelles (Base 8760h pour être raccord avec le Point 3)
 # Essaye de changer juste cette ligne pour voir l'impact :
-nb_interv_lub_an <- 4  # Scénario : Lubrification chaque trimestre
+nb_interv_lub_an <- k_star
 nb_interv_meche_an <- 8760 / mttf_glob
 
 # 4. Calcul du gain financier
@@ -1035,9 +1038,8 @@ economie_annuelle_potentielle <- nb_regroupements_possibles * gain_argent_par_re
 
 # 5. AFFICHAGE DES RÉSULTATS
 {
-cat("\n====================================================\n")
+
 cat("  POINT 5 : ANALYSE DE LA MAINTENANCE OPPORTUNISTE  \n")
-cat("====================================================\n")
 cat("Besoins annuels théoriques :\n")
 cat(" -> Maintenance Lubrification :", round(nb_interv_lub_an, 1), "fois/an\n")
 cat(" -> Changements de Mèches     :", round(nb_interv_meche_an, 1), "fois/an\n")
@@ -1047,16 +1049,9 @@ cat("Gain financier unitaire       :", round(gain_argent_par_regroupement, 2), "
 cat("Nombre de groupages possibles :", round(nb_regroupements_possibles, 1), "fois/an\n")
 cat("----------------------------------------------------\n")
 cat("ÉCONOMIE ANNUELLE POTENTIELLE :", round(economie_annuelle_potentielle, 2), "€/an\n")
-cat("====================================================\n")
 }
 ```
 
-L'analyse de la maintenance opportuniste démontre qu'une simple optimisation logistique génère des bénéfices tangibles sans nécessiter d'investissement matériel. En identifiant la mèche de perçage comme le composant « appelant » avec ses 53 remplacements annuels, nous avons pu synchroniser les 4 interventions de lubrification systématique pour créer des fenêtres de maintenance groupée. Cette stratégie permet de transformer des arrêts isolés en interventions coordonnées, dégageant un gain de productivité de 28 minutes par occurrence. À l'échelle de l'année, cette réduction du temps mort se traduit par une économie directe de 2 820 €, prouvant que la performance de l'atelier ne dépend pas uniquement de la fiabilité intrinsèque des machines, mais également de la pertinence de la planification humaine. Ces résultats soulignent l'importance de passer d'une maintenance subie à une maintenance pilotée par les opportunités du calendrier de production.
+L'analyse de la maintenance opportuniste met en lumière une forte disparité entre les cycles de vie des composants de la station. Avec un optimum de lubrification fixé à 0,5 intervention par an (soit une fois tous les deux ans), le potentiel de regroupement est structurellement bridé par la rareté de cette opération lourde. Bien que le changement de mèche soit fréquent (53 fois/an), l'opportunité de couplage ne se présente statistiquement qu'une seule fois sur deux ans. L'économie annuelle de 352,55 € reste donc marginale par rapport au budget global de 80 000 €.
 
-## Synthèse de l'Optimisation de la Station de Perçage
-
-Ce projet a permis de transformer une maintenance subie en une stratégie de gestion d'actifs pilotée par la donnée. Grâce à l'analyse de la loi de Weibull (Point 1), nous avons identifié que le moteur subit un vieillissement mécanique réel ($\beta \approx 2,36$), justifiant le passage au préventif.
-
-L'étude des dépendances (Point 4) a révélé que la fiabilité de la station est une chaîne : une lubrification optimisée protège la mèche, qui à son tour protège le moteur des chocs fatals. Enfin, la maintenance groupée (Point 5) permet de minimiser l'impact financier des arrêts de production, qui restent le poste de dépense le plus critique (800 €/h).
-
-Résultat final : En combinant l'âge de remplacement optimal du moteur, le cycle de nettoyage de la lubrification et le remplacement préventif des mèches à l'état 4, la station passe d'un coût de défaillance catastrophique à un régime de croisière stabilisé, sécurisant ainsi la production sur le long terme.
+Ce résultat démontre que, dans cette configuration, le coût d'arrêt élevé de la lubrification (4h à 1500 €/h) impose une stratégie de "rareté" qui empêche de capitaliser sur les synergies logistiques. Pour rendre cette maintenance groupée réellement attractive, il faudrait soit réduire la durée d'arrêt technique de la lubrification, soit augmenter sa fréquence réglementaire (par exemple une visite trimestrielle), ce qui porterait immédiatement le gain potentiel à 2 820 €/an.
