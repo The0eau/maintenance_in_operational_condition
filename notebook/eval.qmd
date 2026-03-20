@@ -200,53 +200,43 @@ L'analyse technico-économique de la plateforme rotative révèle un gisement d'
 
 ### Question 3 : Caractérisation de la loi de défaillance
 
-Pour répondre à la Question 3, nous analysons les données de maintenance du système de lubrification afin de caractériser sa loi de défaillance par obstruction.
-
-L'analyse s'appuie sur l'onglet `lubricant_sys`. Nous considérons : \* **Les temps inter-défaillances** : Durées séparant deux nettoyages partiels au sein d'un cycle annuel. \* **La structure des cycles** : Chaque ligne représente une année. Le nettoyage complet annuel est une **réparation parfaite (AGAN)**, tandis que le nettoyage partiel est une **réparation minimale (ABAO)**.
-
-Le système est remis dans l'état d'usure précédant la panne, ce qui implique que les défaillances au sein d'une année suivent un **Processus de Poisson Non Homogène (NHPP)**.
-
-Nous utilisons une loi de Weibull dont le taux de défaillance est $h(t) = \frac{\beta}{\eta} (\frac{t}{\eta})^{\beta-1}$. Pour un processus NHPP, la fonction d'intensité cumulée est $H(t) = (\frac{t}{\eta})^{\beta}$.
-
-La linéarisation $\ln(H(t)) = \beta \ln(t) - \beta \ln(\eta)$ nous permet d'estimer les paramètres par régression : la pente donne $\hat{\beta}$ et l'ordonnée à l'origine permet de déduire $\hat{\eta}$.
+Pour caractériser la fiabilité du système de lubrification, nous nous appuyons sur les données de l'onglet lubricant_sys qui répertorie les temps de bon fonctionnement (TBF) entre chaque obstruction du circuit. Le raisonnement repose sur la distinction entre les types de maintenance : les nettoyages partiels sont considérés comme des réparations minimales (remise en service sans rajeunissement du système), tandis que le nettoyage annuel est une réparation parfaite. En agrégeant l'ensemble des TBF observés sur 429 cycles de pannes, nous constituons un échantillon statistiquement robuste. L'objectif est d'ajuster ces données à une loi de Weibull par la méthode du maximum de vraisemblance. Cette approche permet de vérifier si l'obstruction du circuit est un événement aléatoire ou, comme le suggère la description du système, un processus d'encrassement progressif lié au temps d'usage.
 
 ```{r}
-#| label: analyse-lubrification-flexsurv
-#| message: false
-#| warning: false
+#| label: analyse-lubrification-correctif
 
-df_lub <- read_excel(path, sheet = "lubricant_sys")
-# 2. Extraction et nettoyage des Temps de Bon Fonctionnement (TBF)
-# On récupère toutes les colonnes qui contiennent les durées entre nettoyages partiels
-# (On exclut les colonnes de durée de nettoyage "fullcleaning-duration")
-tbf_cols <- grep("TBF", names(data_lub), value = TRUE)
-tbf_vector <- unlist(data_lub[, tbf_cols])
-
-# On retire les NA (cellules vides quand il y a eu moins de pannes dans l'année)
-tbf_clean <- as.numeric(tbf_vector[!is.na(tbf_vector)])
-
-# 3. Ajustement du modèle de Weibull
-# Note : Ici on utilise fitdistrplus car nous avons des durées pures (pas de censure)
 library(fitdistrplus)
+
+# 1. Lecture
+df_lub <- read_excel(path, sheet = "lubricant_sys")
+
+# 2. Extraction des colonnes de données (les colonnes 1 à 7)
+# On sélectionne les colonnes qui ont des noms numériques "1", "2", etc.
+# Ou plus simplement, on exclut les deux dernières colonnes de texte/résumé
+tbf_cols <- names(df_lub)[1:7] 
+
+# 3. Conversion et nettoyage
+tbf_vector <- as.numeric(unlist(df_lub[, tbf_cols]))
+tbf_clean <- tbf_vector[!is.na(tbf_vector) & tbf_vector > 0]
+
+
+# 4. Ajustement
 fit_lub <- fitdist(tbf_clean, "weibull")
 
-# 4. Extraction des paramètres
-beta_lub <- fit_lub$estimate["shape"] # Paramètre de forme
-eta_lub  <- fit_lub$estimate["scale"] # Paramètre d'échelle (vie caractéristique)
+beta_lub <- fit_lub$estimate["shape"]
+eta_lub  <- fit_lub$estimate["scale"]
 
-# 5. Affichage des résultats
 cat("====================================================\n")
 cat("RÉSULTATS QUESTION 3 : SYSTÈME DE LUBRIFICATION\n")
 cat("====================================================\n")
+cat("Nombre de TBF analysés :", length(tbf_clean), "\n")
 cat("Paramètre de forme (beta) :", round(beta_lub, 4), "\n")
 cat("Paramètre d'échelle (eta) :", round(eta_lub, 2), "heures\n")
-cat("----------------------------------------------------\n")
+
 ```
 
 
-L'étude du système de lubrification par un modèle de Poisson Non-Homogène (NHPP) révèle un paramètre de forme **$\beta = 1,2751$**. Cette valeur, supérieure à 1, confirme l'existence d'un phénomène d'usure ou d'encrassement progressif du circuit, entraînant une accélération modérée de la fréquence des pannes au cours du temps. Avec un paramètre d'échelle **$\eta = 5618$**, le modèle projette un **nombre de pannes attendu de 1,76 par an**, un résultat en parfaite adéquation avec les observations historiques du site (comprises entre 1 et 3 interventions annuelles). 
-
-Sur le plan opérationnel, la combinaison de ces défaillances correctives et de la maintenance préventive annuelle aboutit à une **disponibilité moyenne extrêmement élevée de $\bar{A} = 0,999235$**. Bien que le système soit fonctionnel plus de 99,9 % du temps, ce résultat est loin d'être négligeable : il permet d'identifier précisément les 6,7 heures annuelles durant lesquelles la protection lubrifiante est absente. Ce coefficient $\bar{A}$ constitue désormais le pivot probabiliste essentiel pour modéliser l'usure composite des mèches de perçage, en permettant de basculer du régime de dégradation standard au régime accéléré lors des phases d'indisponibilité du système.
+L'analyse des résultats montre une cohérence remarquable avec la réalité physique du système. Le paramètre de forme obtenu, $\beta = 2,1393$, étant nettement supérieur à 1, il confirme mathématiquement que le système de lubrification subit un phénomène d'usure par encrassement progressif. Le taux de défaillance n'est pas constant : plus le temps passe, plus le risque d'obstruction augmente. La durée de vie caractéristique $\eta$ est estimée à 6 409 heures, ce qui signifie que 63,2 % des circuits subiraient une panne avant d'atteindre ce seuil. Étant donné qu'une année de production complète avoisine les 8 760 heures, ces résultats justifient pleinement la présence de plusieurs nettoyages partiels (correctifs) au cours d'un cycle annuel, le système n'étant pas dimensionné pour tenir une année entière sans intervention sur le circuit de lubrification.
 
 ### QUESTION 4 : Ajustement du modèle de Poisson Non-Homogène (NHPP)
 
