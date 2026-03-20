@@ -938,12 +938,7 @@ L'analyse finale de la station de perçage démontre une excellente maîtrise op
 
 # Point 4 : mise en cascade
 
-## Le Mécanisme de la Cascade (Théorie)
-
-L'impact se propage en trois étapes successives :
-1.  **Niveau 1 (Lubrification) :** La disponibilité $A_{lub}$ détermine le temps passé en régime d'usure accélérée.
-2.  **Niveau 2 (Mèche) :** La matrice $Q_{glob}$ redistribue les probabilités de présence ($\pi_{glob}$). Si la lubrification flanche, la mèche "stagne" davantage dans les états **Sévère** et **Cassée**.
-3.  **Niveau 3 (Moteur) :** Le moteur subit des chocs. La probabilité moyenne de choc $\bar{p}$ augmente car elle est pondérée par les mauvais états de la mèche.
+L'étude de la maintenance ne peut se limiter à une analyse cloisonnée de chaque composant, car la dégradation d'un sous-système agit souvent comme un catalyseur d'usure pour les éléments situés en aval. Dans ce scénario, nous explorons l'interdépendance critique entre la lubrification (maintenance de base) et le bloc moteur (composant noble), via le vecteur de transmission que constituent les mèches de perçage.L'enjeu est de modéliser comment une indisponibilité de la lubrification modifie la dynamique de transition des mèches vers des états d'usure sévère. Mathématiquement, cela se traduit par la construction d'une matrice de transition hybride ($Q_{res}$), pondérée par le taux de service de la lubrification. En utilisant le formalisme des chaînes de Markov absorbantes et la matrice fondamentale ($N$), nous pouvons quantifier non seulement la réduction de la durée de vie des outils, mais surtout l'augmentation du risque résiduel pour le moteur. Cette approche systémique permet de mettre en évidence le "coût caché" d'une maintenance négligée : une économie apparente sur un consommable simple peut en réalité doubler la probabilité de défaillance catastrophique du moteur, illustrant parfaitement le concept de risque en cascade en milieu industriel.
 
 ```{r}
 # 1. Paramètres de base (issus des questions précédentes)
@@ -1008,63 +1003,55 @@ cat("IMPACT SYSTÉMIQUE RÉEL SUR LE MOTEUR : x", round(impact_cascade_reel, 2),
 cat("====================================================\n")
 ```
 
-Bien que le régime accéléré soit plus agressif, la structure de sa matrice de transition réduit le temps de séjour dans les états critiques au profit d'une rotation plus rapide des outils. Cela explique pourquoi le risque de choc moteur ($\lambda$) diminue de 38 % (facteur 0,62) : le moteur est exposé moins longtemps à une mèche dégradée, car celle-ci atteint l'état de rupture ou de remplacement beaucoup plus brutalement.
+Cette analyse met en lumière l’interdépendance critique entre la maintenance de la lubrification et la préservation des composants en aval de la chaîne cinématique. En passant d'une maintenance optimisée à un scénario négligé (80 %), l'espérance de vie des mèches s'effondre, passant de 165,59 h à seulement 49,43 h, soit une usure 3,35 fois plus rapide. Si le risque horaire semble paradoxalement plus faible dans le scénario dégradé ($4,833 \times 10^{-5}$ contre $7,265 \times 10^{-5}$), cela s'explique par un "biais de durée" : les mèches cassent si vite qu'elles n'ont pas le temps d'atteindre les états d'usure les plus dangereux pour le moteur. Cependant, l'impact systémique réel est sans appel : en raison du remplacement beaucoup plus fréquent d'outils atteignant prématurément des niveaux de dégradation critiques, le moteur subit un stress cumulé 2,23 fois plus élevé. Cette étude prouve que toute économie réalisée sur la lubrification est illusoire, car elle génère une réaction en chaîne augmentant radicalement la fréquence d'exposition du moteur aux risques de chocs.
 
 
-# Point 5
+# Point 5 MAINTENANCE GROUPÉE (OPPORTUNISTE)
+
+La stratégie de maintenance opportuniste repose sur l'idée que le coût le plus élevé d'une intervention n'est pas la main-d'œuvre ou la pièce, mais l'indisponibilité de l'outil de production. Dans notre station de perçage, chaque minute d'arrêt coûte cher. En synchronisant le remplacement d'une mèche (prévu par l'analyse de l'état 4) avec une opération de lubrification systématique, nous réduisons le nombre total d'ouvertures de la machine. Ce "groupage" permet d'économiser les temps de préparation, de sécurisation et de remise en route qui sont redondants lors de deux interventions séparées. L'enjeu est de calculer le gain de temps machine ($\Delta t$) et de le multiplier par le coût d'opportunité horaire pour quantifier l'économie annuelle réelle.
 
 ```{r}
 # --- POINT 5 : MAINTENANCE GROUPÉE (OPPORTUNISTE) ---
 
-# 1. Recalcul de sécurité des variables nécessaires (si absentes)
-if(!exists("mttf_glob")) {
-  # On utilise la matrice globale calculée à la Question 7
-  Q_trans_glob <- Q_glob[1:4, 1:4]
-  mttf_glob <- sum(solve(-Q_trans_glob)[1, ])
+# 2. Paramètres de coûts et durées (Alignés sur l'énoncé)
+cout_heure_arret <- 1500  # Coût de production de la station complète
+duree_lub_seule   <- 4.0   # 4h selon tes données précédentes
+duree_meche_seule <- 0.67  # 40 min
+duree_intervention_groupee <- 4.2  # On estime un gain (ex: seulement 12 min de plus que la lub seule)
+
+# 3. Calcul des fréquences annuelles (Base 8760h pour être raccord avec le Point 3)
+# Essaye de changer juste cette ligne pour voir l'impact :
+nb_interv_lub_an <- 4  # Scénario : Lubrification chaque trimestre
+nb_interv_meche_an <- 8760 / mttf_glob
+
+# 4. Calcul du gain financier
+# Gain de temps = (Somme des durées séparées) - (Durée groupée)
+gain_temps_par_regroupement <- (duree_lub_seule + duree_meche_seule) - duree_intervention_groupee
+gain_argent_par_regroupement <- gain_temps_par_regroupement * cout_heure_arret
+
+# On peut grouper au maximum selon l'événement le moins fréquent
+nb_regroupements_possibles <- min(nb_interv_lub_an, nb_interv_meche_an)
+economie_annuelle_potentielle <- nb_regroupements_possibles * gain_argent_par_regroupement
+
+# 5. AFFICHAGE DES RÉSULTATS
+{
+cat("\n====================================================\n")
+cat("  POINT 5 : ANALYSE DE LA MAINTENANCE OPPORTUNISTE  \n")
+cat("====================================================\n")
+cat("Besoins annuels théoriques :\n")
+cat(" -> Maintenance Lubrification :", round(nb_interv_lub_an, 1), "fois/an\n")
+cat(" -> Changements de Mèches     :", round(nb_interv_meche_an, 1), "fois/an\n")
+cat("----------------------------------------------------\n")
+cat("Gain de temps par groupage    :", round(gain_temps_par_regroupement * 60, 0), "minutes\n")
+cat("Gain financier unitaire       :", round(gain_argent_par_regroupement, 2), "€\n")
+cat("Nombre de groupages possibles :", round(nb_regroupements_possibles, 1), "fois/an\n")
+cat("----------------------------------------------------\n")
+cat("ÉCONOMIE ANNUELLE POTENTIELLE :", round(economie_annuelle_potentielle, 2), "€/an\n")
+cat("====================================================\n")
 }
-
-# 2. Paramètres de coûts et durées
-cout_heure_arret <- 800  # 800€ par heure d'arrêt machine
-duree_lub    <- 0.25     # 15 min
-duree_meche  <- 0.50     # 30 min
-duree_groupe <- 0.55     # Temps total si fait ensemble (gain de 12 min)
-
-# 3. Données de production
-T_annuel <- 2000 # Heures de production par an
-
-# Fréquence de lubrification (on s'assure que k_opti existe)
-if(!exists("k_opti")) k_opti <- 1 
-nb_interv_lub <- k_opti
-
-# Fréquence de changement de mèche (Calculé via Markov)
-nb_interv_meche <- T_annuel / mttf_glob
-
-# 4. Calcul des gains
-gain_temps <- (duree_lub + duree_meche) - duree_groupe
-gain_argent_unitaire <- gain_temps * cout_heure_arret
-
-# On peut grouper au maximum selon le besoin le plus faible
-nb_regroupements_possibles <- min(nb_interv_lub, nb_interv_meche)
-economie_annuelle <- nb_regroupements_possibles * gain_argent_unitaire
-
-# 5. AFFICHAGE DES RÉSULTATS (Nettoyé)
-cat("====================================================\n")
-cat("POINT 5 : ANALYSE DE LA MAINTENANCE OPPORTUNISTE\n")
-cat("====================================================\n")
-cat("Besoins annuels (Base 2000h) :\n")
-cat(" -> Maintenance Lubrification :", round(nb_interv_lub, 1), "fois/an\n")
-cat(" -> Changements de Mèches     :", round(nb_interv_meche, 1), "fois/an\n")
-cat("----------------------------------------------------\n")
-cat("Gain par intervention groupée :", gain_argent_unitaire, "€\n")
-# --- FIN DE L'AFFICHAGE POINT 5 ---
-cat("Potentiel de regroupement     :", round(nb_regroupements_possibles, 1), "fois/an\n")
-cat("----------------------------------------------------\n")
-cat("ÉCONOMIE ANNUELLE POTENTIELLE :", round(economie_annuelle, 2), "€/an\n")
-cat("====================================================\n")
 ```
 
-L'étude de la maintenance opportuniste démontre qu'en synchronisant des interventions de natures différentes (Nettoyage de la lubrification et Changement de la mèche), la station de perçage réalise une économie immédiate sur son poste de coût le plus critique : l'indisponibilité de production. Alors que deux interventions isolées totaliseraient 600 € de pertes d'exploitation, le groupement de ces tâches réduit la facture à 480 €, soit un gain net de 20 % par arrêt groupé.
-Cette stratégie repose sur l'optimisation du "temps de préparation" et de remise en route de la machine, qui ne sont facturés qu'une seule fois. Bien que l'économie annuelle calculée ici (120 €) paraisse modeste à l'échelle d'un seul cycle ($k=1$), l'application de ce principe à l'ensemble des organes de la station — incluant le moteur et les capteurs — est le levier fondamental pour minimiser le coût global de possession (LCC). En transformant chaque arrêt subi en une fenêtre d'opportunité technique, la maintenance passe d'un centre de coût à un outil de performance industrielle, garantissant une disponibilité maximale face à un coût d'arrêt de 800 €/h.
+L'analyse de la maintenance opportuniste démontre qu'une simple optimisation logistique génère des bénéfices tangibles sans nécessiter d'investissement matériel. En identifiant la mèche de perçage comme le composant « appelant » avec ses 53 remplacements annuels, nous avons pu synchroniser les 4 interventions de lubrification systématique pour créer des fenêtres de maintenance groupée. Cette stratégie permet de transformer des arrêts isolés en interventions coordonnées, dégageant un gain de productivité de 28 minutes par occurrence. À l'échelle de l'année, cette réduction du temps mort se traduit par une économie directe de 2 820 €, prouvant que la performance de l'atelier ne dépend pas uniquement de la fiabilité intrinsèque des machines, mais également de la pertinence de la planification humaine. Ces résultats soulignent l'importance de passer d'une maintenance subie à une maintenance pilotée par les opportunités du calendrier de production.
 
 ## Synthèse de l'Optimisation de la Station de Perçage
 
