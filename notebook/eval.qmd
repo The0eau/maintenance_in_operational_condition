@@ -190,7 +190,7 @@ cat("Coût en politique corrective pure :", round(cout_correctif_pur, 4), "€/h
 cat("Gain économique espéré           :", round(cout_correctif_pur - cout_horaire_min, 2), "€/h\n")
 ```
 
-L'analyse technico-économique de la plateforme rotative révèle un gisement d'optimisation significatif. On observe tout d'abord une disparité majeure entre les coûts de maintenance : une panne imprévue ($C_c \approx 17\ 600$ €) coûte près de trois fois plus cher qu'une intervention planifiée ($C_p \approx 6\ 160$ €), principalement en raison de l'impact de l'indisponibilité sur la production (MTTR de 10h contre 3h). Les résultats de l'optimisation recommandent de passer d'une politique de "correctif pur" à une politique de remplacement préventif systématique à un âge $T^ = 7\ 429$ heures*. Cette stratégie permet de réduire le coût horaire d'exploitation de 1,71 €/h à 1,11 €/h, soit une économie de 0,59 € par heure de fonctionnement. Rapporté à l'échelle de l'atelier (10 stations fonctionnant en continu), ce gain représente une économie annuelle substantielle d'environ 51 000 €, justifiant ainsi pleinement la mise en place d'un suivi rigoureux de l'âge des plateformes.
+
 
 ------------------------------------------------------------------------
 
@@ -378,7 +378,7 @@ cat("Coût politique actuelle (k=1) :", round(cost_current, 2), "€\n")
 cat("Gain annuel espéré            :", round(cost_current - cost_min, 2), "€\n")
 ```
 
-L'objectif de cette étude est de déterminer la fréquence optimale de maintenance préventive ($k$ nettoyages complets par an) afin de minimiser le coût total d'exploitation du système de lubrification. Le modèle de coût intègre deux composantes contradictoires : le coût du préventif (fixé à 6 900 € par intervention, incluant les 4h de perte de production à 1 500 €/h) et le coût du correctif (250 € par nettoyage partiel, sans arrêt de station). Puisque les nettoyages partiels sont des réparations minimales, nous utilisons la loi de Poisson non-homogène (NHPP) pour estimer l'occurrence des pannes entre deux nettoyages complets. L'optimisation consiste à trouver la valeur de $k$ qui minimise la somme de ces coûts sur un horizon annuel de 8 760 heures.
+Les résultats de l'optimisation mettent en évidence une fréquence de maintenance préventive idéale de $k^ = 0,5$ nettoyage par an*, soit une intervention tous les deux ans (17 518 heures). Ce résultat, bien que surprenant au premier abord, s'explique par la structure des coûts du système : le coût d'un nettoyage complet est massivement dominé par la perte de production (6 000 € d'arrêt pour seulement 900 € de pièces), tandis que le nettoyage partiel correctif ne coûte que 250 € et n'interrompt pas la station. L'arbitrage économique privilégie donc l'acceptation de quelques pannes de lubrification supplémentaires plutôt que le déclenchement d'opérations préventives lourdes et paralysantes. Ce passage d'une politique annuelle à une politique bisannuelle permettrait de réaliser un gain substantiel d'environ 2 863 € par an et par station. Pour l'industriel, si la politique actuelle ($k=1$) apparaît comme « sur-préventive » d'un point de vue strictement financier, une validation technique reste nécessaire afin de s'assurer que l'absence temporaire de lubrifiant n'altère pas prématurément d'autres composants, ce qui annulerait les économies réalisées.
 
 ------------------------------------------------------------------------
 
@@ -388,19 +388,7 @@ L'objectif de cette étude est de déterminer la fréquence optimale de maintena
 
 ### Question 6 : Chaînes de Markov et Probabilités Stationnaires
 
-Cette section définit les deux cinétiques de dégradation des mèches via des Chaînes de Markov en temps continu (CTMC) et calcule leurs distributions stationnaires respectives.
-
-### Modélisation par États de Dégradation (CTMC)
-
-Le raisonnement repose sur une **Chaîne de Markov en temps continu (CTMC)** à 5 états (de l'état 1 "neuf" à l'état 5 "défaillant"). Contrairement à un modèle binaire (marche/arrêt), cette approche permet de quantifier la progression de l'usure. On utilise deux matrices génératrices, $Q$ (régime standard) et $Q'$ (régime accéléré), où chaque coefficient $q_{ij}$ représente la vitesse instantanée de passage d'un niveau d'usure à l'autre.
-
-### Recherche du Régime Stationnaire ($\pi$)
-
-L'objectif est de déterminer le vecteur de probabilités stationnaires $\pi$, qui indique la proportion de temps que la mèche passe dans chaque état d'usure à long terme. Ce vecteur doit satisfaire deux conditions théoriques : \* **L'équilibre des flux :** $\pi^T Q = 0$ (ce qui entre dans un état est égal à ce qui en sort). \* **La conservation des probabilités :** $\sum \pi_i = 1$ (la mèche est obligatoirement dans l'un des 5 états).
-
-### Transformation en Système Linéaire Résoluble
-
-Pour que l'ordinateur puisse résoudre ce problème, on transforme les équations matricielles en un système de type $A \cdot x = b$ : \* **Levée de la singularité :** La matrice $Q$ seule est singulière (non inversible). Le raisonnement consiste à remplacer la dernière ligne de $Q^T$ par une ligne de 1 pour imposer mathématiquement la condition de normalisation ($\sum \pi_i = 1$). \* **Construction du vecteur cible :** On définit un vecteur $b$ composé de zéros (pour l'équilibre des flux) et d'un "1" final (pour la somme des probabilités). \* **Résolution numérique :** L'inversion de la matrice ainsi modifiée permet d'isoler $x$ (le vecteur $\pi$) et d'obtenir la répartition statistique exacte du temps de vie de l'outil.
+L'objectif de cette étape est de modéliser la dynamique de dégradation des mèches de perçage en utilisant des chaînes de Markov en temps continu (CTMC). Le système est défini par cinq états allant de « neuve » (1) à « cassée » (5). Nous distinguons deux régimes de fonctionnement : le mode standard ($Q$), où la lubrification est active, et le mode accélére ($Q'$), correspondant aux phases d'obstruction du circuit. Les matrices de transition intègrent les taux de dégradation physique ainsi qu'un taux de réparation $\mu_m = 1,5$ h⁻¹ (équivalent aux 40 minutes nécessaires pour le remplacement d'une mèche). Pour chaque scénario, nous calculons le vecteur des probabilités stationnaires $\pi$ en résolvant le système d'équilibre $\pi Q = 0$ sous la contrainte de normalisation $\sum \pi_i = 1$. Cette approche permet de quantifier la proportion de temps que l'outil passe dans chaque stade d'usure à long terme.
 
 ```{r}
 #| label: question-6-markov-fixed
@@ -454,20 +442,16 @@ cat("\n--- PROBABILITÉS STATIONNAIRES : ACCÉLÉRÉES ---\n")
 print(round(pi_acc, 5))
 ```
 
-L'étude des régimes stationnaires confirme l'influence déterminante du système de lubrification sur la longévité des outils. En régime standard (lubrification active), la mèche présente une stabilité remarquable dans les premiers stades d'usure, avec une probabilité de rupture (Etat 5) quasi négligeable de 0,30 %. La distribution est concentrée sur les états fonctionnels optimaux (Etats 1 et 2), totalisant 75,6 % du temps de cycle.
-
-En régime accéléré (absence de lubrification), la dynamique est radicalement modifiée. Bien que l'Etat 1 semble plus fréquent (29,09 %), cela traduit une instabilité du cycle de vie : la mèche traverse les stades d'usure à une vitesse telle que les remplacements deviennent incessants. La probabilité de se trouver dans l'état critique de rupture est multipliée par plus de 10, validant l'hypothèse d'une dégradation thermique sévère. Ces vecteurs de probabilités stationnaires constituent les limites opérationnelles entre lesquelles le système oscillera en fonction de la fiabilité de la lubrification.
+L'analyse des probabilités stationnaires met en lumière l'impact critique du système de lubrification sur la santé des mèches. En conditions standard, la mèche présente une stabilité remarquable : elle passe plus de 95 % de son temps dans les trois premiers états de dégradation, avec une probabilité de rupture (État 5) extrêmement faible de 0,4 %. À l'inverse, en conditions accélérées, bien que la mèche semble statistiquement stagner davantage dans les états initiaux (États 1 et 2) en raison de la rapidité des transitions suivantes, la probabilité de se trouver dans l'état "Cassée" bondit à 4,7 %. Cela représente une multiplication du risque de rupture par un facteur de près de 12. Cette dégradation fulgurante confirme que sans lubrification, la mèche traverse les stades d'usure modérée et sévère presque instantanément pour atteindre la rupture, augmentant ainsi drastiquement la fréquence des arrêts de production pour remplacement.
 
 
 ### Question 7 : Modèle de Risques cumulés et Matrice de Transition Globale
 
-Le raisonnement s'appuie sur la disponibilité moyenne (Alub) du système de lubrification. Ce coefficient définit la proportion du temps où la mèche suit la cinétique standard (Qstd), tandis que la fraction complémentaire (1 - Alub) correspond aux phases de dégradation accélérée (Qacc) dues aux pannes ou maintenances.
+L'enjeu de cette question est de construire un modèle unifié capable de représenter la dégradation "réelle" d'une mèche sur une année complète. 
 
-Pour obtenir la matrice globale (Qglob), le code applique une combinaison linéaire pondérée : Qglob = (Alub \* Qstd) + ((1 - Alub) \* Qacc). Cette approche, issue du modèle de risques cumulés, permet de calculer un taux de transition moyen "espéré" qui intègre statistiquement l'alternance entre les deux régimes environnementaux sur le long terme.
+La mèche n'évolue pas uniquement selon le régime standard ou le régime accéléré, mais bascule de l'un à l'autre en fonction de l'état du système de lubrification. Puisque la disponibilité du système de lubrification ($A_{lub} \approx 99,92\%$) a été calculée de manière indépendante, nous pouvons utiliser le théorème des probabilités totales appliqué aux intensités de transition. La méthode consiste à calculer une matrice de transition globale $\bar{Q}$ par combinaison linéaire :$\bar{Q} = A_{lub} \cdot Q_{std} + (1 - A_{lub}) \cdot Q_{acc}$
 
-Une fois Qglob définie, la fonction solve_stationary calcule le vecteur de probabilités stationnaires (πglob). Ce vecteur détermine la répartition réelle du temps passé par la mèche dans chaque état (de "Neuve" à "Cassée"), en tenant compte de la fiabilité imparfaite du système de lubrification.
-
-Ce vecteur πglob constitue la donnée d'entrée pour évaluer le risque de casse moteur. En effet, la probabilité que la mèche se trouve dans un état de dégradation avancée conditionne directement la fréquence des chocs mécaniques et les coûts de maintenance associés.
+Cette approche par "risques additifs" permet d'obtenir une matrice unique qui intègre le risque supplémentaire lié aux phases de dysfonctionnement du lubrifiant, tout en conservant les propriétés mathématiques d'une chaîne de Markov (somme des lignes égale à zéro).
 
 ```{r}
 #| label: question-7-combinaison-matrices
@@ -495,15 +479,11 @@ names(pi_glob) <- etats
 print(round(pi_glob, 6))
 ```
 
-La matrice de transition globale (Q_glob) a été obtenue par une combinaison linéaire des matrices de régime standard (Q_std) et accéléré (Q_acc), pondérée par la disponibilité moyenne du système de lubrification (A_barre = 0,999235). Cette approche par risques additifs permet d'intégrer l'impact stochastique des défaillances de lubrification sur la dégradation des outils.
-
-La distribution stationnaire globale résultante (pi_glob) montre que les mèches passent 75,99 % de leur vie opérationnelle dans un état de santé optimal (Neuve ou Mineure). Toutefois, l'intégration du risque de panne de lubrification entraîne une augmentation mesurable de la probabilité de rupture (Etat Cassée), qui s'établit à 0,3014 %. Bien que faible, cet écart par rapport au régime purement lubrifié est essentiel pour le calcul de la durée de vie moyenne réelle et pour l'estimation précise des coûts de remplacement des consommables.
+L'analyse de la distribution stationnaire globale ($\pi_{glob}$) démontre que, bien que la station fonctionne sous un régime de dégradation standard la grande majorité du temps (99,92 %), l'intégration des phases d'indisponibilité du système de lubrification modifie sensiblement le comportement à long terme de l'outil. On observe que la probabilité de l'état « Cassée » (0,4016 %) est statistiquement plus élevée que celle du régime standard pur (0,397 %). Cette augmentation, bien que numériquement faible, illustre la sévérité du mode de fonctionnement dégradé : les courtes fenêtres de temps sans lubrification agissent comme des accélérateurs d'usure qui « poussent » prématurément la mèche vers la rupture. Avec une probabilité stationnaire d'indisponibilité de 0,4 %, la station perd environ 35 heures de production par an uniquement pour le remplacement des mèches. Ce modèle de transition pondéré confirme donc que la performance de la station de perçage est intrinsèquement liée à la fiabilité de son système de lubrification, validant ainsi l'importance d'une maintenance coordonnée entre ces deux sous-systèmes.
 
 ## Point 2
 
-L'enjeu ici est de comparer deux politiques de maintenance basées sur l'état de dégradation observé :
-1.  **Maintenance Corrective (Run-to-failure)** : On remplace la mèche uniquement lorsqu'elle casse (État 5). C'est risqué car une mèche qui casse en plein perçage peut endommager le moteur de la station.
-2.  **Maintenance Préventive Conditionnelle** : On remplace la mèche dès qu'elle atteint l'usure "Sévère" (État 4). On "gaspille" un peu de durée de vie, mais on élimine presque totalement le risque pour le moteur.
+L'objectif de cette étude est d'évaluer l'efficacité économique de deux politiques de maintenance distinctes pour les mèches de perçage, traitées indépendamment des autres composants de la station. Le Scénario A (Maintenance Corrective) modélise la stratégie actuelle où le remplacement n'intervient qu'après la rupture (état 5), engendrant un coût total de 902,50 € par intervention (incluant le surcoût de casse et la perte de production de la tête de perçage). À l'inverse, le Scénario B (Maintenance Préventive) propose un remplacement systématique dès l'entrée dans l'état de dégradation « sévère » (état 4), ramenant le coût à 702,50 € en évitant les pénalités liées à la défaillance. Pour comparer ces options, nous calculons le coût horaire attendu en multipliant la fréquence de remplacement, déduite des probabilités stationnaires globales et des taux de sortie des états critiques par le coût total de l'intervention associée à chaque stratégie.
 
 
 ```{r}
@@ -544,22 +524,14 @@ cat("--------------------------------------\n")
 cat("GAIN NET (A - B)              :", round(cout_horaire_A - cout_horaire_B, 4), "€/h\n")
 ```
 
-L'analyse comparative entre une maintenance corrective (attente de la rupture) et une maintenance préventive systématique dès l'atteinte de l'état de dégradation sévère (État 4) révèle un avantage économique majeur pour la stratégie préventive. 
-
-Le coût horaire du scénario correctif s'élève à 5,4394 €/h, principalement pénalisé par le coût supplémentaire de détection et de détérioration de 200 € par casse, ainsi que par la fréquence plus élevée des arrêts imprévus. À l'inverse, le remplacement anticipé en État 4 ramène ce coût à 1,7971 €/h. Cette stratégie permet de réaliser un gain net de 3,6422 € par heure de fonctionnement, soit une économie annuelle substantielle de 31 905 euros pour la station. Ce résultat valide l'hypothèse selon laquelle l'observation de l'état de dégradation des mèches est un investissement rentable, permettant de substituer des interventions coûteuses en État 5 par des remplacements programmés moins onéreux.
+L'analyse comparative met en évidence un avantage économique majeur pour la maintenance préventive, avec un coût horaire qui chute de 5,4366 €/h à 1,796 €/h. Alors que le Scénario A subit une lourde pénalité financière due à la sévérité de la casse (détection et détérioration de la pièce courante), le Scénario B permet de réaliser un gain net de 3,6405 €/h. Sur une année complète (8 760 h), cela représente une économie substantielle de 31 891 € par tête de perçage. Bien que cette politique entraîne des remplacements légèrement plus fréquents, l'économie de 200 € par intervention et la maîtrise de l'indisponibilité compensent largement ce rythme. Ce résultat confirme qu'une stratégie conditionnelle basée sur l'état de dégradation permet de transformer un risque aléatoire coûteux en une opération planifiée et optimisée.
 ----
 
 # Moteur
 
 ## Question 8 : Caractérisation du vieillissement (Loi de Weibull)
 
-L'objectif est de modéliser le temps avant défaillance ($TTF$) du moteur pour isoler l'effet de l'usure mécanique.
-
-Le processus débute par l'extraction et le nettoyage des données de temps avant défaillance (TTF). Les données sont triées par ordre croissant pour obtenir les statistiques d'ordre t(1) \< t(2) \< ... \< t(n), représentant la chronologie des pannes successives nécessaires à l'analyse de survie.
-
-Avant toute modélisation, la nature du taux de défaillance est identifiée par la Transformée TTT (Total Time on Test) normalisée. - Calcul : Pour chaque défaillance j, on cumule le temps de fonctionnement de tous les systèmes encore exposés au risque. - Interprétation : Si la courbe TTT est concave (au-dessus de la diagonale), le système présente un taux de défaillance croissant (IFR). Ce vieillissement justifie mathématiquement l'usage d'une loi de Weibull avec un paramètre de forme β \> 1.
-
-Une fois le modèle validé, les paramètres β (forme) et η (échelle) sont estimés : - Rangs médians : Utilisation de la formule (j - 0,3) / (n + 0,4) pour estimer la fonction de répartition F(t) de manière robuste. - Linéarisation : La fonction de fiabilité est transformée en équation de droite : ln(-ln(1 - F(t))) = β*ln(t) - β*ln(η). - Régression Linéaire : La pente de la droite de régression fournit directement β (intensité de l'usure), tandis que l'ordonnée à l'origine permet de déduire η (durée de vie caractéristique) par transformation exponentielle.
+L'objectif de cette étude est de caractériser le temps avant défaillance ($TTF$) dû au vieillissement intrinsèque du moteur de perçage, en faisant abstraction des chocs externes liés à l'utilisation des mèches. Pour ce faire, nous exploitons les données de tests en environnement contrôlé fournies dans l'onglet drill_motor. Nous avons opté pour une modélisation par la loi de Weibull, particulièrement adaptée pour décrire les phénomènes d'usure grâce à sa flexibilité paramétrique. La démarche repose sur un nettoyage préalable des données, suivi d'un ajustement statistique par la méthode du Maximum de Vraisemblance (MLE) via la bibliothèque flexsurv. Cette approche permet d'extraire avec précision le paramètre de forme ($\beta$), qui qualifie la nature de la défaillance, et le paramètre d'échelle ($\eta$), qui définit la durée de vie caractéristique de l'équipement.
 
 ```{r}
 #| label: analyse-moteur-flexsurv
@@ -598,21 +570,7 @@ La valeur de beta étant supérieure à 1, le modèle confirme la présence d'un
 
 ## Question 9 : Calcul de la Fiabilité Globale du Moteur à 500 heures
 
-Cette section combine le vieillissement intrinsèque du moteur (usure) et la vulnérabilité aux chocs induite par l'état de la mèche pour estimer la probabilité de défaillance globale.
-
-Le moteur est considéré comme un système en série vis-à-vis de ses modes de défaillance. Il s'arrête dès que le premier des deux événements survient (T_moteur = min(T_usure, T_chocs)). Sous l'hypothèse d'indépendance, la fiabilité globale est le produit des fiabilités de chaque mode : R_moteur(t) = R_usure(t) * R_chocs(t).
-
-Le risque de défaillance par choc dépend de l'état de dégradation de la mèche (i).
-- Pondération : On utilise le vecteur de probabilités stationnaires π_glob (Question 7), représentant la proportion de temps passée dans chaque état.
-- Espérance du risque : En multipliant chaque probabilité de rupture p(i) par la fréquence de séjour π_i, on obtient une probabilité de rupture par choc "moyenne" (p_barre) représentative du fonctionnement réel.
-
-Cette composante modélise le vieillissement mécanique intrinsèque du bloc moteur.
-- Loi de Weibull : On utilise les paramètres de forme (β) et d'échelle (η) issus des tests (Question 8).
-- Calcul : R_usure(t) = exp(-(t/η)^β). Cela représente la probabilité que le moteur survive à sa propre usure après une durée t (ex: 500h).
-
-Ce mode de défaillance est modélisé par un processus de chocs aléatoires.
-- Modèle de Poisson : Les chocs surviennent à un taux constant ν = 10^-3 chocs/h.
-- Approximation exponentielle : La fiabilité face aux chocs suit une loi exponentielle de taux λ_chocs = ν * p_barre, soit : R_chocs(t) = exp(-ν * p_barre * t).
+L'objectif de cette étape est de construire un modèle de fiabilité opérationnelle pour le moteur en combinant son vieillissement intrinsèque avec les risques accidentels liés à l'état des mèches. Nous utilisons un modèle à risques concurrents, où la fiabilité globale $R_{tot}(t)$ est le produit de la fiabilité d'usure (loi de Weibull identifiée à la Q8) et de la fiabilité face aux chocs (loi exponentielle). Pour intégrer l'influence de la mèche, nous calculons d'abord la probabilité moyenne de rupture par choc $\bar{p}$ en pondérant les probabilités spécifiques à chaque état $p(i)$ par la distribution stationnaire des mèches en service ($\pi_{actifs}$). Le taux de défaillance par choc est alors défini par $\lambda_{chocs} = \nu \cdot \bar{p}$. Cette approche permet d'estimer la probabilité de survie du moteur à un instant $t$ (ici 500h) en tenant compte de la réalité statistique de l'usure des outils qu'il actionne.
 
 ```{r}
 #| label: question-9-risques-concurrents
@@ -624,12 +582,12 @@ p_func <- function(i) {
   # Formule : 0.005 * (0.6 * (i-1))^3.8
   return(0.005 * (0.6 * (i-1))^3.8)
 }
-p_vec_correct <- sapply(1:5, p_func)
+p_vec <- sapply(1:5, p_func)
 
 # 2. Normalisation de pi sur les états actifs (1 à 4)
 # On ne prend pas l'état 5 car la mèche ne perce pas quand elle est cassée
 pi_actifs <- pi_glob[1:4] / sum(pi_glob[1:4])
-p_barre <- sum(pi_actifs * p_vec_correct[1:4])
+p_barre <- sum(pi_actifs * p_vec[1:4])
 
 # 3. Calcul des fiabilités à t = 500h
 nu <- 1e-3  # Fréquence des chocs (donnée énoncé)
@@ -662,17 +620,7 @@ L'analyse comparative des modes de défaillance montre que le risque de rupture 
 
 ## Question 10 : Intégration des Dépendances Lubrification-Mèche-Moteur
 
-Cette section formalise la chaîne de dépendances où la performance du système auxiliaire (lubrification) conditionne la survie du système principal (moteur).
-
-Pour modéliser l'effet "cascade", nous lions mathématiquement les performances du système de lubrification à la dégradation des mèches, puis l'état de ces mèches à la fiabilité du moteur :
-
-De la Lubrification à la Mèche (Influence Environnementale) : La disponibilité moyenne Alub (calculée à la Q5) agit comme un coefficient de pondération sur les taux de transition de la mèche. La matrice de transition globale devient : Qglob = Alub * Qstd + (1 - Alub) * Qacc. Une faible disponibilité augmente instantanément la vitesse de dégradation vers les états sévères.
-
-De la Mèche au Risque de Choc (Distribution des États) : La matrice Qglob détermine le vecteur de probabilités stationnaires pi (Q7). Si Alub diminue, la masse de la distribution pi se déplace vers les états 4 et 5.
-
-De l'État de la Mèche au Blocage Moteur (Couplage par Chocs) : Le risque de défaillance subite du moteur est couplé à l'état de la mèche via la probabilité de défaillance moyenne par choc p_barre = sum(pi_i * p_i). Comme p_i croît exponentiellement avec l'état i, une mèche plus souvent dégradée augmente drastiquement p_barre.
-
-Fiabilité Globale du Moteur (Risques Concurrents) : Le taux de défaillance global h_moteur(t) intègre cette cascade : h_moteur(t) = h_usure(t) + (nu * p_barre).
+L'objectif est de quantifier l'effet "cascade" qui lie la fiabilité du système de lubrification à celle du bloc moteur, par l'intermédiaire de l'usure des mèches. Pour ce faire, nous utilisons les matrices fondamentales $N_{std}$ et $N_{acc}$ issues des sous-matrices de transition. Ces matrices nous permettent de calculer le temps moyen de séjour dans chaque état d'usure (1 à 4) avant la rupture. En couplant ces durées avec le taux de choc $\nu \cdot p(i)$, nous calculons l'exposition cumulée au risque de blocage moteur sur l'ensemble du cycle de vie d'une mèche. Cette approche permet de comparer le "danger" représenté par une mèche fonctionnant en régime standard par rapport à une mèche subissant une lubrification défaillante. L'effet cascade est finalement exprimé par un facteur d'augmentation industriel, qui synthétise comment une panne de lubrification se propage et s'amplifie jusqu'à menacer l'intégrité du moteur.
 
 ```{r}
 #| label: question-10-simulation-cascade
@@ -713,7 +661,7 @@ cat("FACTEUR DE RISQUE RÉEL (PROD)  : x", round(facteur_industriel, 2), "\n")
 cat("------------------------------------------\n")
 ```
 
-L'analyse de l'effet cascade révèle un paradoxe mathématique lié à la dynamique des probabilités stationnaires : en mode de lubrification dégradée, la mèche traverse les états d'usure si rapidement qu'elle passe statistiquement plus de temps en état neuf ou en phase de remplacement qu'en phase d'usure intermédiaire. Ce phénomène donne l'illusion d'un risque horaire plus faible pour le moteur dans le scénario critique. Cependant, une étude approfondie par la matrice fondamentale N démontre que l'exposition réelle du moteur aux chocs est bien supérieure lors de chaque cycle de vie de l'outil en conditions accélérées. La violence des transitions vers l'état de rupture dans le scénario de lubrification défectueuse sollicite le bloc moteur de manière plus intense et imprévisible. En conclusion, le maintien d'une disponibilité maximale du système de lubrification ne sert pas seulement à prévenir le colmatage, mais agit comme un rempart indispensable pour limiter le taux de défaillance induit sur le moteur, garantissant ainsi la longévité de l'organe le plus coûteux de la station.
+L’étude de l’effet cascade révèle une dégradation brutale de la fiabilité opérationnelle dès que le système de lubrification fait défaut. L’espérance de vie d'une mèche (MTTF) s’effondre, passant de 167,41 h en régime standard à seulement 13,52 h en régime accéléré, soit une division par plus de 12 de sa durée de vie utile. Si le risque relatif par outil semble plus faible (0,35), c'est uniquement parce que la mèche casse trop vite pour accumuler autant de chocs qu'en régime normal. Cependant, la donnée cruciale est le Facteur de Risque Réel (x 4,31) : il démontre que pour une même durée de production, le bloc moteur subit 4,3 fois plus de risques de défaillance par choc lorsque la lubrification est absente. Cette accélération s'explique par le fait que les mèches séjournent proportionnellement beaucoup plus longtemps dans des états d'usure critique avant de rompre, transférant ainsi la défaillance du consommable (la mèche) vers l'organe noble (le moteur).
 
 ## Point 2 :
 
