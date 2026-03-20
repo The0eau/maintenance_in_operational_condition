@@ -489,42 +489,35 @@ L'objectif de cette étude est d'évaluer l'efficacité économique de deux poli
 ```{r}
 # --- Optimisation des Mèches de Perçage (Point 2) ---
 
-# 1. Coûts (Tableau 3 + Impact station)
-# On utilise les coûts de l'énoncé
-Cp_meche <- 200  # Préventif
-Cc_meche <- 400  # Correctif (inclut détection/détérioration)
+# 1. Définition des options (Remplacer à l'état 2, 3, 4 ou attendre 5)
+etats_test <- 2:5
+couts_horaires <- numeric(length(etats_test))
+names(couts_horaires) <- c("Préventif_E2", "Préventif_E3", "Préventif_E4", "Correctif_E5")
 
-# Temps d'arrêt de la tête de perçage = 0.67h
-# Coût d'indisponibilité partiel (Tableau 3 : une tête en moins = 1500 - 750 = 750€/h de perte)
-cout_perte_h <- 750 
-duree_arret <- 0.67
+# 2. Boucle de calcul
+for(i in 2:4) {
+  # Fréquence de remplacement à l'état i = pi_i * taux de sortie vers i+1
+  frequence <- pi_glob[i] * abs(Q_glob[i,i])
+  couts_horaires[i-1] <- frequence * cout_total_P
+}
 
-cout_total_P <- Cp_meche + (duree_arret * cout_perte_h)
-cout_total_C <- Cc_meche + (duree_arret * cout_perte_h)
+# Cas correctif pur (E5)
+couts_horaires[4] <- pi_glob[5] * abs(Q_glob[5,5]) * cout_total_C
 
-# 2. Taux de transition (Sorties d'états)
-# nu_i est la vitesse à laquelle on quitte l'état i
-nu_4 <- abs(Q_glob[4,4]) # Taux de passage 4 -> 5 (Casse imminente)
-nu_5 <- abs(Q_glob[5,5]) # Taux de réparation 5 -> 1 (Déjà défini à 1.5 dans l'énoncé)
+# 3. Identification du meilleur
+optimum_etat <- names(which.min(couts_horaires))
+gain_max <- max(couts_horaires) - min(couts_horaires)
 
-# 3. Calcul des Coûts Horaires Réels
-# Scénario A : On attend la casse (On ne répare qu'à l'état 5)
-# Fréquence de remplacement = pi_5 * taux_de_réparation
-cout_horaire_A <- pi_glob["Cassée"] * nu_5 * cout_total_C
-
-# Scénario B : Remplacement préventif à l'état 4
-# On remplace dès qu'on sort de l'état 4 (donc fréquence = pi_4 * nu_4)
-# On n'atteint presque plus l'état 5
-cout_horaire_B <- pi_glob["Sévère"] * nu_4 * cout_total_P
-
-# 4. Affichage
-cat("Coût horaire Scénario A (Correctif) :", round(cout_horaire_A, 4), "€/h\n")
-cat("Coût horaire Scénario B (Préventif) :", round(cout_horaire_B, 4), "€/h\n")
+cat("--- OPTIMISATION FINALE DES MÈCHES ---\n")
+print(round(couts_horaires, 4))
 cat("--------------------------------------\n")
-cat("GAIN NET (A - B)              :", round(cout_horaire_A - cout_horaire_B, 4), "€/h\n")
+cat("LA MEILLEURE STRATÉGIE EST :", optimum_etat, "\n")
+cat("Gain annuel par rapport au pire scénario :", round(gain_max * 8760, 2), "€/an\n")
 ```
 
-L'analyse comparative met en évidence un avantage économique majeur pour la maintenance préventive, avec un coût horaire qui chute de 5,4366 €/h à 1,796 €/h. Alors que le Scénario A subit une lourde pénalité financière due à la sévérité de la casse (détection et détérioration de la pièce courante), le Scénario B permet de réaliser un gain net de 3,6405 €/h. Sur une année complète (8 760 h), cela représente une économie substantielle de 31 891 € par tête de perçage. Bien que cette politique entraîne des remplacements légèrement plus fréquents, l'économie de 200 € par intervention et la maîtrise de l'indisponibilité compensent largement ce rythme. Ce résultat confirme qu'une stratégie conditionnelle basée sur l'état de dégradation permet de transformer un risque aléatoire coûteux en une opération planifiée et optimisée.
+L'étude comparative des stratégies de remplacement pour les mèches de perçage démontre qu'une politique de maintenance préventive systématique à l'état 4 (Sévère) est la solution optimale. Les coûts horaires simulés chutent de 5,44 €/h en stratégie corrective pure (attendre la casse) à seulement 1,80 €/h en intervenant dès l'entrée dans l'état 4. Ce gain s'explique par le fait que l'état 4 est le point de bascule critique : le risque de transition immédiate vers la rupture (état 5) y est maximal. En acceptant de remplacer une pièce qui n'est pas encore brisée (coût réduit de 200 €), on évite les surcoûts liés à la casse (400 €) et les risques de dommages collatéraux sur la tête de perçage.
+
+Le gain financier identifié est massif : l'adoption de la stratégie Préventif_E4 permet de réaliser une économie annuelle de 31 891,19 € par rapport au pire scénario (le correctif pur). À l'inverse, un remplacement trop précoce (aux états 2 ou 3) s'avère moins efficace (4,12 €/h et 3,27 €/h respectivement), car il ne permet pas de rentabiliser suffisamment la durée de vie utile de l'outil. Cette analyse confirme qu'une surveillance précise des états de dégradation, plutôt qu'une maintenance subie, est un levier majeur de rentabilité pour la station de perçage.
 ----
 
 # Moteur
@@ -667,6 +660,8 @@ L’étude de l’effet cascade révèle une dégradation brutale de la fiabilit
 
 ### Optimisation de la Maintenance du Bloc Moteur
 
+L'objectif de cette étape est de comparer l'efficacité économique de la politique de maintenance corrective actuelle avec une stratégie de maintenance préventive systématique basée sur l'âge ($T$) pour le bloc motorisation. Pour ce faire, nous intégrons l'ensemble des contraintes opérationnelles : chaque intervention immobilise une tête de perçage pendant 2,5 heures (2h de remplacement et 30 min de manipulation), générant une perte de production de 1 875 € ($2,5 \times 750 €/h$). Le coût total d'un remplacement s'élève ainsi à 3 275 € en préventif, contre 3 475 € en correctif en raison des frais supplémentaires de détection et de ré-usinage. En nous appuyant sur la loi de Weibull identifiée précédemment, nous modélisons le coût moyen par heure $C(T)$ comme le ratio entre l'espérance du coût d'un cycle — pondéré par la fiabilité $R(T)$ — et la durée moyenne de bon fonctionnement (obtenue par l'intégration numérique de la fiabilité jusqu'à l'âge $T$). Cette étude vise à identifier numériquement l'âge de remplacement optimal $T^*$ qui minimise ce coût horaire, permettant ainsi de valider si un remplacement planifié est plus rentable que le maintien d'une stratégie subie de "panne au premier défaut".
+
 ```{r}
 # --- Optimisation du Bloc Moteur (Point 2) ---
 
@@ -727,20 +722,7 @@ Pour ce composant spécifique, il est donc recommandé de maintenir une politiqu
 
 ### Question 11 : Fiabilité des Capteurs et Structure k-parmi-n
 
-L'objectif est de caractériser la loi de défaillance individuelle des capteurs et d'en déduire la performance du système de positionnement (4 capteurs, 3 nécessaires).
-
-Traitement des données : Le code commence par extraire et trier les temps avant défaillance (TTF) de l'onglet sensor. Le tri est essentiel pour établir la statistique d'ordre t(1) < t(2) < ... < t(n), permettant d'associer chaque rang j à une probabilité de défaillance.
-Choix de la loi de Weibull : Cette loi est choisie pour sa flexibilité à modéliser différents types de taux de défaillance (constant, croissant ou décroissant).
-Estimation par linéarisation : Le code utilise la méthode graphique par régression.
-- Il estime la fonction de répartition F_hat(t) via la formule des rangs médians (j-0.3)/(n+0.4) pour une estimation robuste.
-- Il transforme la fonction de fiabilité de Weibull pour obtenir une équation de droite : ln(-ln(1-F(t))) = beta*ln(t) - beta*ln(eta).
-- La régression linéaire permet d'extraire le paramètre de forme beta (pente) et le paramètre d'échelle eta (via l'ordonnée à l'origine).
-Calcul de la fiabilité cible : Avec ces paramètres, le code calcule la probabilité qu'un capteur survive au moins 500 heures : Rindiv(500) = exp(-(500/eta)^beta).
-
-Logique de structure : La station dispose de n=4 capteurs, mais k=3 sont nécessaires au bon fonctionnement. C'est un système à redondance partielle.
-Calcul de la fiabilité système (Rsys) : Si l'on suppose les capteurs indépendants et identiques, la fiabilité du groupe est la probabilité qu'au moins 3 capteurs sur 4 soient opérationnels à t=500.
-Le code utilise la loi binomiale pour sommer les probabilités de succès : Rsys = [choose(4,3) * Rindiv^3 * (1-Rindiv)] + [choose(4,4) * Rindiv^4].
-Le premier terme correspond au cas où exactement 3 capteurs fonctionnent, et le second au cas où les 4 fonctionnent.
+L'objectif est de caractériser la fiabilité du système de positionnement, composé de 4 capteurs dont au moins 3 doivent fonctionner pour assurer l'opération de la station. Dans un premier temps, nous modélisons la durée de bon fonctionnement individuelle de chaque capteur en utilisant les données de l'onglet sensor. Nous avons opté pour une distribution de Weibull, ajustée par la méthode de linéarisation (régression sur les rangs médians de Benard). Cette approche permet d'extraire le paramètre de forme ($\beta$) et d'échelle ($\eta$) spécifiques aux capteurs. Dans un second temps, le système global est modélisé par une loi binomiale de type $k$-parmi-$n$ ($3/4$). La fiabilité du système $R_{sys}(t)$ est ainsi définie comme la probabilité qu'au moins 3 capteurs soient fonctionnels à l'instant $t$, calculée à partir de la fiabilité individuelle $R_{indiv}(t)$.
 
 ```{r}
 #| label: question-11-sensors-fixed
@@ -802,7 +784,7 @@ Le système de positionnement étant configuré en redondance partielle "3-parmi
 
 ### Point 2
 
-L'enjeu ici est de traiter le problème des pannes cachées. Contrairement à la plateforme qui s'arrête net, on ne sait pas qu'un capteur est tombé en panne tant qu'on ne l'inspecte pas. Si deux capteurs tombent en panne, le système "3 parmi 4" échoue, mais la machine continue de tourner en produisant des pièces défectueuses (rebuts) jusqu'à la prochaine inspection.
+L'objectif de cette étape est de déterminer l'intervalle d'inspection optimal ($\tau$) pour le système de positionnement, dont la redondance de type 3-parmi-4 (sur 4 capteurs installés) induit des défaillances « dormantes » uniquement détectables par un arrêt technique. Chaque inspection immobilise la station pendant 30 minutes, soit une perte de production de 750 €. Si le système devient critique (moins de 3 capteurs fonctionnels) entre deux inspections, la station génère des rebuts pour un coût de 800 €/h. Pour optimiser cette maintenance, nous modélisons le coût horaire moyen $C(\tau)$ en intégrant trois composantes : le coût fixe de l'inspection, le coût des rebuts (calculé par l'intégration de l'indisponibilité du système $1 - R_{sys}(t)$ sur l'intervalle $[0, \tau]$), et le coût de remplacement incluant le prix des pièces (225 €) et le temps de pose supplémentaire (15 min par unité). Une optimisation numérique est ensuite réalisée pour identifier la valeur de $\tau^*$ minimisant la somme de ces coûts, garantissant ainsi l'équilibre idéal entre fréquence d'inspection et risque de non-qualité.
 
 ```{r}
 # --- Optimisation des Capteurs (Point 2) ---
