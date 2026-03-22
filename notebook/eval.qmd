@@ -92,7 +92,6 @@ library(survival)
 library(flexsurv)
 
 # 1. Lecture directe du fichier Excel
-# On spécifie le nom du fichier et le nom exact de la feuille (SDR)
 path <- "data/eval/drilling_station.xlsx"
 data_plat <- read_excel(path, sheet = "rotating_platform")
 
@@ -195,8 +194,6 @@ L'analyse des résultats d'optimisation pour la plateforme met en évidence la p
 
 # Système de Lubrification
 
-## Point 1
-
 ### Question 3 : Caractérisation de la loi de défaillance
 
 Pour caractériser la fiabilité du système de lubrification, nous nous appuyons sur les données de l'onglet lubricant_sys qui répertorie les temps de bon fonctionnement (TBF) entre chaque obstruction du circuit. Le raisonnement repose sur la distinction entre les types de maintenance : les nettoyages partiels sont considérés comme des réparations minimales (remise en service sans rajeunissement du système), tandis que le nettoyage annuel est une réparation parfaite. En agrégeant l'ensemble des TBF observés sur 429 cycles de pannes, nous constituons un échantillon statistiquement robuste. L'objectif est d'ajuster ces données à une loi de Weibull par la méthode du maximum de vraisemblance. Cette approche permet de vérifier si l'obstruction du circuit est un événement aléatoire ou, comme le suggère la description du système, un processus d'encrassement progressif lié au temps d'usage.
@@ -285,7 +282,7 @@ Les paramètres obtenus valident les estimations initiales de l'industriel tout 
 L'objectif de cette étape est d'estimer la disponibilité moyenne ($\bar{A}$) du service de lubrification sur un cycle annuel de 8760 heures. Ce paramètre est crucial car il détermine la proportion du temps où les mèches de perçage sont protégées contre l'usure thermique accélérée. Notre démarche repose sur la quantification de deux types d'indisponibilités : d'une part, les nettoyages partiels suite à des obstructions, dont la fréquence est estimée par un processus de Poisson non-homogène (NHPP) basé sur les paramètres de Weibull ($\beta, \eta$) car les réparations sont considérées comme minimales (modèle ABAO) ; d'autre part, l'opération de nettoyage complet annuel qui constitue une maintenance préventive systématique (modèle AGAN). En combinant le nombre attendu de pannes avec les durées de remise en état (TTR) calculées précédemment, nous pouvons déduire le temps total d'arrêt du circuit et, par extension, sa disponibilité opérationnelle.
 
 ```{r}
-#| label: question-5-disponibilite-corrigee
+#| label: question-5-disponibilite
 #| message: false
 #| warning: false
 
@@ -381,14 +378,12 @@ Les résultats de l'optimisation mettent en évidence une fréquence de maintena
 
 # Analyse de la Dégradation Globale des Mèches
 
-## Point 1
-
 ### Question 6 : Chaînes de Markov et Probabilités Stationnaires
 
 L'objectif de cette étape est de modéliser la dynamique de dégradation des mèches de perçage en utilisant des chaînes de Markov en temps continu (CTMC). Le système est défini par cinq états allant de « neuve » (1) à « cassée » (5). Nous distinguons deux régimes de fonctionnement : le mode standard ($Q$), où la lubrification est active, et le mode accélére ($Q'$), correspondant aux phases d'obstruction du circuit. Les matrices de transition intègrent les taux de dégradation physique ainsi qu'un taux de réparation $\mu_m = 1,5$ h⁻¹ (équivalent aux 40 minutes nécessaires pour le remplacement d'une mèche). Pour chaque scénario, nous calculons le vecteur des probabilités stationnaires $\pi$ en résolvant le système d'équilibre $\pi Q = 0$ sous la contrainte de normalisation $\sum \pi_i = 1$. Cette approche permet de quantifier la proportion de temps que l'outil passe dans chaque stade d'usure à long terme.
 
 ```{r}
-#| label: question-6-markov-fixed
+#| label: question-6-markov
 #| message: false
 #| warning: false
 
@@ -493,12 +488,12 @@ t_stop_meche      <- 0.67   # 40 minutes
 cout_total_P <- 200 + (t_stop_meche * cost_perte_h_tete) # 702.5€
 cout_total_C <- 400 + (t_stop_meche * cost_perte_h_tete) # 902.5€
 
-# 1. Définition des options (Remplacer à l'état 2, 3, 4 ou attendre 5)
+# 2. Définition des options (Remplacer à l'état 2, 3, 4 ou attendre 5)
 etats_test <- 2:5
 couts_horaires <- numeric(length(etats_test))
 names(couts_horaires) <- c("Préventif_E2", "Préventif_E3", "Préventif_E4", "Correctif_E5")
 
-# 2. Boucle de calcul
+# 3. Boucle de calcul
 for(i in 2:4) {
   # Fréquence de remplacement à l'état i = pi_i * taux de sortie vers i+1
   frequence <- pi_glob[i] * abs(Q_glob[i,i])
@@ -508,7 +503,7 @@ for(i in 2:4) {
 # Cas correctif pur (E5)
 couts_horaires[4] <- pi_glob[5] * abs(Q_glob[5,5]) * cout_total_C
 
-# 3. Identification du meilleur
+# 4. Identification du meilleur
 optimum_etat <- names(which.min(couts_horaires))
 gain_max <- max(couts_horaires) - min(couts_horaires)
 
