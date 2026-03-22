@@ -21,9 +21,31 @@ format:
 
 # Introduction et Contexte du Projet
 
+Ce projet s'inscrit dans une démarche d'optimisation de la **Sûreté de Fonctionnement (SdF)** d'une station de perçage industrielle haute performance. L'objectif est de passer d'une maintenance subie (corrective) à une maintenance pilotée (préventive et prédictive) afin de garantir une disponibilité maximale tout en minimisant les coûts d'exploitation.
 
 ## Description du Système
 
+La station de perçage est un système complexe composé de quatre sous-ensembles critiques interdépendants. Sa performance globale dépend de la santé de chaque maillon, suivant un modèle de fiabilité en série.
+
+### 1. Le Système de Lubrification
+C'est le "poumon" de la station. Il assure le refroidissement et la réduction de la friction lors de l'usinage. 
+* **Fonctionnement :** Basé sur des cycles de nettoyage (complets ou partiels).
+* **Criticité :** Une défaillance ici entraîne un effet "cascade" immédiat sur l'usure des outils de coupe.
+
+### 2. Les Mèches de Perçage (Outils)
+Composants consommables soumis à une usure continue, modélisée par des **chaînes de Markov**.
+* **États d'usure :** Le système évolue de l'état "Neuf" à "Cassé" à travers plusieurs stades de dégradation.
+* **Interaction :** La vitesse de dégradation est directement corrélée à la qualité de la lubrification.
+
+### 3. Le Bloc Moteur
+L'organe moteur de la tête de perçage, dont la fiabilité suit une **loi de Weibull**.
+* **Usure :** Contrairement aux mèches, le moteur subit une usure intrinsèque (vieillissement) mais est aussi exposé à des **risques concurrents** (chocs accidentels transmis par une mèche défaillante).
+* **Enjeu :** C'est l'actif le plus coûteux à remplacer en cas de casse majeure.
+
+### 4. Le Système de Positionnement (Capteurs)
+Un ensemble de 4 capteurs assurant la précision du perçage.
+* **Architecture :** Configuré en redondance de type **3-parmi-4** (le système fonctionne tant que 3 capteurs sur 4 sont opérationnels).
+* **Maintenance :** Optimisée par des intervalles d'inspection périodiques pour détecter les pannes "dormantes".
 
 ------------------------------------------------------------------------
 
@@ -92,7 +114,7 @@ library(survival)
 library(flexsurv)
 
 # 1. Lecture directe du fichier Excel
-path <- "data/eval/drilling_station.xlsx"
+path <- "../data/eval/drilling_station.xlsx"
 data_plat <- read_excel(path, sheet = "rotating_platform")
 
 # 2. Préparation des données (status : 1 = défaillance, 0 = censure)
