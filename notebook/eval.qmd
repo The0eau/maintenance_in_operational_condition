@@ -605,7 +605,7 @@ cat("Fiabilité globale du moteur                  :", round(R_moteur_global, 5)
 cat("Probabilité de défaillance cumulée à 500h    :", round(P_defaillance, 6), "\n")
 ```
 
-L'analyse de la station de perçage révèle un système industriel à haute performance avec une disponibilité globale de 99,54 %, ce qui limite le temps d'arrêt total à environ 40,3 heures par an. Cette efficacité est le fruit d'un équilibre stratégique entre différents modes de maintenance. D'une part, la maintenance préventive sur la lubrification et les mèches permet d'éviter des pannes coûteuses sur des composants à forte usure. D'autre part, l'analyse de fiabilité du moteur valide une approche corrective, car sa fiabilité intrinsèque reste extrêmement élevée ($R > 0,997$ à 500h) malgré les risques de chocs induits par les mèches. Cependant, le maillon faible identifié reste le système de capteurs, dont la stratégie d'inspection périodique génère la plus forte indisponibilité relative ($0,246$ %). Bien que les coûts de maintenance soient optimisés, une réduction supplémentaire des arrêts passerait par une amélioration du temps de diagnostic des capteurs ou une transition vers une surveillance en temps réel (maintenance prédictive) pour réduire la durée des inspections manuelles.
+L'analyse de la fiabilité globale à 500 heures démontre que le moteur est soumis à un régime de risques concurrents où les défaillances accidentelles prédominent sur l'usure naturelle. Bien que la fiabilité intrinsèque du bloc moteur reste très élevée (99,957 %), c'est la fiabilité induite par les chocs liés aux mèches qui impacte le plus significativement le système (99,781 %). Avec une probabilité moyenne de rupture par choc de 0,00438, le risque "exogène" est environ cinq fois plus menaçant que le vieillissement du moteur lui-même à cet horizon. La fiabilité globale de 99,739 % confirme que la survie du moteur dépend moins de sa propre robustesse que de la maîtrise de l'état d'usure des mèches, validant ainsi l'importance d'une maintenance préventive rigoureuse sur les outils de coupe pour protéger l'organe noble de la station.
 
 ------------------------------------------------------------------------
 
@@ -658,7 +658,7 @@ L’étude de l’effet cascade révèle une dégradation brutale de la fiabilit
 
 ### Optimisation de la Maintenance du Bloc Moteur
 
-L'objectif de cette étape est de comparer l'efficacité économique de la politique de maintenance corrective actuelle avec une stratégie de maintenance préventive systématique basée sur l'âge ($T$) pour le bloc motorisation. Pour ce faire, nous intégrons l'ensemble des contraintes opérationnelles : chaque intervention immobilise une tête de perçage pendant 2,5 heures (2h de remplacement et 30 min de manipulation), générant une perte de production de 1 875 € ($2,5 \times 750 €/h$). Le coût total d'un remplacement s'élève ainsi à 3 275 € en préventif, contre 3 475 € en correctif en raison des frais supplémentaires de détection et de ré-usinage. En nous appuyant sur la loi de Weibull identifiée précédemment, nous modélisons le coût moyen par heure $C(T)$ comme le ratio entre l'espérance du coût d'un cycle — pondéré par la fiabilité $R(T)$ — et la durée moyenne de bon fonctionnement (obtenue par l'intégration numérique de la fiabilité jusqu'à l'âge $T$). Cette étude vise à identifier numériquement l'âge de remplacement optimal $T^*$ qui minimise ce coût horaire, permettant ainsi de valider si un remplacement planifié est plus rentable que le maintien d'une stratégie subie de "panne au premier défaut".
+L'objectif de cette étape est de comparer l'efficacité économique de la politique de maintenance corrective actuelle avec une stratégie de maintenance préventive systématique basée sur l'âge ($T$) pour le bloc motorisation. Pour ce faire, nous intégrons l'ensemble des contraintes opérationnelles : chaque intervention immobilise une tête de perçage pendant 2,5 heures (2h de remplacement et 30 min de manipulation), générant une perte de production de 1 875 € ($2,5 \times 750 €/h$). Le coût total d'un remplacement s'élève ainsi à 3 275 € en préventif, contre 3 475 € en correctif en raison des frais supplémentaires de détection et de ré-usinage. En nous appuyant sur la loi de Weibull identifiée précédemment, nous modélisons le coût moyen par heure $C(T)$ comme le ratio entre l'espérance du coût d'un cycle pondéré par la fiabilité $R(T)$ et la durée moyenne de bon fonctionnement (obtenue par l'intégration numérique de la fiabilité jusqu'à l'âge $T$). Cette étude vise à identifier numériquement l'âge de remplacement optimal $T^*$ qui minimise ce coût horaire, permettant ainsi de valider si un remplacement planifié est plus rentable que le maintien d'une stratégie subie de "panne au premier défaut".
 
 ```{r}
 # --- Optimisation du Bloc Moteur (Point 2) ---
@@ -686,7 +686,7 @@ moteur_cost_per_hour <- function(T_age) {
   expected_cost <- (cost_preventif * R_T) + (cost_correctif * (1 - R_T))
   
   # Durée moyenne d'un cycle
-  expected_time <- MTTF_T 
+  expected_time <- MTTF_T + ttr_moteur 
   
   return(expected_cost / expected_time)
 }
