@@ -21,40 +21,38 @@ format:
 
 # Introduction et Contexte du Projet
 
-Ce rapport présente une étude approfondie de la politique de maintien en condition opérationnelle d'un poste de perçage multi-têtes au sein d'un atelier industriel. L'objectif est de produire une analyse globale et des recommandations basées sur des modèles de fiabilité (Weibull, Lognormale) et des processus stochastiques (Chaînes de Markov).
+Ce projet s'inscrit dans une démarche d'optimisation de la **Sûreté de Fonctionnement (SdF)** d'une station de perçage industrielle haute performance. L'objectif est de passer d'une maintenance subie (corrective) à une maintenance pilotée (préventive et prédictive) afin de garantir une disponibilité maximale tout en minimisant les coûts d'exploitation.
 
 ## Description du Système
 
-Le système étudié est une station de perçage rotative comprenant plusieurs sous-systèmes critiques dont les interactions dictent la performance globale :
+La station de perçage est un système complexe composé de quatre sous-ensembles critiques interdépendants. Sa performance globale dépend de la santé de chaque maillon, suivant un modèle de fiabilité en série.
 
-- **Plateforme rotative :** Élément indispensable au positionnement des pièces ; sa défaillance entraîne l'arrêt total de la station.
-- **Têtes de perçage :** La station dispose de 3 têtes indépendantes. La station reste fonctionnelle tant qu'au moins une tête est opérationnelle. Chaque tête est composée d'un bloc moteur et d'une mèche.
-- **Système de lubrification :** Un circuit commun qui limite les frottements. La station peut fonctionner sans lui (mode dégradé), mais cela impacte la dégradation des mèches.
-- **Capteurs de positionnement :** Au nombre de 4, ils assurent la précision du perçage. Une redondance partielle de type "3 parmi 4" (k-sur-n) est nécessaire pour maintenir l'opération.
+### 1. Le Système de Lubrification
+C'est le "poumon" de la station. Il assure le refroidissement et la réduction de la friction lors de l'usinage. 
+* **Fonctionnement :** Basé sur des cycles de nettoyage (complets ou partiels).
+* **Criticité :** Une défaillance ici entraîne un effet "cascade" immédiat sur l'usure des outils de coupe.
+
+### 2. Les Mèches de Perçage (Outils)
+Composants consommables soumis à une usure continue, modélisée par des **chaînes de Markov**.
+* **États d'usure :** Le système évolue de l'état "Neuf" à "Cassé" à travers plusieurs stades de dégradation.
+* **Interaction :** La vitesse de dégradation est directement corrélée à la qualité de la lubrification.
+
+### 3. Le Bloc Moteur
+L'organe moteur de la tête de perçage, dont la fiabilité suit une **loi de Weibull**.
+* **Usure :** Contrairement aux mèches, le moteur subit une usure intrinsèque (vieillissement) mais est aussi exposé à des **risques concurrents** (chocs accidentels transmis par une mèche défaillante).
+* **Enjeu :** C'est l'actif le plus coûteux à remplacer en cas de casse majeure.
+
+### 4. Le Système de Positionnement (Capteurs)
+Un ensemble de 4 capteurs assurant la précision du perçage.
+* **Architecture :** Configuré en redondance de type **3-parmi-4** (le système fonctionne tant que 3 capteurs sur 4 sont opérationnels).
+* **Maintenance :** Optimisée par des intervalles d'inspection périodiques pour détecter les pannes "dormantes".
 
 ------------------------------------------------------------------------
 
 # Analyse Individuelle des Sous-systèmes
 
-## Question 1 : Diagramme de Blocs de Fiabilité (RBD)
-
-L'analyse de la description du système permet de construire un **Diagramme de Blocs de Fiabilité (RBD)**. Dans ce modèle, la station est considérée comme fonctionnelle si un chemin continu existe entre l'entrée et la sortie du diagramme.
-
-### Architecture du RBD
-
-La station est constituée d'une mise en série de trois blocs principaux:
-
-1.  **Bloc 1 : Plateforme Rotative (Série)** : Composant unique indispensable. Si elle tombe en panne, la station est inutilisable.
-
-2.  **Bloc 2 : Système de Positionnement (Redondance k-parmi-n)** : Contient 4 capteurs. Le système fonctionne tant qu'au moins 3 capteurs sur 4 sont opérationnels.
-
-3.  **Bloc 3 : Têtes de Perçage (Redondance en parallèle)** : La station peut fonctionner tant qu'au moins 1 tête sur 3 est fonctionnelle.
-
-- Chaque tête est un sous-système composé d'un **moteur** et d'une **mèche** montés en série.
-
-### Le Système de Lubrification
-
-Le système de lubrification n'apparaît pas dans la chaîne de série principale car son fonctionnement n'est pas strictement nécessaire pour opérer la station (mode dégradé possible). Il agit toutefois comme un facteur d'influence sur le taux de dégradation des mèches.
+La station de perçage est modélisée par un Diagramme de Blocs de Fiabilité (RBD) constitué de trois blocs fonctionnels principaux disposés en série, car la défaillance d'un seul de ces blocs entraîne l'arrêt total de la production. 
+Le premier bloc représente la plateforme rotative, composant critique unique. Le second bloc est un système de positionnement en redondance partielle de type $k$ parmi $n$ ($3/4$), signifiant que la station reste opérationnelle tant qu'au moins trois capteurs sur quatre sont fonctionnels. Enfin, le troisième bloc modélise les trois têtes de perçage en parallèle : la station fonctionne tant qu'au moins une tête est active (redondance $1/3$). Chaque tête est elle-même une mise en série d'un moteur et d'une mèche, où la panne de l'un neutralise la tête concernée. Le système de lubrification, bien qu'influençant l'usure thermique, est exclu de la chaîne de disponibilité directe puisque l'énoncé confirme la possibilité d'un fonctionnement en mode dégradé sans ce dernier.
 
 ```{mermaid}
 graph LR
@@ -96,30 +94,14 @@ graph LR
 
 ```
 
-### Justification du modèle
-
-Le choix du RBD permet de visualiser directement les capacités de production en mode dégradé (nombre de têtes actives) et de modéliser facilement les redondances de type k-parmi-n mentionnées pour les capteurs.
-
 ------------------------------------------------------------------------
 
 
 # Plateforme rotative
 
-## Point 1
-
 ### Question 2 : Estimation de la loi du temps avant défaillance
 
-Pour estimer la loi du temps avant défaillance de la plateforme rotative, nous suivons une démarche d'inférence paramétrique adaptée aux données de survie avec censure.
-
-Les données de l'onglet `rotating_platform` contiennent des **censures de Type I**. L'étude s'étant arrêtée après 5 ans de production, pour les systèmes n'ayant pas connu de défaillance à cette date, nous savons seulement que leur durée de vie $T_i$ est supérieure à l'instant de censure $C_i$.
-
-Nous utilisons une **loi de Weibull** pour modéliser ce composant mécanique, car elle permet de représenter finement les phénomènes de vieillissement via ses deux paramètres : \* Le paramètre de forme $\beta$. \* Le paramètre d'échelle $\eta$.
-
-Pour traiter les données censurées, nous utilisons la méthode du **Maximum de Vraisemblance** afin d'estimer les paramètres qui maximisent la probabilité d'observer l'échantillon recueilli. La fonction de vraisemblance $L$ intègre : \* La densité de probabilité $f(t)$ pour les défaillances observées. \* La fonction de fiabilité $R(C)$ pour les données censurées.
-
-$$L = R(C)^{n-k} \prod_{i=1}^{k} f(t_{(i)})$$
-
-La cohérence du modèle sera vérifiée par deux outils : \* **Linéarisation de Weibull** : Un tracé de $\ln(-\ln(R(t)))$ en fonction de $\ln(t)$ doit montrer une tendance linéaire. \* **Transformée TTT (Total Time on Test)** : Si la courbe est concave, cela confirme un taux de défaillance croissant ($IFR$, $\beta > 1$), caractéristique d'une usure mécanique.
+Afin d'estimer la loi de probabilité régissant le temps avant défaillance de la plateforme rotative, nous utilisons une analyse de survie basée sur la distribution de Weibull. Ce modèle est privilégié en fiabilité industrielle car il permet de caractériser précisément la nature du taux de défaillance (jeunesse, hasard ou usure) à travers son paramètre de forme $\beta$. L'échantillon fourni contient 47 observations, dont plusieurs données censurées à droite (status = 0), correspondant aux équipements toujours en fonctionnement lors du relevé. L'utilisation de la bibliothèque flexsurv permet d'ajuster ce modèle par la méthode du Maximum de Vraisemblance (MLE), garantissant une estimation robuste des paramètres d'échelle ($\eta$) et de forme ($\beta$) tout en intégrant l'incertitude liée aux données censurées.
 
 ```{r}
 #| label: analyse-plateforme-flexsurv
@@ -132,7 +114,6 @@ library(survival)
 library(flexsurv)
 
 # 1. Lecture directe du fichier Excel
-# On spécifie le nom du fichier et le nom exact de la feuille (SDR)
 path <- "../data/eval/drilling_station.xlsx"
 data_plat <- read_excel(path, sheet = "rotating_platform")
 
@@ -145,11 +126,11 @@ data_plat$status_num <- as.numeric(data_plat$status)
 fit_flex <- flexsurvreg(Surv(time, status_num) ~ 1, data = data_plat, dist = "weibull")
 
 # 4. Extraction des paramètres estimés
-beta_hat <- fit_flex$res["shape", "est"]
-eta_hat  <- fit_flex$res["scale", "est"]
+beta_plat <- fit_flex$res["shape", "est"]
+eta_plat  <- fit_flex$res["scale", "est"]
 
-cat("Paramètre de forme (beta) estimé :", round(beta_hat, 4), "\n")
-cat("Paramètre d'échelle (eta) estimé :", round(eta_hat, 2), " heures\n")
+cat("Paramètre de forme (beta) estimé :", round(beta_plat, 4), "\n")
+cat("Paramètre d'échelle (eta) estimé :", round(eta_plat, 2), " heures\n")
 
 ```
 
@@ -158,304 +139,280 @@ Avec un paramètre de forme $\beta = 4,1017$, le système subit une **usure méc
 
 ## Point 2
 
-Après avoir caractérisé la loi de défaillance (Point 1), l'objectif ici est de déterminer la stratégie de maintenance optimale. Étant donné que $\beta = 4,1017$, le système vieillit fortement. Il est donc mathématiquement rentable de remplacer la plateforme de manière **préventive** avant qu'elle ne tombe en panne.
-
-### Optimisation du Remplacement Préventif
-
-L'enjeu est de trouver l'âge de remplacement optimal $T^*$ qui minimise le **coût moyen par unité de temps** $C(T)$. Ce modèle repose sur un arbitrage entre :
-1.  **Le coût de la maintenance corrective ($C_c$)** : Très élevé car la panne est imprévue, nécessite un expert extérieur, un transport d'urgence (200€) et immobilise la station pendant 14h ($14 \times 1500€/h$).
-2.  **Le coût de la maintenance préventive ($C_p$)** : Plus faible car l'arrêt est planifié (6h au lieu de 14h) et les pièces sont moins chères ($900€$ au lieu de $1300€$).
+L'objectif est de déterminer l'âge optimal de remplacement ($T^*$) permettant de minimiser le coût moyen d'exploitation par unité de temps. Pour ce faire, nous comparons deux scénarios : une maintenance corrective (intervention après panne, coûteuse en temps d'arrêt et en logistique) et une maintenance préventive (intervention planifiée, plus rapide et moins onéreuse).Le calcul intègre les coûts directs (pièces, main-d'œuvre et transport) ainsi que les coûts indirects liés à la non-production (1500 €/h). Les durées d'intervention étant aléatoires, nous calculons d'abord leurs espérances à partir des lois log-normales fournies ($E[X] = e^{\mu + \sigma^2/2}$). En utilisant les paramètres de Weibull ($\beta, \eta$) estimés précédemment, nous modélisons la fonction de coût global. L'optimum recherché représente le point d'équilibre où le coût des remplacements préventifs fréquents compense la réduction du risque de pannes correctives majeures.
 
 
 ```{r}
 # --- Point (2) : Optimisation de la Maintenance (Plateforme) ---
 
-# 1. Paramètres de coûts (issus de l'énoncé)
-cout_arret_h <- 1500
-transport <- 200
+# 1. Paramètres économiques et logistiques
+cout_arret_h   <- 1500
+transport      <- 200
+main_oeuvre_h  <- 100
 
-# Coût Correctif (Cc) : Panne imprévue
-# Pièces (1300) + Transport (200) + 14h d'arrêt
-Cc <- 1300 + transport + (14 * cout_arret_h) 
+# Calcul des durées moyennes d'arrêt (Espérances des lois log-normales)
+# Formule : E[X] = exp(mu + sigma^2 / 2)
+mttr_c <- exp(2.28 + (0.24^2 / 2)) # Moyenne temps correctif (~10.06h)
+mttr_p <- exp(1 + (0.55^2 / 2))    # Moyenne temps préventif (~3.16h)
 
-# Coût Préventif (Cp) : Remplacement planifié
-# Pièces (900) + Transport (200) + 6h d'arrêt
-Cp <- 900 + transport + (6 * cout_arret_h)
+# Coût total d'une intervention Corrective (Cc)
+# (Pièces + Transport + Main d'œuvre + Perte de production)
+Cc <- 1300 + transport + (mttr_c * (cout_arret_h + main_oeuvre_h))
+
+# Coût total d'une intervention Préventive (Cp)
+# (Pièces + Transport + Main d'œuvre + Perte de production)
+Cp <- 900 + transport + (mttr_p * (cout_arret_h + main_oeuvre_h))
 
 # 2. Fonction de coût moyen par unité de temps C(T)
-# Utilise les paramètres beta_hat et eta_hat calculés au Point (1)
+# Basée sur le modèle de renouvellement par l'âge
 cost_function_plat <- function(T_age) {
-  # Fiabilité à l'instant T
-  R_T <- exp(-(T_age / eta_hat)^beta_hat)
-  # Probabilité de défaillance avant T
+  # Fiabilité R(T) et Probabilité de défaillance F(T)
+  R_T <- exp(-(T_age / eta_plat)^beta_plat)
   F_T <- 1 - R_T
   
-  # Espérance du temps de bon fonctionnement (MTTF restreint à T)
-  # On intègre la fonction de fiabilité de 0 à T
-  mttf_T <- integrate(function(t) exp(-(t / eta_hat)^beta_hat), 
+  # Espérance du temps de bon fonctionnement (Intégrale de R(t) de 0 à T)
+  mttf_T <- integrate(function(t) exp(-(t / eta_plat)^beta_plat), 
                       lower = 0, upper = T_age)$value
   
-  # Coût moyen = Espérance du coût / Espérance du temps
-  return((Cp * R_T + Cc * F_T) / mttf_T)
+  # Espérance de la durée totale du cycle (Fonctionnement + Arrêt)
+  duree_cycle <- mttf_T + (mttr_p * R_T + mttr_c * F_T)
+  
+  # Espérance du coût du cycle
+  cout_cycle <- (Cp * R_T + Cc * F_T)
+  
+  # Coût moyen par unité de temps
+  return(cout_cycle / duree_cycle)
 }
 
-# 3. Recherche du minimum de la fonction
-# On cherche entre 1000h et la valeur de eta_hat
-opti_result <- optimize(cost_function_plat, interval = c(1000, 15000))
+# 3. Recherche de l'âge optimal (T*)
+# On cherche entre 100h et 1.5 fois la durée de vie caractéristique (eta_plat)
+opti_result <- optimize(cost_function_plat, interval = c(100, eta_plat * 1.5))
 
 T_opti <- opti_result$minimum
 cout_horaire_min <- opti_result$objective
 
-# 4. AFFICHAGE DES RÉSULTATS
-cat("--- OPTIMISATION DE LA PLATEFORME ROTATIVE ---\n")
-cat("Coût d'une panne corrective (Cc) :", Cc, "€\n")
-cat("Coût d'un remplacement préventif (Cp) :", Cp, "€\n")
-cat("----------------------------------------------\n")
-cat("Âge optimal de remplacement (T*) :", round(T_opti, 2), "heures\n")
-cat("Coût horaire minimum associé     :", round(cout_horaire_min, 4), "€/h\n")
-cat("Gain par rapport au correctif pur :", round(cost_function_plat(15000) - cout_horaire_min, 2), "€/h\n")
+# 4. Calcul du coût en "Correctif Pur" pour comparaison (T -> infini)
+# En correctif pur, le coût moyen est Cc / (MTTF + mttr_c)
+mttf_total <- eta_plat * gamma(1 + 1/beta_plat)
+cout_correctif_pur <- Cc / (mttf_total + mttr_c)
 
+# 5. Affichage des résultats
+cat("--- RÉSULTATS DE L'OPTIMISATION (PLATEFORME) ---\n")
+cat("MTTR Correctif estimé :", round(mttr_c, 2), "h\n")
+cat("MTTR Préventif estimé :", round(mttr_p, 2), "h\n\n")
+cat("Coût total d'une panne (Cc) :", round(Cc, 2), "€\n")
+cat("Coût d'un préventif (Cp)    :", round(Cp, 2), "€\n")
+cat("------------------------------------------------\n")
+cat("Âge optimal de remplacement (T*) :", round(T_opti, 0), "heures\n")
+cat("Coût horaire à l'optimum         :", round(cout_horaire_min, 4), "€/h\n")
+cat("Coût en politique corrective pure :", round(cout_correctif_pur, 4), "€/h\n")
+cat("Gain économique espéré           :", round(cout_correctif_pur - cout_horaire_min, 2), "€/h\n")
 ```
 
-L'étude économique confirme la pertinence d'une stratégie de remplacement préventif systématique. Avec un coût de défaillance corrective ($22\,500$ €) plus de deux fois supérieur au coût préventif ($10\,100$ €), l'enjeu financier est majeur. Cette disproportion s'explique par l'impact critique de la production perdue (14h d'arrêt en correctif contre 6h en préventif).
+L'analyse des résultats d'optimisation pour la plateforme met en évidence la pertinence d'une stratégie de maintenance préventive systématique. Avec un coût de défaillance corrective ($C_c$) s'élevant à 17 599,75 €, soit près de trois fois le coût d'une intervention planifiée ($C_p$ de 6 159,43 €), l'arbitrage économique est fortement influencé par les pertes de production et les durées d'indisponibilité (10,06 h en correctif contre 3,16 h en préventif). L'âge optimal de remplacement ($T^*$) est ainsi fixé à 7 429 heures, permettant de ramener le coût horaire d'exploitation à 1,11 €/h. Bien que le gain horaire de 0,59 €/h puisse paraître modeste, il représente une réduction de 35 % des coûts par rapport à une politique de "correctif pur" (1,71 €/h). À l'échelle d'un parc de machines ou d'une exploitation annuelle longue durée, cette optimisation garantit une stabilité opérationnelle majeure tout en évitant des arrêts critiques coûteux et imprévisibles.
 
-Le modèle identifie un **âge optimal de remplacement $T^* \approx 8\,234$ heures**. À ce point, le coût moyen d'exploitation est minimisé à **1,66 €/h**. 
-
-* **Avant 8 234 h :** Le coût horaire est plus élevé car on remplace une pièce encore fiable trop tôt, gaspillant ainsi son potentiel de vie.
-* **Après 8 234 h :** Le coût remonte rapidement. Le paramètre de vieillissement élevé ($\beta \approx 4,1$) provoque une explosion de la probabilité de panne, rendant le risque de subir les $22\,500$ € de frais correctifs statistiquement trop lourd.
-
-Le gain de **0,48 €/h** par rapport à une politique de "laisser-casser" peut sembler faible, mais à l'échelle d'une année de production (8 760h) et pour les 10 stations de l'atelier, cela représente une économie globale d'environ **42 000 € par an**, tout en sécurisant la disponibilité de la ligne.
 
 ------------------------------------------------------------------------
 
 # Système de Lubrification
 
-## Point 1
-
 ### Question 3 : Caractérisation de la loi de défaillance
 
-Pour répondre à la Question 3, nous analysons les données de maintenance du système de lubrification afin de caractériser sa loi de défaillance par obstruction.
-
-L'analyse s'appuie sur l'onglet `lubricant_sys`. Nous considérons : \* **Les temps inter-défaillances** : Durées séparant deux nettoyages partiels au sein d'un cycle annuel. \* **La structure des cycles** : Chaque ligne représente une année. Le nettoyage complet annuel est une **réparation parfaite (AGAN)**, tandis que le nettoyage partiel est une **réparation minimale (ABAO)**.
-
-Le système est remis dans l'état d'usure précédant la panne, ce qui implique que les défaillances au sein d'une année suivent un **Processus de Poisson Non Homogène (NHPP)**.
-
-Nous utilisons une loi de Weibull dont le taux de défaillance est $h(t) = \frac{\beta}{\eta} (\frac{t}{\eta})^{\beta-1}$. Pour un processus NHPP, la fonction d'intensité cumulée est $H(t) = (\frac{t}{\eta})^{\beta}$.
-
-La linéarisation $\ln(H(t)) = \beta \ln(t) - \beta \ln(\eta)$ nous permet d'estimer les paramètres par régression : la pente donne $\hat{\beta}$ et l'ordonnée à l'origine permet de déduire $\hat{\eta}$.
+Pour caractériser la fiabilité du système de lubrification, nous nous appuyons sur les données de l'onglet lubricant_sys qui répertorie les temps de bon fonctionnement (TBF) entre chaque obstruction du circuit. Le raisonnement repose sur la distinction entre les types de maintenance : les nettoyages partiels sont considérés comme des réparations minimales (remise en service sans rajeunissement du système), tandis que le nettoyage annuel est une réparation parfaite. En agrégeant l'ensemble des TBF observés sur 429 cycles de pannes, nous constituons un échantillon statistiquement robuste. L'objectif est d'ajuster ces données à une loi de Weibull par la méthode du maximum de vraisemblance. Cette approche permet de vérifier si l'obstruction du circuit est un événement aléatoire ou, comme le suggère la description du système, un processus d'encrassement progressif lié au temps d'usage.
 
 ```{r}
-#| label: analyse-lubrification-flexsurv
-#| message: false
-#| warning: false
+#| label: analyse-lubrification-correctif
 
-# 1. Lecture des données
-df_lub <- as.data.frame(read_excel(path, sheet = "lubricant_sys"))
+# 1. Lecture
+df_lub <- read_excel(path, sheet = "lubricant_sys")
 
-# 2. Transformation des données
-cols_pannes <- df_lub[, 1:7]
-times <- as.vector(as.matrix(cols_pannes))
-times <- sort(times[!is.na(times)])
+# 2. Extraction des colonnes de données (les colonnes 1 à 7)
+# On sélectionne les colonnes qui ont des noms numériques "1", "2", etc.
+# Ou plus simplement, on exclut les deux dernières colonnes de texte/résumé
+tbf_cols <- names(df_lub)[1:7] 
 
-# 3. Estimation via flexsurv (Approche MLE)
-# On crée un objet de survie. Ici, on considère que chaque 'time' est une panne.
-# flexsurv va estimer les paramètres qui maximisent la vraisemblance de ces temps.
-fit_flex <- flexsurvreg(Surv(times) ~ 1, dist = "weibull")
+# 3. Conversion et nettoyage
+tbf_vector <- as.numeric(unlist(df_lub[, tbf_cols]))
+tbf_clean <- tbf_vector[!is.na(tbf_vector) & tbf_vector > 0]
 
-# 4. Extraction des paramètres
-# Attention : flexsurv utilise shape (beta) et scale (eta)
-beta_lub <- fit_flex$res["shape", "est"]
-eta_lub  <- fit_flex$res["scale", "est"]
 
-# 5. Affichage des résultats
-cat("--- Résultats Système de Lubrification (via flexsurv) ---\n")
-cat("Paramètre de forme (Beta) :", round(beta_lub, 4), "\n")
-cat("Paramètre d'échelle (Eta) :", round(eta_lub, 4), "\n")
-```
+# 4. Ajustement avec flexsurvreg
+# On crée un objet de survie sans censure : Surv(tbf_clean)
+fit_lub_flex <- flexsurvreg(Surv(tbf_clean) ~ 1, dist = "weibull")
 
-L'analyse par modèle NHPP, avec un paramètre de forme $\beta = 1,7282$ et d'échelle $\eta \approx 8\,298$ heures, confirme un **vieillissement graduel** du système de lubrification lié à l'encrassement, validant ainsi l'efficacité des réparations minimales (ABAO) pour gérer l'usure entre deux maintenances majeures.
+beta_lub <- fit_lub_flex$res["shape", "est"]
+eta_lub  <- fit_lub_flex$res["scale", "est"]
 
-------------------------------------------------------------------------
-
-### Question 4 : Caractérisation des durées de maintenance (TTR)
-
-Pour modéliser les durées des interventions de maintenance (Time To Repair - TTR) du système de lubrification, nous utilisons une approche paramétrique basée sur la loi lognormale.
-
-La **méthode des moments** permet d'estimer les paramètres $(\mu, \sigma)$ de la loi lognormale en utilisant la moyenne empirique ($m$) et la variance ($v$) de l'échantillon via les relations suivantes :
-
-- **Paramètre de forme :** $\sigma^2 = \ln\left(1 + \frac{v}{m^2}\right)$
-- **Paramètre d'échelle :** $\mu = \ln(m) - \frac{1}{2}\sigma^2$
-
-Souhaitez-vous que je réalise une application numérique de ces formules avec vos données de maintenance ?
-
-```{r}
-#| label: analyse-ttr-flexsurv
-#| message: false
-#| warning: false
-
-# 1. Préparation des données
-ttr_full <- df_lub[["fullcleaning-duration"]]
-ttr_full <- ttr_full[!is.na(ttr_full)]
-
-# Nettoyages partiels (Simulation)
-set.seed(123)
-ttr_partial <- rnorm(nrow(df_lub), mean = 1.5, sd = 0.2)
-
-# 2. Estimation par Maximum de Vraisemblance (MLE)
-# flexsurvreg utilise la distribution "lnorm" (lognormale)
-fit_full    <- flexsurvreg(Surv(ttr_full) ~ 1, dist = "lnorm")
-fit_partial <- flexsurvreg(Surv(ttr_partial) ~ 1, dist = "lnorm")
-
-# 3. Extraction des paramètres (meanlog = mu, sdlog = sigma)
-res_full    <- fit_full$res
-res_partial <- fit_partial$res
-
-cat("--- Résultats flexsurv (MLE) ---\n")
-cat("Nettoyage Complet : mu =", round(res_full["meanlog", "est"], 4), 
-    ", sigma =", round(res_full["sdlog", "est"], 4), "\n")
-cat("Nettoyage Partiel : mu =", round(res_partial["meanlog", "est"], 4), 
-    ", sigma =", round(res_partial["sdlog", "est"], 4), "\n")
+cat("====================================================\n")
+cat("RÉSULTATS QUESTION 3 : SYSTÈME DE LUBRIFICATION\n")
+cat("====================================================\n")
+cat("Nombre de TBF analysés :", length(tbf_clean), "\n")
+cat("Paramètre de forme (beta) :", round(beta_lub, 4), "\n")
+cat("Paramètre d'échelle (eta) :", round(eta_lub, 2), "heures\n")
 
 ```
 
-L'utilisation de deux lois lognormales distinctes ($\mu_{complet} = 1,3571$ ; $\mu_{partiel} = 0,3984$) permet de modéliser avec précision l'asymétrie des temps de réparation (TTR), intégrant ainsi la variabilité réelle et les risques d'interventions prolongées dans vos calculs de disponibilité.
 
------
+L'analyse des résultats montre une cohérence remarquable avec la réalité physique du système. Le paramètre de forme obtenu, $\beta = 2,1393$, étant nettement supérieur à 1, il confirme mathématiquement que le système de lubrification subit un phénomène d'usure par encrassement progressif. Le taux de défaillance n'est pas constant : plus le temps passe, plus le risque d'obstruction augmente. La durée de vie caractéristique $\eta$ est estimée à 6 409 heures, ce qui signifie que 63,2 % des circuits subiraient une panne avant d'atteindre ce seuil. Étant donné qu'une année de production complète avoisine les 8 760 heures, ces résultats justifient pleinement la présence de plusieurs nettoyages partiels (correctifs) au cours d'un cycle annuel, le système n'étant pas dimensionné pour tenir une année entière sans intervention sur le circuit de lubrification.
+
+### QUESTION 4 : Ajustement du modèle de Poisson Non-Homogène (NHPP)
+
+Pour évaluer l'indisponibilité générée par la maintenance du système de lubrification, nous caractérisons les durées d'intervention (TTR) par des lois log-normales. Cette loi est particulièrement adaptée aux temps de réparation car elle modélise naturellement des processus qui ne peuvent être négatifs et qui présentent une traîne à droite (rares interventions très longues).
+- Nettoyage complet : L'ajustement est réalisé par maximum de vraisemblance sur les données réelles de l'industriel.
+- Nettoyage partiel : En l'absence de données brutes, nous avons construit une loi théorique centrée sur l'espérance de 1,5 heure mentionnée dans l'énoncé, en y associant une faible variabilité ($\sigma = 0,1$) pour refléter la répétitivité de cette tâche mineure.
+
+```{r}
+# 1. Nettoyage Complet (Full Cleaning)
+# Utilisation du nom de colonne exact du fichier
+ttr_full_data <- df_lub$fullcleaning_duration
+ttr_full_data <- as.numeric(ttr_full_data[!is.na(ttr_full_data)])
+
+# Ajustement d'une loi lognormale
+# flexsurvreg est parfait ici pour extraire meanlog et sdlog
+fit_full <- flexsurvreg(Surv(ttr_full_data) ~ 1, dist = "lnorm")
+
+# Extraction des paramètres
+mu_full    <- fit_full$res["meanlog", "est"]
+sigma_full <- fit_full$res["sdlog", "est"]
+# Calcul de l'espérance mathématique (MTTR)
+mttr_full  <- exp(mu_full + (sigma_full^2 / 2))
+
+# 2. Nettoyage Partiel (Partial Cleaning)
+# Cible : 1h30 = 1.5h
+target_mttr_p <- 1.5
+sigma_partial <- 0.1 # Hypothèse de variabilité faible
+# Calcul de mu pour que l'espérance soit exactement 1.5
+mu_partial    <- log(target_mttr_p) - (sigma_partial^2 / 2)
+
+# 3. Affichage des résultats
+cat("--- CARACTÉRISATION DES DURÉES DE MAINTENANCE (TTR) ---\n")
+cat("Nettoyage Complet (Données réelles) :\n")
+cat("  - Paramètre mu (meanlog)    :", round(mu_full, 4), "\n")
+cat("  - Paramètre sigma (sdlog)   :", round(sigma_full, 4), "\n")
+cat("  - MTTR (Espérance)          :", round(mttr_full, 2), "heures\n\n")
+
+cat("Nettoyage Partiel (Estimation énoncé) :\n")
+cat("  - Paramètre mu (meanlog)    :", round(mu_partial, 4), "\n")
+cat("  - Paramètre sigma (sdlog)   :", round(sigma_partial, 4), "\n")
+cat("  - MTTR (Cible)              :", round(exp(mu_partial + (sigma_partial^2/2)), 2), "heures\n")
+```
+
+Les paramètres obtenus valident les estimations initiales de l'industriel tout en apportant une précision statistique nécessaire à la modélisation future. Le nettoyage complet présente un MTTR de 4,05 heures ($\mu = 1,3595, \sigma = 0,2838$), confirmant que cette opération majeure nécessite un arrêt de station d'une demi-journée environ. Pour le nettoyage partiel, les paramètres calculés ($\mu = 0,4005, \sigma = 0,1$) garantissent une espérance mathématique strictement égale à 1,5 heure. Ces deux modèles de durées, couplés à la loi de défaillance (Weibull) établie précédemment, permettront de simuler avec précision le coût annuel total de maintenance et l'impact du système de lubrification sur la disponibilité globale de la station.
 
 ### Question 5 : Calcul de la disponibilité moyenne ($\bar{A}$)
 
-La disponibilité moyenne représente la proportion du temps où le système est opérationnel sur un cycle annuel de 8760 heures, en tenant compte des arrêts induits par la maintenance corrective (nettoyages partiels) et préventive (nettoyage complet).
-
-
-Le raisonnement débute par le passage du domaine logarithmique au domaine temporel physique. On utilise l'espérance mathématique de la loi lognormale pour transformer les paramètres $\mu$ et $\sigma$ (issus de la méthode des moments) en **durées moyennes de réparation** ($MTTR$) exprimées en heures. $$MTTR = \exp\left(\mu + \frac{\sigma^2}{2}\right)$$
-
-
-On modélise ensuite l'occurrence des défaillances sur un cycle annuel. Puisque les nettoyages partiels ne restaurent pas le système à neuf (réparations minimales), on utilise la fonction d'intensité cumulée du **Processus de Poisson Non Homogène** pour calculer le nombre attendu de pannes ($H(T)$) sur 8 760 heures. $$H(T) = \left( \frac{T}{\eta} \right)^\beta$$
-
-L'indisponibilité totale est la somme de deux composantes : \* **Indisponibilité corrective :** Le produit du nombre de pannes attendu par la durée moyenne d'un nettoyage partiel. \* **Indisponibilité préventive :** La durée du nettoyage complet annuel (une seule occurrence par cycle).
-
-Enfin, on calcule le ratio du temps de bon fonctionnement sur le temps total du cycle. Cette valeur $\bar{A}$ représente la proportion du temps où le système de lubrification remplit sa fonction. $$\bar{A} = \frac{T_{total} - (D_{corrective} + D_{preventive})}{T_{total}}$$
-
-Ce coefficient $\bar{A}$ sert de **pivot probabiliste** : il permet de pondérer les matrices de transition des mèches. En période d'indisponibilité ($1-\bar{A}$), le modèle bascule sur un régime d'usure accélérée ($Q'$), simulant ainsi l'impact réel des défaillances de lubrification sur la durée de vie des outils de perçage.
+L'objectif de cette étape est d'estimer la disponibilité moyenne ($\bar{A}$) du service de lubrification sur un cycle annuel de 8760 heures. Ce paramètre est crucial car il détermine la proportion du temps où les mèches de perçage sont protégées contre l'usure thermique accélérée. Notre démarche repose sur la quantification de deux types d'indisponibilités : d'une part, les nettoyages partiels suite à des obstructions, dont la fréquence est estimée par un processus de Poisson non-homogène (NHPP) basé sur les paramètres de Weibull ($\beta, \eta$) car les réparations sont considérées comme minimales (modèle ABAO) ; d'autre part, l'opération de nettoyage complet annuel qui constitue une maintenance préventive systématique (modèle AGAN). En combinant le nombre attendu de pannes avec les durées de remise en état (TTR) calculées précédemment, nous pouvons déduire le temps total d'arrêt du circuit et, par extension, sa disponibilité opérationnelle.
 
 ```{r}
 #| label: question-5-disponibilite
 #| message: false
 #| warning: false
 
-# 1. Horizon temporel
-T_cycle <- 8760
+# 1. Horizon temporel (1 an en heures)
+T_cycle <- 8760 
 
-# 2. Extraction correcte des paramètres Lognormaux (Question 4)
-# On récupère les valeurs estimées par flexsurvreg
-mu_p <- fit_partial$res["meanlog", "est"]
-sigma_p <- fit_partial$res["sdlog", "est"]
-
-mu_c <- fit_full$res["meanlog", "est"]
-sigma_c <- fit_full$res["sdlog", "est"]
-
-# 3. Calcul des MTTR
-mttr_partiel <- exp(mu_p + (sigma_p^2 / 2))
-mttr_complet <- exp(mu_c + (sigma_c^2 / 2))
-
-# 4. Calcul du nombre attendu de pannes (NHPP)
+# 2. Calcul du nombre de pannes attendues (Intensité cumulée NHPP)
+# Utilise beta_lub et eta_lub de la Question 3
 nb_pannes_attendues <- (T_cycle / eta_lub)^beta_lub
 
-# 5. Calcul des indisponibilités totales
-D_corrective <- nb_pannes_attendues * mttr_partiel
-D_preventive <- 1 * mttr_complet
+# 3. Calcul des indisponibilités annuelles cumulées
+# Temps perdu par les nettoyages partiels (nb pannes * MTTR partiel)
+indispo_corrective <- nb_pannes_attendues * exp(mu_partial + (sigma_partial^2 / 2))
 
-# 6. Calcul de la Disponibilité Moyenne (A_barre)
-dispo_moyenne <- (T_cycle - (D_corrective + D_preventive)) / T_cycle
+# Temps perdu par le nettoyage complet annuel (1 intervention * MTTR full)
+indispo_preventive <- 1 * mttr_full
 
-# Affichage des résultats
-cat("--- Synthèse de la Disponibilité Annuelle ---\n")
-cat("Nombre attendu de nettoyages partiels :", round(nb_pannes_attendues, 2), "\n")
-cat("Temps de maintenance corrective total :", round(D_corrective, 2), "heures\n")
-cat("Temps de maintenance préventive total :", round(D_preventive, 2), "heures\n")
-cat("Disponibilité moyenne (A_bar)         :", round(dispo_moyenne, 6), "\n")
+total_indispo <- indispo_corrective + indispo_preventive
+
+# 4. Calcul de la disponibilité moyenne (A_barre)
+dispo_moyenne_lub <- (T_cycle - total_indispo) / T_cycle
+
+# 5. Affichage des résultats
+cat("--- SYNTHÈSE DISPONIBILITÉ LUBRIFICATION ---\n")
+cat("Nombre de pannes (obstructions) attendues :", round(nb_pannes_attendues, 2), "\n")
+cat("Total indisponibilité annuelle du circuit :", round(total_indispo, 2), "heures\n")
+cat("--------------------------------------------\n")
+cat("DISPONIBILITÉ MOYENNE (A_barre)           :", round(dispo_moyenne_lub, 6), "\n")
+cat("Proportion du temps lubrifié              :", round(dispo_moyenne_lub * 100, 2), "%\n")
 ```
 
-L'analyse combinée du modèle NHPP ($\beta = 1,236$) et des lois lognormales permet de calculer une disponibilité moyenne $\bar{A}$ réaliste sur 8 760 heures, intégrant à la fois l'usure progressive du circuit et l'impact des maintenances correctives et préventives. Cette valeur de $\bar{A}$ servira de pivot pour modéliser l'accélération de l'usure des mèches lors des phases d'indisponibilité du système de lubrification.
+Les résultats confirment la très haute performance du plan de maintenance actuel pour le système de lubrification. Avec un nombre de pannes attendu de 1,95 par an, le circuit ne subit en moyenne que deux obstructions majeures au cours d'un cycle annuel de production. L'indisponibilité totale cumulée, incluant le nettoyage préventif complet, s'élève à seulement 6,98 heures par an. Cela se traduit par une disponibilité moyenne de 99,92 %. D'un point de vue industriel, ce chiffre indique que le système remplit parfaitement sa fonction de soutien : le risque que les têtes de perçage fonctionnent sans lubrifiant est inférieur à 0,1 % du temps total. Cette valeur extrêmement élevée suggère que la stratégie actuelle (correctif au fil de l'eau et préventif annuel) est optimale et qu'un investissement supplémentaire pour accroître la fiabilité du circuit de lubrification ne serait pas rentable au regard du gain de disponibilité marginal.
 
 ------------------------------------------------------------------------
 
 ## Point 2
 
-Le système de lubrification subit un encrassement progressif ($\beta > 1$), ce qui augmente la fréquence des pannes (nettoyages partiels) au fil du temps. Actuellement, un seul nettoyage complet est effectué par an ($k=1$). L'enjeu est de déterminer si multiplier ces interventions lourdes (politique préventive **AGAN**) permet de réduire le coût global en limitant le nombre de pannes imprévues (politique corrective **ABAO**) et l'indisponibilité associée.
-
-L'arbitrage se fait entre :
-* **Le coût d'un nettoyage complet** : 900 € de maintenance + 8h d'arrêt de production (soit $8 \times 1500 = 12\,000$ € d'indisponibilité).
-* **Le coût des nettoyages partiels** : 250 € par intervention + 1,5h d'arrêt moyen par panne.
+L'objectif de cette étude est de déterminer la fréquence optimale de maintenance préventive ($k$ nettoyages complets par an) afin de minimiser le coût total d'exploitation du système de lubrification. Le modèle de coût intègre deux composantes contradictoires : le coût du préventif (fixé à 6 900 € par intervention, incluant les 4h de perte de production à 1 500 €/h) et le coût du correctif (250 € par nettoyage partiel, sans arrêt de station). Puisque les nettoyages partiels sont des réparations minimales, nous utilisons la loi de Poisson non-homogène (NHPP) pour estimer l'occurrence des pannes entre deux nettoyages complets. L'optimisation consiste à trouver la valeur de $k$ qui minimise la somme de ces coûts sur un horizon annuel de 8 760 heures.
 
 ```{r}
-# --- Optimisation du Système de Lubrification (Point 2) ---
-# 1. Utilisation des MTTR calculés à la Question 5
-# (Vérifie que mu_p, sigma_p etc. sont bien chargés)
+# --- Optimisation de la Fréquence de Maintenance (Lubrification) ---
 
-# Coûts directs
-cout_complet_fixe <- 900 
-cout_partiel_fixe <- 250 
+# 1. Paramètres (Tableau 2)
+cost_prod_h <- 1500
+cost_full   <- 900    # Préventif
+t_stop_full <- 4      # Arrêt station
+cost_part   <- 250    # Correctif
+t_stop_part <- 0      # Pas d'arrêt station selon Tableau 2
 
-# 2. Fonction de coût annuel
-lub_annual_cost <- function(k) {
+# 2. Fonction de coût annuel global
+# k : nombre de nettoyages complets par an
+lub_total_annual_cost <- function(k) {
+  # Durée d'un cycle entre deux nettoyages parfaits (en heures)
   T_cycle <- 8760 / k
   
-  # Nombre de pannes attendues (NHPP)
-  n_pannes_cycle <- (T_cycle / eta_lub)^beta_lub
+  # Coût d'une opération préventive (Full)
+  # Inclut les pièces et la perte de production
+  Cp <- cost_full + (t_stop_full * cost_prod_h)
   
-  # Coût Cycle = (Maintenance Préventive + Indispo Préventive) + 
-  #              (Pannes * (Maintenance Corrective + Indispo Corrective))
-  cout_prev <- cout_complet_fixe + (mttr_complet * cout_arret_h)
-  cout_corr <- n_pannes_cycle * (cout_partiel_fixe + (mttr_partiel * cout_arret_h))
+  # Espérance du nombre de pannes par cycle (Intensité cumulée NHPP)
+  # On utilise beta_lub et eta_lub calculés en Q3
+  E_N <- (T_cycle / eta_lub)^beta_lub
   
-  return((cout_prev + cout_corr) * k)
+  # Coût des pannes sur un cycle (Correctif)
+  # Note : t_stop_part = 0, donc pas de perte de production ici
+  Cc_total <- E_N * (cost_part + (t_stop_part * cost_prod_h))
+  
+  # Coût annuel = (Coût préventif + Coût correctifs cumulés) * nombre de cycles
+  return((Cp + Cc_total) * k)
 }
 
-# 3. Calcul et affichage
-k_values <- 1:5
-annual_costs <- sapply(k_values, lub_annual_cost)
-k_opti <- k_values[which.min(annual_costs)]
+# 3. Recherche de l'optimum (k peut être un nombre réel pour plus de précision)
+opti_k <- optimize(lub_total_annual_cost, interval = c(0.5, 12))
 
-cat("--- Résultats Optimisation Lubrification ---\n")
-cat("Coût annuel pour k=1 :", round(annual_costs[1], 2), "€\n")
-cat("Fréquence optimale k* :", k_opti, "\n")
-cat("Gain annuel réalisé  :", round(annual_costs[1] - min(annual_costs), 2), "€\n")
+k_star <- opti_k$minimum
+cost_min <- opti_k$objective
+
+# 4. Comparaison avec la politique actuelle (k=1)
+cost_current <- lub_total_annual_cost(1)
+
+# 5. Affichage
+cat("--- RÉSULTATS OPTIMISATION SYSTÈME LUBRIFICATION ---\n")
+cat("Fréquence optimale (k*)       :", round(k_star, 2), "nettoyages/an\n")
+cat("Intervalle entre nettoyages   :", round(8760/k_star, 0), "heures\n")
+cat("Coût annuel à l'optimum       :", round(cost_min, 2), "€\n")
+cat("Coût politique actuelle (k=1) :", round(cost_current, 2), "€\n")
+cat("Gain annuel espéré            :", round(cost_current - cost_min, 2), "€\n")
 ```
 
-L'optimisation du système de lubrification conclut à une fréquence idéale de k* = 1 nettoyage complet par an (coût minimal de 9 736,61 €), confirmant que la stratégie actuelle est déjà l'optimum économique. Bien que l'usure soit réelle ($\beta \approx 1,73$), elle n'est pas assez rapide pour rentabiliser un second arrêt préventif, dont le coût d'indisponibilité (12 000 € pour 8h) surpasse les économies réalisées sur les pannes évitées. Toutefois, un passage à k = 2 pourrait être envisagé dans une vision globale pour protéger les mèches et le moteur en augmentant la disponibilité moyenne $\bar{A}$, réduisant ainsi le temps passé en régime d'usure accélérée.
+Les résultats de l'optimisation mettent en évidence une fréquence de maintenance préventive idéale de $k^ = 0,5$ nettoyage par an*, soit une intervention tous les deux ans (17 518 heures). Ce résultat, bien que surprenant au premier abord, s'explique par la structure des coûts du système : le coût d'un nettoyage complet est massivement dominé par la perte de production (6 000 € d'arrêt pour seulement 900 € de pièces), tandis que le nettoyage partiel correctif ne coûte que 250 € et n'interrompt pas la station. L'arbitrage économique privilégie donc l'acceptation de quelques pannes de lubrification supplémentaires plutôt que le déclenchement d'opérations préventives lourdes et paralysantes. Ce passage d'une politique annuelle à une politique bisannuelle permettrait de réaliser un gain substantiel d'environ 2 863 € par an et par station. Pour l'industriel, si la politique actuelle ($k=1$) apparaît comme « sur-préventive » d'un point de vue strictement financier, une validation technique reste nécessaire afin de s'assurer que l'absence temporaire de lubrifiant n'altère pas prématurément d'autres composants, ce qui annulerait les économies réalisées.
 
 ------------------------------------------------------------------------
 
 # Analyse de la Dégradation Globale des Mèches
 
-## Point 1
-
 ### Question 6 : Chaînes de Markov et Probabilités Stationnaires
 
-Cette section définit les deux cinétiques de dégradation des mèches via des Chaînes de Markov en temps continu (CTMC) et calcule leurs distributions stationnaires respectives.
-
-### Modélisation par États de Dégradation (CTMC)
-
-Le raisonnement repose sur une **Chaîne de Markov en temps continu (CTMC)** à 5 états (de l'état 1 "neuf" à l'état 5 "défaillant"). Contrairement à un modèle binaire (marche/arrêt), cette approche permet de quantifier la progression de l'usure. On utilise deux matrices génératrices, $Q$ (régime standard) et $Q'$ (régime accéléré), où chaque coefficient $q_{ij}$ représente la vitesse instantanée de passage d'un niveau d'usure à l'autre.
-
-### Recherche du Régime Stationnaire ($\pi$)
-
-L'objectif est de déterminer le vecteur de probabilités stationnaires $\pi$, qui indique la proportion de temps que la mèche passe dans chaque état d'usure à long terme. Ce vecteur doit satisfaire deux conditions théoriques : \* **L'équilibre des flux :** $\pi^T Q = 0$ (ce qui entre dans un état est égal à ce qui en sort). \* **La conservation des probabilités :** $\sum \pi_i = 1$ (la mèche est obligatoirement dans l'un des 5 états).
-
-### Transformation en Système Linéaire Résoluble
-
-Pour que l'ordinateur puisse résoudre ce problème, on transforme les équations matricielles en un système de type $A \cdot x = b$ : \* **Levée de la singularité :** La matrice $Q$ seule est singulière (non inversible). Le raisonnement consiste à remplacer la dernière ligne de $Q^T$ par une ligne de 1 pour imposer mathématiquement la condition de normalisation ($\sum \pi_i = 1$). \* **Construction du vecteur cible :** On définit un vecteur $b$ composé de zéros (pour l'équilibre des flux) et d'un "1" final (pour la somme des probabilités). \* **Résolution numérique :** L'inversion de la matrice ainsi modifiée permet d'isoler $x$ (le vecteur $\pi$) et d'obtenir la répartition statistique exacte du temps de vie de l'outil.
+L'objectif de cette étape est de modéliser la dynamique de dégradation des mèches de perçage en utilisant des chaînes de Markov en temps continu (CTMC). Le système est défini par cinq états allant de « neuve » (1) à « cassée » (5). Nous distinguons deux régimes de fonctionnement : le mode standard ($Q$), où la lubrification est active, et le mode accélére ($Q'$), correspondant aux phases d'obstruction du circuit. Les matrices de transition intègrent les taux de dégradation physique ainsi qu'un taux de réparation $\mu_m = 1,5$ h⁻¹ (équivalent aux 40 minutes nécessaires pour le remplacement d'une mèche). Pour chaque scénario, nous calculons le vecteur des probabilités stationnaires $\pi$ en résolvant le système d'équilibre $\pi Q = 0$ sous la contrainte de normalisation $\sum \pi_i = 1$. Cette approche permet de quantifier la proportion de temps que l'outil passe dans chaque stade d'usure à long terme.
 
 ```{r}
-#| label: question-6-markov-fixed
+#| label: question-6-markov
 #| message: false
 #| warning: false
 
 # 1. Chargement et nettoyage des matrices
 # On s'assure de ne prendre que les 5 premières lignes et colonnes pour éviter les colonnes fantômes d'Excel
-Q_std <- as.matrix(read_excel(path, sheet = "drillbit_std", col_names = FALSE))[1:5, 1:5]
-Q_acc <- as.matrix(read_excel(path, sheet = "drillbit_acc", col_names = FALSE))[1:5, 1:5]
+Q_std <- as.matrix(read_excel(path, sheet = "drillbit_std", col_names = FALSE, skip = 1))[1:5, 1:5]
+Q_acc <- as.matrix(read_excel(path, sheet = "drillbit_acc", col_names = FALSE, skip = 1))[1:5, 1:5]
 
 # Conversion explicite en numérique pour éviter tout conflit de type
 class(Q_std) <- "numeric"
@@ -480,24 +437,35 @@ pi_std <- solve_stationary(Q_std)
 pi_acc <- solve_stationary(Q_acc)
 
 # 4. Affichage
-cat("--- Probabilités Stationnaires : Conditions Standard (Q) ---\n")
+# 4. Affichage des Matrices de Transition (Q)
+cat("====================================================\n")
+cat("MATRICE Q : CONDITIONS STANDARD (drillbit_std)\n")
+cat("====================================================\n")
+print(round(Q_std, 5))
+
+cat("\n====================================================\n")
+cat("MATRICE Q' : CONDITIONS ACCÉLÉRÉES (drillbit_acc)\n")
+cat("====================================================\n")
+print(round(Q_acc, 5))
+
+# 5. Affichage des Probabilités Stationnaires (pi)
+cat("\n--- PROBABILITÉS STATIONNAIRES : STANDARD ---\n")
 print(round(pi_std, 5))
-cat("\n--- Probabilités Stationnaires : Conditions Accélérées (Q') ---\n")
+
+cat("\n--- PROBABILITÉS STATIONNAIRES : ACCÉLÉRÉES ---\n")
 print(round(pi_acc, 5))
 ```
 
-L'étude des dynamiques de dégradation par chaînes de Markov en temps continu permet de comparer l'état stationnaire des mèches sous deux régimes de fonctionnement. En conditions standard (matrice Q_std), la mèche passe la majeure partie de son temps en dégradation intermédiaire, avec une probabilité de rupture de 18,3% en régime permanent. À l'inverse, en conditions accélérées (matrice Q_acc), l'analyse révèle une accumulation beaucoup plus rapide dans l'état 3 (64,6%), indiquant une usure structurelle accélérée malgré une probabilité de rupture instantanée affichée à 5,8%. Cette comparaison justifie le couplage de ces cinétiques à la disponibilité réelle du système de lubrification pour évaluer le risque global.
+L'analyse des probabilités stationnaires met en lumière l'impact critique du système de lubrification sur la santé des mèches. En conditions standard, la mèche présente une stabilité remarquable : elle passe plus de 95 % de son temps dans les trois premiers états de dégradation, avec une probabilité de rupture (État 5) extrêmement faible de 0,4 %. À l'inverse, en conditions accélérées, bien que la mèche semble statistiquement stagner davantage dans les états initiaux (États 1 et 2) en raison de la rapidité des transitions suivantes, la probabilité de se trouver dans l'état "Cassée" bondit à 4,7 %. Cela représente une multiplication du risque de rupture par un facteur de près de 12. Cette dégradation fulgurante confirme que sans lubrification, la mèche traverse les stades d'usure modérée et sévère presque instantanément pour atteindre la rupture, augmentant ainsi drastiquement la fréquence des arrêts de production pour remplacement.
 
 
 ### Question 7 : Modèle de Risques cumulés et Matrice de Transition Globale
 
-Le raisonnement s'appuie sur la disponibilité moyenne (Alub) du système de lubrification. Ce coefficient définit la proportion du temps où la mèche suit la cinétique standard (Qstd), tandis que la fraction complémentaire (1 - Alub) correspond aux phases de dégradation accélérée (Qacc) dues aux pannes ou maintenances.
+L'enjeu de cette question est de construire un modèle unifié capable de représenter la dégradation "réelle" d'une mèche sur une année complète. 
 
-Pour obtenir la matrice globale (Qglob), le code applique une combinaison linéaire pondérée : Qglob = (Alub \* Qstd) + ((1 - Alub) \* Qacc). Cette approche, issue du modèle de risques cumulés, permet de calculer un taux de transition moyen "espéré" qui intègre statistiquement l'alternance entre les deux régimes environnementaux sur le long terme.
+La mèche n'évolue pas uniquement selon le régime standard ou le régime accéléré, mais bascule de l'un à l'autre en fonction de l'état du système de lubrification. Puisque la disponibilité du système de lubrification ($A_{lub} \approx 99,92\%$) a été calculée de manière indépendante, nous pouvons utiliser le théorème des probabilités totales appliqué aux intensités de transition. La méthode consiste à calculer une matrice de transition globale $\bar{Q}$ par combinaison linéaire :$\bar{Q} = A_{lub} \cdot Q_{std} + (1 - A_{lub}) \cdot Q_{acc}$
 
-Une fois Qglob définie, la fonction solve_stationary calcule le vecteur de probabilités stationnaires (πglob). Ce vecteur détermine la répartition réelle du temps passé par la mèche dans chaque état (de "Neuve" à "Cassée"), en tenant compte de la fiabilité imparfaite du système de lubrification.
-
-Ce vecteur πglob constitue la donnée d'entrée pour évaluer le risque de casse moteur. En effet, la probabilité que la mèche se trouve dans un état de dégradation avancée conditionne directement la fréquence des chocs mécaniques et les coûts de maintenance associés.
+Cette approche par "risques additifs" permet d'obtenir une matrice unique qui intègre le risque supplémentaire lié aux phases de dysfonctionnement du lubrifiant, tout en conservant les propriétés mathématiques d'une chaîne de Markov (somme des lignes égale à zéro).
 
 ```{r}
 #| label: question-7-combinaison-matrices
@@ -506,7 +474,7 @@ Ce vecteur πglob constitue la donnée d'entrée pour évaluer le risque de cass
 
 # 1. Utilisation de la disponibilité calculée à la Question 5
 # A_lub (dispo_moyenne) représente la fraction de temps en régime standard
-A_lub <- dispo_moyenne
+A_lub <- dispo_moyenne_lub
 
 # 2. Calcul de la matrice globale par combinaison linéaire (Risques additifs)
 # Qglob = A_lub * Q_std + (1 - A_lub) * Q_acc
@@ -525,62 +493,59 @@ names(pi_glob) <- etats
 print(round(pi_glob, 6))
 ```
 
-La matrice Qglob repose sur un modèle de risques additifs pondéré par la disponibilité du système de lubrification (Alub ≈ 99,925%), fusionnant les régimes d'usure standard et accéléré. L'analyse de la distribution stationnaire πglob montre que l'outil passe l'essentiel de sa vie en dégradation Modérée (43,15%) et Sévère (33,74%), avec un état de rupture (Cassée) atteint 17,97% du temps en régime permanent. Cette distribution intègre statistiquement l'impact des pannes de lubrification et sert de base au calcul des coûts de maintenance annuels.
+L'analyse de la distribution stationnaire globale ($\pi_{glob}$) démontre que, bien que la station fonctionne sous un régime de dégradation standard la grande majorité du temps (99,92 %), l'intégration des phases d'indisponibilité du système de lubrification modifie sensiblement le comportement à long terme de l'outil. On observe que la probabilité de l'état « Cassée » (0,4016 %) est statistiquement plus élevée que celle du régime standard pur (0,397 %). Cette augmentation, bien que numériquement faible, illustre la sévérité du mode de fonctionnement dégradé : les courtes fenêtres de temps sans lubrification agissent comme des accélérateurs d'usure qui « poussent » prématurément la mèche vers la rupture. Avec une probabilité stationnaire d'indisponibilité de 0,4 %, la station perd environ 35 heures de production par an uniquement pour le remplacement des mèches. Ce modèle de transition pondéré confirme donc que la performance de la station de perçage est intrinsèquement liée à la fiabilité de son système de lubrification, validant ainsi l'importance d'une maintenance coordonnée entre ces deux sous-systèmes.
 
 ## Point 2
 
-L'enjeu ici est de comparer deux politiques de maintenance basées sur l'état de dégradation observé :
-1.  **Maintenance Corrective (Run-to-failure)** : On remplace la mèche uniquement lorsqu'elle casse (État 5). C'est risqué car une mèche qui casse en plein perçage peut endommager le moteur de la station.
-2.  **Maintenance Préventive Conditionnelle** : On remplace la mèche dès qu'elle atteint l'usure "Sévère" (État 4). On "gaspille" un peu de durée de vie, mais on élimine presque totalement le risque pour le moteur.
+L'objectif de cette étude est d'évaluer l'efficacité économique de deux politiques de maintenance distinctes pour les mèches de perçage, traitées indépendamment des autres composants de la station. Le Scénario A (Maintenance Corrective) modélise la stratégie actuelle où le remplacement n'intervient qu'après la rupture (état 5), engendrant un coût total de 902,50 € par intervention (incluant le surcoût de casse et la perte de production de la tête de perçage). À l'inverse, le Scénario B (Maintenance Préventive) propose un remplacement systématique dès l'entrée dans l'état de dégradation « sévère » (état 4), ramenant le coût à 702,50 € en évitant les pénalités liées à la défaillance. Pour comparer ces options, nous calculons le coût horaire attendu en multipliant la fréquence de remplacement, déduite des probabilités stationnaires globales et des taux de sortie des états critiques par le coût total de l'intervention associée à chaque stratégie.
 
 
 ```{r}
 # --- Optimisation des Mèches de Perçage (Point 2) ---
 
-# 1. Paramètres de coûts et durées (Données constructeur/historiques)
-cout_meche <- 120
-cout_moteur_casse <- 4500  # Coût si la mèche casse en service (réparation moteur)
-cout_arret_h <- 1500
+# 1. Paramètres du Tableau 3 et énoncé
+cost_perte_h_tete <- 750    # Coût de l'arrêt d'une seule tête
+t_stop_meche      <- 0.67   # 40 minutes
 
-# Durées de changement (TTR)
-ttr_prev <- 0.5    # 30 min pour un changement planifié (État 4)
-ttr_corr <- 2.0    # 2h si casse (État 5) : extraction mèche cassée + vérif moteur
+cout_total_P <- 200 + (t_stop_meche * cost_perte_h_tete) # 702.5€
+cout_total_C <- 400 + (t_stop_meche * cost_perte_h_tete) # 902.5€
 
-# 2. Scénario A : Remplacement à la rupture (État 5)
-# On utilise pi_glob[5] (probabilité d'être à l'état "Cassée")
-# Le coût moyen par heure est le ratio : (Espérance Coût) / (Espérance Temps)
-# Ici, on simplifie par l'approche stationnaire :
-gain_vie_A <- 1 / abs(diag(Q_glob)[5]) # Temps moyen passé dans l'état avant saut
-cout_horaire_A <- (cout_meche + cout_moteur_casse + (ttr_corr * cout_arret_h)) * pi_glob["Cassée"]
+# 2. Définition des options (Remplacer à l'état 2, 3, 4 ou attendre 5)
+etats_test <- 2:5
+couts_horaires <- numeric(length(etats_test))
+names(couts_horaires) <- c("Préventif_E2", "Préventif_E3", "Préventif_E4", "Correctif_E5")
 
-# 3. Scénario B : Remplacement préventif à l'état "Sévère" (État 4)
-# On considère que l'on change la mèche dès l'entrée dans l'état 4.
-# Le risque de casse moteur tombe à presque 0.
-cout_horaire_B <- (cout_meche + (ttr_prev * cout_arret_h)) * (pi_glob["Sévère"] + pi_glob["Cassée"])
+# 3. Boucle de calcul
+for(i in 2:4) {
+  # Fréquence de remplacement à l'état i = pi_i * taux de sortie vers i+1
+  frequence <- pi_glob[i] * abs(Q_glob[i,i])
+  couts_horaires[i-1] <- frequence * cout_total_P
+}
 
-# 4. Affichage des résultats
-cat("--- OPTIMISATION DES MÈCHES DE PERÇAGE ---\n")
-cat("Coût horaire Scénario A (Attendre la casse) :", round(cout_horaire_A, 2), "€/h\n")
-cat("Coût horaire Scénario B (Changer à l'état 4) :", round(cout_horaire_B, 2), "€/h\n")
-cat("------------------------------------------\n")
-cat("Différence (A - B) :", round(cout_horaire_A - cout_horaire_B, 2), "€/h\n")
+# Cas correctif pur (E5)
+couts_horaires[4] <- pi_glob[5] * abs(Q_glob[5,5]) * cout_total_C
+
+# 4. Identification du meilleur
+optimum_etat <- names(which.min(couts_horaires))
+gain_max <- max(couts_horaires) - min(couts_horaires)
+
+cat("--- OPTIMISATION FINALE DES MÈCHES ---\n")
+print(round(couts_horaires, 4))
+cat("--------------------------------------\n")
+cat("LA MEILLEURE STRATÉGIE EST :", optimum_etat, "\n")
+cat("Gain annuel par rapport au pire scénario :", round(gain_max * 8760, 2), "€/an\n")
 ```
 
-L'optimisation des mèches de perçage démontre la supériorité de la maintenance conditionnelle sur la maintenance corrective, avec une réduction massive du coût horaire qui passe de 1372,74 €/h à 450,47 €/h. En remplaçant systématiquement l'outil dès l'état de dégradation sévère (état 4), l'entreprise économise 922,26 € par heure de fonctionnement en évitant les conséquences catastrophiques d'une rupture en service. Bien que cette stratégie augmente la fréquence de remplacement d'un consommable peu coûteux (120 €), elle élimine les frais de réparation du moteur (4 500 €) et divise par quatre la durée d'indisponibilité de la station, sécurisant ainsi la rentabilité globale de la ligne de production.
+L'étude comparative des stratégies de remplacement pour les mèches de perçage démontre qu'une politique de maintenance préventive systématique à l'état 4 (Sévère) est la solution optimale. Les coûts horaires simulés chutent de 5,44 €/h en stratégie corrective pure (attendre la casse) à seulement 1,80 €/h en intervenant dès l'entrée dans l'état 4. Ce gain s'explique par le fait que l'état 4 est le point de bascule critique : le risque de transition immédiate vers la rupture (état 5) y est maximal. En acceptant de remplacer une pièce qui n'est pas encore brisée (coût réduit de 200 €), on évite les surcoûts liés à la casse (400 €) et les risques de dommages collatéraux sur la tête de perçage.
 
+Le gain financier identifié est massif : l'adoption de la stratégie Préventif_E4 permet de réaliser une économie annuelle de 31 891,19 € par rapport au pire scénario (le correctif pur). À l'inverse, un remplacement trop précoce (aux états 2 ou 3) s'avère moins efficace (4,12 €/h et 3,27 €/h respectivement), car il ne permet pas de rentabiliser suffisamment la durée de vie utile de l'outil. Cette analyse confirme qu'une surveillance précise des états de dégradation, plutôt qu'une maintenance subie, est un levier majeur de rentabilité pour la station de perçage.
 ----
 
 # Moteur
 
 ## Question 8 : Caractérisation du vieillissement (Loi de Weibull)
 
-L'objectif est de modéliser le temps avant défaillance ($TTF$) du moteur pour isoler l'effet de l'usure mécanique.
-
-Le processus débute par l'extraction et le nettoyage des données de temps avant défaillance (TTF). Les données sont triées par ordre croissant pour obtenir les statistiques d'ordre t(1) \< t(2) \< ... \< t(n), représentant la chronologie des pannes successives nécessaires à l'analyse de survie.
-
-Avant toute modélisation, la nature du taux de défaillance est identifiée par la Transformée TTT (Total Time on Test) normalisée. - Calcul : Pour chaque défaillance j, on cumule le temps de fonctionnement de tous les systèmes encore exposés au risque. - Interprétation : Si la courbe TTT est concave (au-dessus de la diagonale), le système présente un taux de défaillance croissant (IFR). Ce vieillissement justifie mathématiquement l'usage d'une loi de Weibull avec un paramètre de forme β \> 1.
-
-Une fois le modèle validé, les paramètres β (forme) et η (échelle) sont estimés : - Rangs médians : Utilisation de la formule (j - 0,3) / (n + 0,4) pour estimer la fonction de répartition F(t) de manière robuste. - Linéarisation : La fonction de fiabilité est transformée en équation de droite : ln(-ln(1 - F(t))) = β*ln(t) - β*ln(η). - Régression Linéaire : La pente de la droite de régression fournit directement β (intensité de l'usure), tandis que l'ordonnée à l'origine permet de déduire η (durée de vie caractéristique) par transformation exponentielle.
+L'objectif de cette étude est de caractériser le temps avant défaillance ($TTF$) dû au vieillissement intrinsèque du moteur de perçage, en faisant abstraction des chocs externes liés à l'utilisation des mèches. Pour ce faire, nous exploitons les données de tests en environnement contrôlé fournies dans l'onglet drill_motor. Nous avons opté pour une modélisation par la loi de Weibull, particulièrement adaptée pour décrire les phénomènes d'usure grâce à sa flexibilité paramétrique. La démarche repose sur un nettoyage préalable des données, suivi d'un ajustement statistique par la méthode du Maximum de Vraisemblance (MLE) via la bibliothèque flexsurv. Cette approche permet d'extraire avec précision le paramètre de forme ($\beta$), qui qualifie la nature de la défaillance, et le paramètre d'échelle ($\eta$), qui définit la durée de vie caractéristique de l'équipement.
 
 ```{r}
 #| label: analyse-moteur-flexsurv
@@ -608,30 +573,179 @@ cat("Paramètre de forme (beta) :", round(beta_mle, 4), "\n")
 cat("Paramètre d'échelle (eta) :", round(eta_mle, 2), " heures\n")
 ```
 
-L'analyse des temps avant défaillance (nbHours) via la transformée TTT révèle une courbe concave située au-dessus de la diagonale, confirmant un régime de défaillance de type IFR (Increasing Failure Rate). L'estimation par linéarisation valide ce diagnostic avec un paramètre de forme β ≈ 2,40, prouvant un vieillissement mécanique prononcé où la probabilité de panne s'accroît avec le temps. Le paramètre d'échelle η ≈ 13 416 heures définit la durée de vie caractéristique du moteur. Ces résultats justifient mathématiquement le passage d'une maintenance corrective à une politique de remplacement préventif systématique pour anticiper l'usure critique.
+L'ajustement statistique réalisé sur les données 'drill_motor' par la méthode du Maximum de Vraisemblance (MLE) permet de proposer une loi de Weibull pour caractériser le vieillissement du système de motorisation, indépendamment des chocs extérieurs.
+
+La distribution paramétrée est définie par :
+- Un paramètre de forme (beta) = 2,3586
+- Un paramètre d'échelle (eta) = 13 439,77 heures
+
+La valeur de beta étant supérieure à 1, le modèle confirme la présence d'un mécanisme de dégradation progressive (zone de fatigue du moteur). Cette distribution représente la fiabilité intrinsèque du moteur (R_usure(t)). Pour obtenir la fiabilité globale du système de perçage, ce modèle devra être combiné ultérieurement avec le modèle de chocs successifs lié à l'état de la mèche (p(i)).
 
 
+## Question 9 : Calcul de la Fiabilité Globale du Moteur à 500 heures
+
+L'objectif de cette étape est de construire un modèle de fiabilité opérationnelle pour le moteur en combinant son vieillissement intrinsèque avec les risques accidentels liés à l'état des mèches. Nous utilisons un modèle à risques concurrents, où la fiabilité globale $R_{tot}(t)$ est le produit de la fiabilité d'usure (loi de Weibull identifiée à la Q8) et de la fiabilité face aux chocs (loi exponentielle). Pour intégrer l'influence de la mèche, nous calculons d'abord la probabilité moyenne de rupture par choc $\bar{p}$ en pondérant les probabilités spécifiques à chaque état $p(i)$ par la distribution stationnaire des mèches en service ($\pi_{actifs}$). Le taux de défaillance par choc est alors défini par $\lambda_{chocs} = \nu \cdot \bar{p}$. Cette approche permet d'estimer la probabilité de survie du moteur à un instant $t$ (ici 500h) en tenant compte de la réalité statistique de l'usure des outils qu'il actionne.
+
+```{r}
+#| label: question-9-risques-concurrents
+#| message: false
+#| warning: false
+# 1. Calcul de p(i) : Probabilité de rupture par choc selon l'état d'usure
+p_func <- function(i) {
+  if(i == 1) return(0)
+  # Formule stricte : 5e-3 * exp(3.8 * ln(0.6 * (i-1)))
+  return(5e-3 * exp(3.8 * log(0.6 * (i-1))))
+}
+p_vec <- sapply(1:5, p_func)
+
+# 2. Normalisation de pi sur les états actifs (1 à 4)
+# On ne prend pas l'état 5 car la mèche ne perce pas quand elle est cassée
+pi_actifs <- pi_glob[1:4] / sum(pi_glob[1:4])
+p_barre <- sum(pi_actifs * p_vec[1:4])
+
+# 3. Calcul des fiabilités à t = 500h
+nu <- 1e-3  # Fréquence des chocs (donnée énoncé)
+
+# Fiabilité intrinsèque (Usure Weibull du bloc moteur)
+R_usure <- exp(-(500 / eta_mle)^beta_mle)
+
+# Fiabilité induite (Chocs accidentels - Loi exponentielle)
+# lambda_choc = nu * p_barre
+R_chocs <- exp(-nu * p_barre * 500)
+
+# Fiabilité globale (Modèle à risques concurrents : Produit des fiabilités)
+R_moteur_global <- R_usure * R_chocs
+P_defaillance <- 1 - R_moteur_global
+
+# 4. Affichage des résultats
+cat("--- ANALYSE DE LA FIABILITÉ GLOBALE (t = 500h) ---\n")
+cat("Probabilité moyenne de rupture par choc (p_bar) :", round(p_barre, 5), "\n")
+cat("Fiabilité liée à l'usure (Weibull)            :", round(R_usure, 5), "\n")
+cat("Fiabilité liée aux chocs (Exponentielle)     :", round(R_chocs, 5), "\n")
+cat("---------------------------------------------------\n")
+cat("Fiabilité globale du moteur                  :", round(R_moteur_global, 5), "\n")
+cat("Probabilité de défaillance cumulée à 500h    :", round(P_defaillance, 6), "\n")
+```
+
+L'analyse de la fiabilité globale à 500 heures démontre que le moteur est soumis à un régime de risques concurrents où les défaillances accidentelles prédominent largement sur l'usure naturelle. Bien que la fiabilité intrinsèque du bloc moteur reste très élevée (99,957 %), c'est la fiabilité induite par les chocs liés aux mèches qui impacte le plus significativement le système, chutant à 99,781 %. Avec une probabilité moyenne de rupture par choc ($\bar{p}$) de 0,00438, ce risque exogène s'avère environ cinq fois plus menaçant que le vieillissement propre de l'organe à cet horizon. La fiabilité globale de 99,739 % confirme ainsi que la survie du moteur dépend moins de sa propre robustesse que de la maîtrise statistique de l'état d'usure des outils qu'il actionne, validant l'aspect critique d'une maintenance préventive sur les mèches pour protéger cet organe noble.
+
+------------------------------------------------------------------------
+
+## Question 10 : Intégration des Dépendances Lubrification-Mèche-Moteur
+
+L'objectif est de quantifier l'effet "cascade" qui lie la fiabilité du système de lubrification à celle du bloc moteur, par l'intermédiaire de l'usure des mèches. Pour ce faire, nous utilisons les matrices fondamentales $N_{std}$ et $N_{acc}$ issues des sous-matrices de transition. Ces matrices nous permettent de calculer le temps moyen de séjour dans chaque état d'usure (1 à 4) avant la rupture. En couplant ces durées avec le taux de choc $\nu \cdot p(i)$, nous calculons l'exposition cumulée au risque de blocage moteur sur l'ensemble du cycle de vie d'une mèche. Cette approche permet de comparer le "danger" représenté par une mèche fonctionnant en régime standard par rapport à une mèche subissant une lubrification défaillante. L'effet cascade est finalement exprimé par un facteur d'augmentation industriel, qui synthétise comment une panne de lubrification se propage et s'amplifie jusqu'à menacer l'intégrité du moteur.
+
+```{r}
+#| label: question-10-simulation-cascade
+#| message: false
+#| warning: false
+# 1. Calcul des matrices fondamentales (Temps passé dans les états d'usure)
+# N_ij = temps moyen passé dans l'état j avant la casse (état 5)
+N_std <- solve(-Q_std[1:4, 1:4])
+N_acc <- solve(-Q_acc[1:4, 1:4])
+
+# 2. Calcul de l'exposition aux chocs par cycle de vie d'une mèche
+# On multiplie le temps moyen dans chaque état par le risque de choc (nu * p)
+risque_cumule_std <- sum(N_std[1, ] * (nu * p_vec[1:4]))
+risque_cumule_acc <- sum(N_acc[1, ] * (nu * p_vec[1:4]))
+
+# 3. Calcul de l'espérance de vie (MTTF) des mèches
+mttf_std <- sum(N_std[1, ])
+mttf_acc <- sum(N_acc[1, ])
+
+# 4. Calcul du taux de risque par heure de PRODUCTION (lambda_moteur)
+# C'est ici que l'effet "cascade" est quantifié pour le moteur
+lambda_prod_std <- risque_cumule_std / mttf_std
+lambda_prod_acc <- risque_cumule_acc / mttf_acc
+
+# 5. Calcul du FACTEUR D'AUGMENTATION INDUSTRIEL
+# On compare le risque sur une durée fixe (ex: 1000h) en tenant compte 
+# du fait que les mèches "accélérées" sont remplacées beaucoup plus souvent.
+facteur_brut_outil <- lambda_prod_acc / lambda_prod_std
+facteur_industriel  <- facteur_brut_outil * (mttf_std / mttf_acc)
+
+# --- AFFICHAGE DES RÉSULTATS POUR LE RAPPORT ---
+cat("\n--- ANALYSE DE L'EFFET CASCADE (Q10) ---\n")
+cat("Durée de vie mèche (Standard)  :", round(mttf_std, 2), "h\n")
+cat("Durée de vie mèche (Accélérée) :", round(mttf_acc, 2), "h\n")
+cat("------------------------------------------\n")
+cat("Risque relatif par outil       : x", round(facteur_brut_outil, 2), "\n")
+cat("FACTEUR DE RISQUE RÉEL (PROD)  : x", round(facteur_industriel, 2), "\n")
+cat("------------------------------------------\n")
+```
+
+L’étude de l’effet cascade révèle une dégradation brutale de la fiabilité opérationnelle dès que le système de lubrification fait défaut. L’espérance de vie d'une mèche (MTTF) s’effondre, passant de 167,41 h en régime standard à seulement 13,52 h en régime accéléré, soit une division par plus de 12 de sa durée de vie utile. Si le risque relatif par outil semble plus faible (0,35), c'est uniquement parce que la mèche casse trop vite pour accumuler autant de chocs qu'en régime normal. Cependant, la donnée cruciale est le Facteur de Risque Réel (x 4,31) : il démontre que pour une même durée de production, le bloc moteur subit 4,3 fois plus de risques de défaillance par choc lorsque la lubrification est absente. Cette accélération s'explique par le fait que les mèches séjournent proportionnellement beaucoup plus longtemps dans des états d'usure critique avant de rompre, transférant ainsi la défaillance du consommable (la mèche) vers l'organe noble (le moteur).
+
+## Point 2 :
+
+### Optimisation de la Maintenance du Bloc Moteur
+
+L'objectif de cette étape est de comparer l'efficacité économique de la politique de maintenance corrective actuelle avec une stratégie de maintenance préventive systématique basée sur l'âge ($T$) pour le bloc motorisation. Pour ce faire, nous intégrons l'ensemble des contraintes opérationnelles : chaque intervention immobilise une tête de perçage pendant 2,5 heures (2h de remplacement et 30 min de manipulation), générant une perte de production de 1 875 € ($2,5 \times 750 €/h$). Le coût total d'un remplacement s'élève ainsi à 3 275 € en préventif, contre 3 475 € en correctif en raison des frais supplémentaires de détection et de ré-usinage. En nous appuyant sur la loi de Weibull identifiée précédemment, nous modélisons le coût moyen par heure $C(T)$ comme le ratio entre l'espérance du coût d'un cycle pondéré par la fiabilité $R(T)$ et la durée moyenne de bon fonctionnement (obtenue par l'intégration numérique de la fiabilité jusqu'à l'âge $T$). Cette étude vise à identifier numériquement l'âge de remplacement optimal $T^*$ qui minimise ce coût horaire, permettant ainsi de valider si un remplacement planifié est plus rentable que le maintien d'une stratégie subie de "panne au premier défaut".
+
+```{r}
+# --- Optimisation du Bloc Moteur (Point 2) ---
+
+# 1. Paramètres de coûts (Tableau 4)
+# Perte de production : 750€/h (car une seule tête s'arrête, comme pour les mèches)
+perte_h <- 750 
+ttr_moteur <- 2.5 # 2h remplacement + 0.5h démontage/remontage
+
+cost_preventif <- 1400 + (ttr_moteur * perte_h) # 1400 + 1875 = 3275€
+cost_correctif <- 1600 + (ttr_moteur * perte_h) # 1600 + 1875 = 3475€
+
+# 2. Fonction de coût moyen par unité de temps C(T)
+# Modèle de remplacement systématique à l'âge T
+moteur_cost_per_hour <- function(T_age) {
+  # Fiabilité à l'âge T
+  R_T <- exp(-(T_age / eta_mle)^beta_mle)
+  
+  # Espérance du temps de bon fonctionnement avant T
+  # Pour Weibull, on utilise une intégration numérique de la fiabilité
+  MTTF_T <- integrate(function(x) exp(-(x / eta_mle)^beta_mle), 0, T_age)$value
+  
+  # Coût moyen par cycle
+  # (Coût_Prév * Prob_survie_à_T) + (Coût_Corr * Prob_panne_avant_T)
+  expected_cost <- (cost_preventif * R_T) + (cost_correctif * (1 - R_T))
+  
+  # Durée moyenne d'un cycle
+  expected_time <- MTTF_T + ttr_moteur 
+  
+  return(expected_cost / expected_time)
+}
+
+# 3. Recherche de l'âge optimal T*
+ages_test <- seq(1000, 15000, by = 100)
+costs_v <- sapply(ages_test, moteur_cost_per_hour)
+
+T_opti <- ages_test[which.min(costs_v)]
+min_cost <- min(costs_v)
+
+# 4. Comparaison avec le correctif pur (T -> infini)
+# En correctif pur, le coût horaire est Coût_Corr / MTTF_total
+MTTF_total <- eta_mle * gamma(1 + 1/beta_mle)
+cost_correctif_pur <- cost_correctif / MTTF_total
+
+# 5. Affichage des résultats
+cat("--- OPTIMISATION DE LA MAINTENANCE MOTEUR ---\n")
+cat("Coût horaire (Correctif pur)        :", round(cost_correctif_pur, 4), "€/h\n")
+cat("Âge optimal de remplacement (T*)    :", T_opti, "heures\n")
+cat("Coût horaire à l'optimum C(T*)      :", round(min_cost, 4), "€/h\n")
+cat("Gain annuel potentiel par moteur    :", round((cost_correctif_pur - min_cost) * 8760, 2), "€\n")
+```
+
+L'application du modèle de remplacement systématique à l'âge T pour le bloc motorisation révèle une situation singulière : la stratégie de maintenance préventive n'est pas économiquement viable. 
+
+Le calcul montre que le coût horaire minimal pour un remplacement préventif (0,3143 €/h) reste supérieur au coût du correctif pur (0,2918 €/h). Ce résultat s'explique par le faible écart entre le coût d'une intervention préventive (3275 €) et d'une intervention corrective (3475 €). Le gain de fiabilité obtenu en remplaçant prématurément un moteur ne compense pas la perte de potentiel de vie résiduelle de l'équipement. 
+
+Pour ce composant spécifique, il est donc recommandé de maintenir une politique de "Run-to-Failure" (maintenance corrective), car le surcoût lié à la détection et au ré-usinage en cas de panne est négligeable face au coût global de remplacement et d'indisponibilité.
 ------------------------------------------------------------------------
 
 ### Question 11 : Fiabilité des Capteurs et Structure k-parmi-n
 
-L'objectif est de caractériser la loi de défaillance individuelle des capteurs et d'en déduire la performance du système de positionnement (4 capteurs, 3 nécessaires).
-
-Traitement des données : Le code commence par extraire et trier les temps avant défaillance (TTF) de l'onglet sensor. Le tri est essentiel pour établir la statistique d'ordre t(1) < t(2) < ... < t(n), permettant d'associer chaque rang j à une probabilité de défaillance.
-Choix de la loi de Weibull : Cette loi est choisie pour sa flexibilité à modéliser différents types de taux de défaillance (constant, croissant ou décroissant).
-Estimation par linéarisation : Le code utilise la méthode graphique par régression.
-- Il estime la fonction de répartition F_hat(t) via la formule des rangs médians (j-0.3)/(n+0.4) pour une estimation robuste.
-- Il transforme la fonction de fiabilité de Weibull pour obtenir une équation de droite : ln(-ln(1-F(t))) = beta*ln(t) - beta*ln(eta).
-- La régression linéaire permet d'extraire le paramètre de forme beta (pente) et le paramètre d'échelle eta (via l'ordonnée à l'origine).
-Calcul de la fiabilité cible : Avec ces paramètres, le code calcule la probabilité qu'un capteur survive au moins 500 heures : Rindiv(500) = exp(-(500/eta)^beta).
-
-Logique de structure : La station dispose de n=4 capteurs, mais k=3 sont nécessaires au bon fonctionnement. C'est un système à redondance partielle.
-Calcul de la fiabilité système (Rsys) : Si l'on suppose les capteurs indépendants et identiques, la fiabilité du groupe est la probabilité qu'au moins 3 capteurs sur 4 soient opérationnels à t=500.
-Le code utilise la loi binomiale pour sommer les probabilités de succès : Rsys = [choose(4,3) * Rindiv^3 * (1-Rindiv)] + [choose(4,4) * Rindiv^4].
-Le premier terme correspond au cas où exactement 3 capteurs fonctionnent, et le second au cas où les 4 fonctionnent.
+L'objectif est de caractériser la fiabilité du système de positionnement, composé de 4 capteurs dont au moins 3 doivent fonctionner pour assurer l'opération de la station. Dans un premier temps, nous modélisons la durée de bon fonctionnement individuelle de chaque capteur en utilisant les données de l'onglet sensor. Nous avons opté pour une distribution de Weibull, ajustée par la méthode de linéarisation (régression sur les rangs médians de Benard). Cette approche permet d'extraire le paramètre de forme ($\beta$) et d'échelle ($\eta$) spécifiques aux capteurs. Dans un second temps, le système global est modélisé par une loi binomiale de type $k$-parmi-$n$ ($3/4$). La fiabilité du système $R_{sys}(t)$ est ainsi définie comme la probabilité qu'au moins 3 capteurs soient fonctionnels à l'instant $t$, calculée à partir de la fiabilité individuelle $R_{indiv}(t)$.
 
 ```{r}
-#| label: question-11-sensors-fixed
+#| label: question-11-sensors
 #| message: false
 #| warning: false
 
@@ -682,55 +796,63 @@ if(n_s > 0) {
 }
 ```
 
-L'étude repose sur la caractérisation de la loi de défaillance individuelle des capteurs (via time et status) et la modélisation de leur architecture redondante. L'usage de la loi de Weibull capte la réalité de l'usure : un paramètre de forme beta > 1 confirme un vieillissement structurel, validant la pertinence du remplacement préventif.
+L'analyse statistique des durées de bon fonctionnement (TTF) des capteurs via une régression de Weibull donne un paramètre de forme beta = 1,02 et un paramètre d'échelle eta = 14 584 heures. 
 
-La structure k-parmi-n (3-parmi-4) constitue le cœur de la résilience : le système reste opérationnel tant que 75% des capacités de détection sont préservées. La fiabilité globale Rsys(t), calculée par une loi binomiale, démontre un gain significatif de sûreté par rapport à un capteur isolé. Cette configuration maintient la précision du perçage malgré la fragilité individuelle des composants.
+La proximité de beta avec la valeur 1 permet de conclure que les capteurs suivent une loi Exponentielle. Cela signifie que le risque de panne est constant dans le temps et indépendant de l'âge du capteur, excluant ainsi tout phénomène d'usure prématurée ou de fatigue cyclique.
 
-En conclusion, la redondance active transforme des composants au cycle de vie limité en un système robuste. La fiabilité à 500 heures sert d'indicateur clé pour définir l'intervalle optimal de contrôle avant que la probabilité de perdre un second composant, entraînant la panne totale, ne devienne critique.
+Le système de positionnement étant configuré en redondance partielle "3-parmi-4" (k-out-of-n), la fiabilité globale de l'unité de positionnement à 500 heures atteint 99,43 %. Cette architecture offre une excellente tolérance aux pannes, car elle convertit une fiabilité de composant standard (96,8 %) en une fiabilité système de haut niveau. Pour la maintenance, ce résultat implique qu'un remplacement préventif est inutile (puisqu'il n'y a pas d'usure) ; une stratégie de remplacement au premier défaut (correctif) est ici la plus rationnelle.
 
 ### Point 2
 
-L'enjeu ici est de traiter le problème des pannes cachées. Contrairement à la plateforme qui s'arrête net, on ne sait pas qu'un capteur est tombé en panne tant qu'on ne l'inspecte pas. Si deux capteurs tombent en panne, le système "3 parmi 4" échoue, mais la machine continue de tourner en produisant des pièces défectueuses (rebuts) jusqu'à la prochaine inspection.
+L'objectif de cette étape est de déterminer l'intervalle d'inspection optimal ($\tau$) pour le système de positionnement, dont la redondance de type 3-parmi-4 (sur 4 capteurs installés) induit des défaillances « dormantes » uniquement détectables par un arrêt technique. Chaque inspection immobilise la station pendant 30 minutes, soit une perte de production de 750 €. Si le système devient critique (moins de 3 capteurs fonctionnels) entre deux inspections, la station génère des rebuts pour un coût de 800 €/h. Pour optimiser cette maintenance, nous modélisons le coût horaire moyen $C(\tau)$ en intégrant trois composantes : le coût fixe de l'inspection, le coût des rebuts (calculé par l'intégration de l'indisponibilité du système $1 - R_{sys}(t)$ sur l'intervalle $[0, \tau]$), et le coût de remplacement incluant le prix des pièces (225 €) et le temps de pose supplémentaire (15 min par unité). Une optimisation numérique est ensuite réalisée pour identifier la valeur de $\tau^*$ minimisant la somme de ces coûts, garantissant ainsi l'équilibre idéal entre fréquence d'inspection et risque de non-qualité.
 
 ```{r}
 # --- Optimisation des Capteurs (Point 2) ---
 
-# 1. Paramètres économiques (issus de l'énoncé)
+# 1. Paramètres (Tableau 5 & Enoncé)
 cout_arret_h <- 1500
-cout_rebut_h <- 800   # Coût horaire des pièces défectueuses si le système est HS
-duree_insp   <- 0.5   # 30 minutes d'inspection systématique
+cout_rebut_h <- 1500     # Selon l'énoncé : "temps de production perdu" = revenu station
+duree_insp   <- 0.5      
+cout_insp_fixe <- 50     # Donnée Tableau 5
 
-# Coût d'une inspection (Cinsp)
-Cinsp <- duree_insp * cout_arret_h
+# Coût fixe de l'inspection (Temps d'arrêt + frais fixes)
+Cinsp <- (duree_insp * cout_arret_h) + cout_insp_fixe # 750 + 50 = 800€
 
-# 2. Fonction de coût total moyen par heure C(tau)
-# tau est l'intervalle entre deux inspections
+# Coût total d'UN remplacement (Pièce 225€ + Arrêt prod 0.25h*1500€)
+cout_piece_rempl <- 225
+duree_rempl      <- 0.25
+C_un_remplacement <- cout_piece_rempl + (duree_rempl * cout_arret_h) # 225 + 375 = 600€
+
+# 2. Fonction de coût par heure
 sensor_cost_function <- function(tau) {
   
-  # Probabilité qu'un capteur survive jusqu'à t
-  R_t <- function(t) exp(-(t / eta_s)^beta_s)
+  # Probabilité de panne d'un capteur seul à l'instant t
+  # (S'assure que beta_s et eta_s sont bien définis avant)
+  R_t_unitaire <- exp(-(tau / eta_s)^beta_s)
   
-  # Probabilité que le système (3 parmi 4) soit opérationnel à t
+  # A. Fiabilité du système 3-parmi-4 (Rsys)
   R_sys_t <- function(t) {
-    p <- R_t(t)
+    p <- exp(-(t / eta_s)^beta_s)
+    # Formule : P(3 capteurs OK) + P(4 capteurs OK)
     return(choose(4, 3) * (p^3) * (1 - p) + (p^4))
   }
   
-  # Temps moyen d'indisponibilité non détectée entre 0 et tau
-  # C'est l'intégrale de l'infidélité (1 - Rsys)
-  temps_mort_moyen <- integrate(function(t) 1 - sapply(t, R_sys_t), 
-                                lower = 0, upper = tau)$value
+  # B. Espérance du temps passé en état de défaillance (Rebuts)
+  # Intégrale de l'indisponibilité (1 - Rsys) sur l'intervalle [0, tau]
+  temps_rebuts <- integrate(function(t) 1 - sapply(t, R_sys_t), lower=0, upper=tau)$value
   
-  # Coût total sur une période tau = Coût inspection + Coût des rebuts
-  cout_total_periode <- Cinsp + (temps_mort_moyen * cout_rebut_h)
+  # C. Nombre moyen de capteurs à remplacer lors de l'inspection
+  # Loi Binomiale : n * p
+  nb_pannes_moyen <- 4 * (1 - R_t_unitaire)
   
-  # Retourne le coût moyen par heure
-  return(cout_total_periode / tau)
+  # Coût total sur le cycle d'inspection
+  cout_cycle <- Cinsp + (temps_rebuts * cout_rebut_h) + (nb_pannes_moyen * C_un_remplacement)
+  
+  return(cout_cycle / tau)
 }
 
-# 3. Recherche de l'optimum tau*
-# On cherche un intervalle entre 100h et 5000h
-opti_sensor <- optimize(sensor_cost_function, interval = c(100, 5000))
+# 3. Optimisation
+opti_sensor <- optimize(sensor_cost_function, interval = c(50, 3000))
 
 tau_opti <- opti_sensor$minimum
 cout_horaire_sensor_min <- opti_sensor$objective
@@ -743,315 +865,222 @@ cat("--------------------------------------------------\n")
 
 ```
 
-L'optimisation du système de positionnement fixe un intervalle d'inspection idéal de 394,64 heures pour gérer les pannes cachées des capteurs. Cette stratégie permet d'équilibrer le coût certain des arrêts programmés pour contrôle (750 € par intervention de 30 minutes) avec le risque financier élevé lié à la production de pièces défectueuses (800 €/h) en cas de défaillance non détectée de la redondance k-parmi-n. En identifiant ce point de bascule à 2,85 €/h, l'entreprise minimise le coût moyen d'exploitation tout en garantissant que la station ne fonctionne pas avec moins de trois capteurs opérationnels, protégeant ainsi la qualité de la production sans multiplier inutilement les interruptions de service.
+La stratégie de maintenance des capteurs a été optimisée en modélisant le coût global par unité de temps, incluant les frais d'inspection, les coûts de remplacement et les pertes liées à la production de rebuts (lorsque le système descend sous le seuil de 3 capteurs fonctionnels).
+
+L'intervalle d'inspection optimal a été déterminé à 326,54 heures. À cet intervalle, le coût moyen de maintenance et de non-qualité est réduit à 3,8215 €/h par station. 
+
+Cette périodicité d'environ 350 heures (soit environ toutes les deux semaines en fonctionnement continu) constitue un compromis idéal. Elle permet de capitaliser sur la redondance "3-parmi-4" du système tout en limitant l'exposition au risque de rebuts, particulièrement coûteux pour la station. Contrairement au moteur, où le correctif pur était privilégié, le système de positionnement nécessite une surveillance périodique stricte en raison du caractère "caché" de ses défaillances.
 
 
 ## Point 3 
 
-Voici le détail de la mise en œuvre du Point 3, incluant la logique de calcul de la disponibilité système et le code R associé pour consolider vos résultats.
-
-## La vision "Système" et Disponibilité Globale
-
-Pour estimer la performance finale, on utilise le modèle du diagramme-bloc en série. La disponibilité du système est le produit des disponibilités individuelles. 
-
-* **Lubrification ($A_{lub}$)** : Calculée via le ratio temps de bon fonctionnement sur temps total (Question 5).
-* **Mèches ($A_{meches}$)** : Bien que l'on calcule souvent un coût horaire, la disponibilité se déduit du temps passé hors de l'état 5 (Scénario A) ou des états 4 et 5 (Scénario B).
-* **Capteurs ($A_{capteurs}$)** : Elle est impactée par le temps d'indisponibilité non détectée (rebuts) et le temps d'inspection.
+L'objectif final de cette étude est de quantifier l'impact combiné des optimisations individuelles sur la performance globale de la station de perçage. Pour ce faire, nous modélisons la station comme un système en série via un Diagramme de Bloc Fiabilité (RBD) : cette configuration implique que la défaillance d'un seul des sous-systèmes (lubrification, mèches, capteurs, moteur ou plateforme) entraîne l'arrêt complet de la production. La démarche consiste d'abord à calculer la disponibilité opérationnelle de chaque composant sous son régime optimisé (par exemple, l'intervalle d'inspection $\tau^*$ pour les capteurs ou la maintenance à l'âge $T^*$ pour le moteur). Ces disponibilités sont ensuite multipliées pour obtenir la disponibilité globale du système ($D_{sys} = \prod D_i$). Enfin, nous réalisons un bilan financier comparatif en sommant les coûts annuels, incluant la maintenance et les pertes de production du scénario initial en « correctif pur » face au scénario optimisé. Cette synthèse permet de transformer des indicateurs techniques de fiabilité en une valeur économique concrète : l'économie annuelle totale générée par la nouvelle stratégie de maintenance.
 
 ```{r}
-# --- Synthèse Globale du Système (Point 3) ---
+# ====================================================
+# SYNTHÈSE GLOBALE - STATION DE PERÇAGE (POINT 3)
+# ====================================================
 
-# 1. Disponibilité et Coûts du Scénario Initial (Correctif)
-# Lubrification : k=1
-# Mèches : Changement à la rupture (Scénario A)
-# Capteurs : Pas d'inspection (tau = 8760h)
-dispo_init_lub <- dispo_moyenne 
-cout_init_annuel <- annual_costs[1] + (cout_horaire_A * 8760) + (sensor_cost_function(8760) * 8760)
+# --- 1. PARAMÈTRES DE BASE (Extraits des Tableaux 1 à 5) ---
+revenu_horaire      <- 1500   # Station complète
+revenu_h_tete       <- 750    # Perte si 1 seule tête est arrêtée (Mèches/Moteur)
+main_oeuvre_h       <- 100    # Facturation MO qualifiée
 
-# 2. Disponibilité et Coûts du Scénario Optimisé
-# Lubrification : utilisation de k_opti
-# Mèches : Changement préventif à l'état 4 (Scénario B)
-# Capteurs : Inspection à tau_opti
+# Durées d'arrêt moyennes (MTTR)
+duree_arret_lub     <- 4.0    # Tableau 2
+duree_arret_meche   <- 0.67   # Tableau 3 (40 min)
+duree_arret_moteur  <- 2.5    # Tableau 4 (2h + 0.5h)
+duree_insp_sensor   <- 0.5    # Tableau 5 (30 min)
 
-# Recalcul de la disponibilité Lubrification avec k_opti
-nb_pannes_opti <- k_opti * (( (8760/k_opti) / eta_lub )^beta_lub)
-D_opti_lub <- (nb_pannes_opti * mttr_partiel) + (k_opti * mttr_complet)
-dispo_opti_lub <- (8760 - D_opti_lub) / 8760
+# --- 2. CALCUL DE LA DISPONIBILITÉ PAR COMPOSANT (SCÉNARIO OPTIMISÉ) ---
 
-# Disponibilité Mèches (Approche stationnaire : 1 - proba d'être en maintenance/arrêt)
-# On estime ici la disponibilité comme le temps productif (hors états de changement)
-dispo_opti_meches <- 1 - (pi_glob["Sévère"] + pi_glob["Cassée"])
+# A. Lubrification (Optimisée à k_star)
+# Disponibilité = (Temps total - Temps de maintenance préventive) / Temps total
+temps_mort_lub_annuel <- k_star * duree_arret_lub
+dispo_opti_lub        <- (8760 - temps_mort_lub_annuel) / 8760
+# Coût horaire moyen issu de optimisation Point 2
+cout_horaire_lub_min  <- cost_min / 8760
 
-# Disponibilité Capteurs (1 - temps d'indisponibilité non détectée / tau)
-R_sys_t <- function(t) {
+# B. Mèches (Remplacement préventif à l'État 4)
+# On utilise la fréquence de ton modèle de Markov
+# freq_rempl_meche = pi_E4 * q_E4_E5 (nombre de remplacements par heure)
+freq_rempl_meche       <- pi_glob[4] * abs(Q_glob[4,4])
+indispo_meche_annuelle <- freq_rempl_meche * 8760 * duree_arret_meche
+dispo_opti_meches      <- (8760 - indispo_meche_annuelle) / 8760
+
+# C. Capteurs (Inspection à l'intervalle tau_opti)
+# Rsys(t) pour un système 3-parmi-4
+R_sys_t_func <- function(t) {
   p <- exp(-(t / eta_s)^beta_s)
   return(choose(4, 3) * (p^3) * (1 - p) + (p^4))
 }
-temps_mort_tau <- integrate(function(t) 1 - sapply(t, R_sys_t), lower = 0, upper = tau_opti)$value
-dispo_opti_sensors <- (tau_opti - temps_mort_tau - duree_insp) / tau_opti
+# Temps mort = Temps HS indétecté (Rebuts) + Temps d'arrêt pour inspection
+temps_HS_indetecte <- integrate(function(t) 1 - sapply(t, R_sys_t_func), 
+                                lower = 0, upper = tau_opti)$value
+dispo_opti_sensors <- (tau_opti - temps_HS_indetecte - duree_insp_sensor) / tau_opti
 
-# On récupère le coût lubrification optimisé directement depuis les résultats précédents
-# (Ou on le recalcule rapidement pour être sûr)
-cout_lub_opti <- lub_annual_cost(k_opti) 
+# D. Moteur (Maintenance Corrective Pure - Résultat Q.9)
+# MTTF_total calculé avec la loi de Weibull (eta_mle, beta_mle)
+dispo_moteur <- MTTF_total / (MTTF_total + duree_arret_moteur)
 
-# Calcul du coût annuel optimisé final
-cout_annuel_optimise <- cout_lub_opti + (cout_horaire_B * 8760) + (cout_horaire_sensor_min * 8760)
-# La station fonctionne si la Lubrification ET les Mèches ET les Capteurs fonctionnent
-dispo_globale_optimisee <- dispo_opti_lub * dispo_opti_meches * dispo_opti_sensors
+# --- 3. DISPONIBILITÉ GLOBALE DU SYSTÈME (Modèle en Série) ---
+# La station tombe en panne si l'un des composants est à l'arrêt
+dispo_globale_optimisee <- dispo_opti_lub * dispo_opti_meches * dispo_opti_sensors * dispo_moteur
 
-# Affichage des Gains
+# --- 4. BILAN FINANCIER ANNUEL GLOBAL (Coûts Horaires) ---
+
+# 1. Coût Mèches (Préventif E4) : Pièce 200€ + Arrêt 0.67h à 750€/h
+cout_unit_meche_P <- 200 + (duree_arret_meche * revenu_h_tete) 
+cout_horaire_meches <- freq_rempl_meche * cout_unit_meche_P
+
+# 2. Coût Moteur (Correctif Pur) : Pièces/MO 1600€ + Arrêt 2.5h à 750€/h
+# On divise le coût d'un cycle par la durée totale du cycle (MTTF + MTTR)
+cout_unit_moteur_C <- 1600 + (duree_arret_moteur * revenu_h_tete)
+cout_horaire_moteur <- cout_unit_moteur_C / (MTTF_total + duree_arret_moteur)
+
+# 3. Coût Capteurs (Optimisé à tau_opti)
+# Déjà calculé dans le script Point 2 (cout_horaire_sensor_min)
+
+# 4. Calcul du coût annuel total (Somme des coûts horaires * 8760)
+cout_annuel_total <- (cout_horaire_lub_min + cout_horaire_meches + 
+                      cout_horaire_sensor_min + cout_horaire_moteur) * 8760
+
+# --- 5. AFFICHAGE DES RÉSULTATS ---
+{
+cat("\n====================================================\n")
+cat("          BILAN DE SYNTHÈSE FINAL (POINT 3)         \n")
 cat("====================================================\n")
-cat("BILAN DE SYNTHÈSE (POINT 3)\n")
-cat("====================================================\n")
-cat("Disponibilité Globale Optimisée :", round(dispo_globale_optimisee * 100, 3), "%\n")
-cat("Coût Annuel Scénario Initial    :", round(cout_init_annuel, 2), "€\n")
-cat("Coût Annuel Scénario Optimisé   :", round(cout_annuel_optimise, 2), "€\n")
+
+cat("Disponibilité Individuelle :\n")
+cat(" - Lubrification :", round(dispo_opti_lub * 100, 4), "%\n")
+cat(" - Mèches        :", round(dispo_opti_meches * 100, 4), "%\n")
+cat(" - Capteurs      :", round(dispo_opti_sensors * 100, 4), "%\n")
+cat(" - Moteur        :", round(dispo_moteur * 100, 4), "%\n")
+
 cat("----------------------------------------------------\n")
-cat("ÉCONOMIE TOTALE RÉALISÉE        :", round(cout_init_annuel - cout_annuel_optimise, 2), "€/an\n")
+
+cat("DISPONIBILITÉ GLOBALE STATION :", round(dispo_globale_optimisee * 100, 3), "%\n")
+cat("Heures d'arrêt totales / an   :", round((1 - dispo_globale_optimisee) * 8760, 2), "h\n")
+cat("COÛT DE MAINTENANCE TOTAL     :", round(cout_annuel_total, 2), "€/an\n")
+
 cat("====================================================\n")
+}
 ```
 
-La synthèse globale démontre l'efficacité radicale d'une stratégie de maintenance préventive et conditionnelle, permettant une économie annuelle massive de près de 10 millions d'euros par rapport au scénario correctif initial. Ce gain financier spectaculaire s'explique par l'élimination quasi totale des coûts catastrophiques liés aux ruptures de mèches (4 500 € par moteur cassé) et à la production de rebuts par les capteurs défaillants (800 €/h). Bien que la disponibilité globale optimisée de 48,072 % puisse sembler basse au premier abord, elle reflète un choix d'exploitation rationnel où l'on accepte des arrêts programmés fréquents pour sécuriser les actifs les plus coûteux et garantir la qualité du perçage. En passant d'un coût annuel de 13,9 millions d'euros à moins de 4 millions d'euros, la station passe d'un régime de gestion de crise à une maîtrise industrielle pérenne, prouvant que la fiabilité des composants critiques est le levier principal de la rentabilité de la ligne.
+L'analyse finale de la station de perçage démontre une excellente maîtrise opérationnelle, avec une disponibilité globale de 99,55 %, ce qui limite l'indisponibilité totale à seulement 39,34 heures par an. Ce résultat valide la stratégie de maintenance mixte adoptée : l'optimisation de la lubrification ($k^*$) et le remplacement préventif des mèches (État 4) permettent de sécuriser la production, tandis que le moteur, très fiable (Question 9), est maintenu en correctif pur pour éviter des coûts de prévention inutiles. Le coût total de 56 289,41 €/an peut paraître élevé, mais il est largement dominé par le coût d'opportunité lié à la perte de production (1 500 €/h) ; investir dans ces interventions préventives est donc un choix économiquement rationnel car cela empêche des pannes aléatoires beaucoup plus longues et coûteuses. Le point critique identifié reste le système de capteurs, dont la fréquence d'inspection pèse le plus lourdement sur l'indisponibilité individuelle (99,75 %).
 
 # Point 4 : mise en cascade
 
-## Question 9 : Calcul de la Fiabilité Globale du Moteur à 500 heures
-
-Cette section combine le vieillissement intrinsèque du moteur (usure) et la vulnérabilité aux chocs induite par l'état de la mèche pour estimer la probabilité de défaillance globale.
-
-Le moteur est considéré comme un système en série vis-à-vis de ses modes de défaillance. Il s'arrête dès que le premier des deux événements survient (T_moteur = min(T_usure, T_chocs)). Sous l'hypothèse d'indépendance, la fiabilité globale est le produit des fiabilités de chaque mode : R_moteur(t) = R_usure(t) * R_chocs(t).
-
-Le risque de défaillance par choc dépend de l'état de dégradation de la mèche (i).
-- Pondération : On utilise le vecteur de probabilités stationnaires π_glob (Question 7), représentant la proportion de temps passée dans chaque état.
-- Espérance du risque : En multipliant chaque probabilité de rupture p(i) par la fréquence de séjour π_i, on obtient une probabilité de rupture par choc "moyenne" (p_barre) représentative du fonctionnement réel.
-
-Cette composante modélise le vieillissement mécanique intrinsèque du bloc moteur.
-- Loi de Weibull : On utilise les paramètres de forme (β) et d'échelle (η) issus des tests (Question 8).
-- Calcul : R_usure(t) = exp(-(t/η)^β). Cela représente la probabilité que le moteur survive à sa propre usure après une durée t (ex: 500h).
-
-Ce mode de défaillance est modélisé par un processus de chocs aléatoires.
-- Modèle de Poisson : Les chocs surviennent à un taux constant ν = 10^-3 chocs/h.
-- Approximation exponentielle : La fiabilité face aux chocs suit une loi exponentielle de taux λ_chocs = ν * p_barre, soit : R_chocs(t) = exp(-ν * p_barre * t).
+L'étude de la maintenance ne peut se limiter à une analyse cloisonnée de chaque composant, car la dégradation d'un sous-système agit souvent comme un catalyseur d'usure pour les éléments situés en aval. Dans ce scénario, nous explorons l'interdépendance critique entre la lubrification (maintenance de base) et le bloc moteur (composant noble), via le vecteur de transmission que constituent les mèches de perçage.L'enjeu est de modéliser comment une indisponibilité de la lubrification modifie la dynamique de transition des mèches vers des états d'usure sévère. Mathématiquement, cela se traduit par la construction d'une matrice de transition hybride ($Q_{res}$), pondérée par le taux de service de la lubrification. En utilisant le formalisme des chaînes de Markov absorbantes et la matrice fondamentale ($N$), nous pouvons quantifier non seulement la réduction de la durée de vie des outils, mais surtout l'augmentation du risque résiduel pour le moteur. Cette approche systémique permet de mettre en évidence le "coût caché" d'une maintenance négligée : une économie apparente sur un consommable simple peut en réalité doubler la probabilité de défaillance catastrophique du moteur, illustrant parfaitement le concept de risque en cascade en milieu industriel.
 
 ```{r}
-#| label: question-9-risques-concurrents
-#| message: false
-#| warning: false
 
-# 1. Paramètres issus de l'énoncé et des questions précédentes
-nu <- 1e-3  # Taux d'occurrence des chocs (chocs/heure)
-p_vec <- c(0, 0.05, 0.15, 0.35, 1) # Probabilité de rupture p(i) par état
-
-# Rappel des données calculées précédemment :
-# pi_glob (Q7), beta_motor (Q8), eta_motor (Q8)
-
-# 2. Calcul de la probabilité de défaillance moyenne par choc (p_barre)
-# On pondère la probabilité de rupture par la distribution stationnaire globale
-p_barre <- sum(pi_glob * p_vec)
-
-# 3. Paramètres de l'échéance cible
-t_cible <- 500
-
-# 4. Calcul des fiabilités individuelles (Risques Concurrents)
-# Composante Usure (Weibull) : R_usure(t) = exp(-(t/eta)^beta)
-R_usure <- exp(-(t_cible / eta_mle)^beta_mle)
-
-# Composante Chocs (Exponentielle) : R_chocs(t) = exp(-nu * p_barre * t)
-R_chocs <- exp(-nu * p_barre * t_cible)
-
-# 5. Fiabilité globale R(t) et Probabilité de défaillance F(t)
-# Le moteur survit si les deux modes de défaillance sont évités
-R_moteur_global <- R_usure * R_chocs
-P_defaillance <- 1 - R_moteur_global
-
-# 6. Affichage des résultats consolidés
-cat("--- Analyse de la Fiabilité Globale (t = 500h) ---\n")
-cat("Probabilité moyenne de rupture par choc (p_bar) :", round(p_barre, 5), "\n")
-cat("Fiabilité liée à l'usure (Weibull)            :", round(R_usure, 5), "\n")
-cat("Fiabilité liée aux chocs (Exponentielle)     :", round(R_chocs, 5), "\n")
-cat("---------------------------------------------------\n")
-cat("Fiabilité globale du moteur                  :", round(R_moteur_global, 5), "\n")
-cat("Probabilité de défaillance cumulée à 500h    :", round(P_defaillance, 6), "\n")
-```
-
-Le moteur est modélisé selon le cadre des risques concurrents, sa défaillance survenant dès que l'un des deux modes se manifeste : l'usure intrinsèque ou la rupture induite par choc. La durée de vie est définie par Tmoteur = min(Tusure, Tchocs), d'où une fiabilité globale : Rmoteur(t) = Rusure(t) * Rchocs(t).
-
-Mode Usure (Rusure) : À t = 500 heures, la fiabilité liée au vieillissement (Weibull, β ≈ 2,4) est de 99,96%. L'usure interne ne constitue pas la menace principale à court terme.
-
-Mode Chocs (Rchocs) : Ce mode est prédominant. L'utilisation de πglob permet de calculer une probabilité moyenne de rupture par choc p_barre ≈ 0,365. Ce risque conduit à une fiabilité de 83,32% à 500 heures (modèle de Poisson).
-
-Synthèse Globale : La probabilité de défaillance cumulée du système atteint 16,71% à 500 heures.
-
-Cette approche démontre que la fiabilité du moteur est pilotée par les événements stochastiques (chocs) amplifiés par la dégradation de la mèche, plutôt que par son usure propre. La lubrification et l'état de l'outil sont donc les leviers prioritaires pour protéger le moteur.
-
-------------------------------------------------------------------------
-
-## Question 10 : Intégration des Dépendances Lubrification-Mèche-Moteur
-
-Cette section formalise la chaîne de dépendances où la performance du système auxiliaire (lubrification) conditionne la survie du système principal (moteur).
-
-Pour modéliser l'effet "cascade", nous lions mathématiquement les performances du système de lubrification à la dégradation des mèches, puis l'état de ces mèches à la fiabilité du moteur :
-
-De la Lubrification à la Mèche (Influence Environnementale) : La disponibilité moyenne Alub (calculée à la Q5) agit comme un coefficient de pondération sur les taux de transition de la mèche. La matrice de transition globale devient : Qglob = Alub * Qstd + (1 - Alub) * Qacc. Une faible disponibilité augmente instantanément la vitesse de dégradation vers les états sévères.
-
-De la Mèche au Risque de Choc (Distribution des États) : La matrice Qglob détermine le vecteur de probabilités stationnaires pi (Q7). Si Alub diminue, la masse de la distribution pi se déplace vers les états 4 et 5.
-
-De l'État de la Mèche au Blocage Moteur (Couplage par Chocs) : Le risque de défaillance subite du moteur est couplé à l'état de la mèche via la probabilité de défaillance moyenne par choc p_barre = sum(pi_i * p_i). Comme p_i croît exponentiellement avec l'état i, une mèche plus souvent dégradée augmente drastiquement p_barre.
-
-Fiabilité Globale du Moteur (Risques Concurrents) : Le taux de défaillance global h_moteur(t) intègre cette cascade : h_moteur(t) = h_usure(t) + (nu * p_barre).
-
-```{r}
-#| label: question-10-simulation-cascade
-#| message: false
-#| warning: false
-
-# 1. Fonction pour simuler l'impact de la lubrification sur le taux de choc moteur
-simuler_effet_cascade <- function(dispo_lub_cible) {
-  # Reconstruction de la matrice Q impactée par la cascade
-  Q_cascade <- dispo_lub_cible * Q_std + (1 - dispo_lub_cible) * Q_acc
+# 1. Fonction de calcul des indicateurs de performance
+calculer_indicateurs_cascade <- function(dispo_lub) {
   
-  # Calcul du vecteur stationnaire pi correspondant
-  n_etats <- nrow(Q_cascade)
-  A <- t(Q_cascade)
-  A[n_etats, ] <- rep(1, n_etats)
-  B <- c(rep(0, n_etats - 1), 1)
-  pi_cascade <- solve(A, B)
-  
-  # Calcul de la nouvelle probabilité moyenne de rupture par choc (p_barre)
-  p_barre_cascade <- sum(pi_cascade * p_vec)
-  
-  # Retourne le taux de défaillance induit par les chocs (lambda_chocs)
-  return(nu * p_barre_cascade)
-}
-
-# 2. Comparaison des scénarios
-# Scénario A : Lubrification nominale (issue de la Q5)
-lambda_chocs_nominal <- simuler_effet_cascade(A_lub)
-
-# Scénario B : Lubrification dégradée (ex: chute à 50% de disponibilité)
-lambda_chocs_degrade <- simuler_effet_cascade(0.50)
-
-# 3. Affichage des résultats
-cat("--- Quantification de l'Effet Cascade ---\n")
-cat("Disponibilité lubrification (Nominale) :", round(A_lub * 100, 2), "%\n")
-cat("Taux de défaillance par chocs (Nominal) :", round(lambda_chocs_nominal, 6), "h^-1\n")
-cat("Taux de défaillance par chocs (Dégradé) :", round(lambda_chocs_degrade, 6), "h^-1\n")
-cat("-----------------------------------------\n")
-cat("Facteur d'augmentation du risque moteur :", round(lambda_chocs_degrade / lambda_chocs_nominal, 2), "x\n")
-
-```
-
-La modélisation repose sur une approche systémique liant la lubrification à la dégradation de la mèche, puis la vulnérabilité du moteur à l'état d'usure de l'outil. Ce cadre mathématique reflète la réalité physique : une lubrification défaillante dégrade l'interface outil/matière, augmentant la probabilité de blocages fatals au moteur.
-
-L'analyse numérique souligne la sensibilité du système : avec une disponibilité de lubrification de 99,93%, le moteur évolue dans un environnement protecteur où le taux de défaillance par chocs est stabilisé à 0,000365 h⁻¹. L'intégration de Alub dans la matrice Qglob permet de quantifier la propagation d'une défaillance auxiliaire en un risque opérationnel majeur.
-
-La redistribution des probabilités stationnaires pi vers les états d'usure avancée (4 et 5) montre que la fiabilité du moteur est pilotée par la santé de la mèche. Pour la maintenance, cette cascade prouve que la surveillance de la lubrification est le levier le plus efficace pour garantir la longévité du moteur, confirmant que la survie du système dépend de son maillon le plus faible.
-
-
-
-## Le Mécanisme de la Cascade (Théorie)
-
-L'impact se propage en trois étapes successives :
-1.  **Niveau 1 (Lubrification) :** La disponibilité $A_{lub}$ détermine le temps passé en régime d'usure accélérée.
-2.  **Niveau 2 (Mèche) :** La matrice $Q_{glob}$ redistribue les probabilités de présence ($\pi_{glob}$). Si la lubrification flanche, la mèche "stagne" davantage dans les états **Sévère** et **Cassée**.
-3.  **Niveau 3 (Moteur) :** Le moteur subit des chocs. La probabilité moyenne de choc $\bar{p}$ augmente car elle est pondérée par les mauvais états de la mèche.
-
-```{r}
-# --- POINT 4 : ANALYSE DE L'IMPACT EN CASCADE ---
-
-# 1. Définition des paramètres nécessaires
-p_vec <- c(0, 0.05, 0.15, 0.35, 1) # Probabilités de rupture par état
-nu <- 1e-3                        # Taux de chocs (Question 9)
-
-# 2. Fonction de propagation du risque
-calculer_risque_cascade <- function(dispo_lub) {
-  
-  # Étape A : Impact sur la cinétique de la mèche (Q7)
-  # Utilise Q_std et Q_acc qui doivent être dans votre environnement
+  # A. Calcul de la matrice de transition hybride (Effet cascade Lub -> Mèche)
   Q_res <- (dispo_lub * Q_std) + ((1 - dispo_lub) * Q_acc)
   
-  # Étape B : Calcul de la distribution stationnaire (Q6)
-  n <- nrow(Q_res)
-  Mat <- t(Q_res)
-  Mat[n, ] <- rep(1, n)
-  Vec_B <- c(rep(0, n - 1), 1)
-  pi_res <- solve(Mat, Vec_B)
+  # B. Matrice fondamentale N (Temps passé dans les états transitoires)
+  Q_trans <- Q_res[1:4, 1:4]
+  N <- solve(-Q_trans)
   
-  # Étape C : Impact sur le risque de choc moteur (Q9)
-  p_barre_res <- sum(pi_res * p_vec)
+  # C. MTTF : Espérance de vie moyenne de la mèche (en heures)
+  mttf_meche <- sum(N[1, ])
   
-  # Étape D : Taux de défaillance par choc
-  lambda_choc <- nu * p_barre_res
+  # D. Risque de choc cumulé sur LA VIE ENTIÈRE de la mèche
+  # C'est l'intégrale du risque sur la durée de vie
+  risque_cumule_cycle <- sum(N[1, ] * (nu * p_vec[1:4]))
   
-  return(list(p_bar = p_barre_res, lambda = lambda_choc))
+  # E. TAUX DE RISQUE HORAIRE (Intensité du danger pendant la production)
+  # On ramène le risque à une base comparable : 1 heure de perçage effectif
+  lambda_horaire_moteur <- risque_cumule_cycle / mttf_meche
+  
+  return(list(mttf = mttf_meche, lambda = lambda_horaire_moteur))
 }
 
-# 3. Exécution des simulations
-res_opti <- calculer_risque_cascade(0.9993) # Maintenance k=1
-res_degrade <- calculer_risque_cascade(0.80) # Maintenance négligée
+# 2. Simulation des deux scénarios de maintenance
+# Scénario A : Maintenance préventive rigoureuse (99.93%)
+# Scénario B : Maintenance négligée (80.00%)
+res_opti    <- calculer_indicateurs_cascade(0.9993)
+res_degrade <- calculer_indicateurs_cascade(0.80)
 
-# 4. Affichage propre des résultats
+# 3. Calcul des facteurs d'impact
+ratio_vie_meche <- res_opti$mttf / res_degrade$mttf
+facteur_brut_outil <- res_degrade$lambda / res_opti$lambda
+
+# FACTEUR CASCADE RÉEL (Sur une base de production fixe)
+# On multiplie l'intensité du risque par la fréquence de remplacement
+impact_cascade_reel <- facteur_brut_outil * ratio_vie_meche
+
+# 4. AFFICHAGE DES RÉSULTATS
 cat("====================================================\n")
 cat("POINT 4 : QUANTIFICATION DES EFFETS EN CASCADE\n")
 cat("====================================================\n")
-cat("Scénario Lubrification OPTIMISÉE (99.93%):\n")
-cat(" -> Probabilité choc moyenne (p_bar) :", round(res_opti$p_bar, 4), "\n")
-cat(" -> Risque horaire moteur (lambda)   :", round(res_opti$lambda, 6), "h^-1\n\n")
+cat("SCÉNARIO A : Lubrification OPTIMISÉE (99.93%)\n")
+cat(" -> Espérance de vie mèche (MTTF) :", round(res_opti$mttf, 2), "h\n")
+cat(" -> Risque horaire pour le moteur :", formatC(res_opti$lambda, format = "e", digits = 3), "h^-1\n\n")
 
-cat("Scénario Lubrification NÉGLIGÉE (80.00%):\n")
-cat(" -> Probabilité choc moyenne (p_bar) :", round(res_degrade$p_bar, 4), "\n")
-cat(" -> Risque horaire moteur (lambda)   :", round(res_degrade$lambda, 6), "h^-1\n")
+cat("SCÉNARIO B : Lubrification NÉGLIGÉE (80.00%)\n")
+cat(" -> Espérance de vie mèche (MTTF) :", round(res_degrade$mttf, 2), "h\n")
+cat(" -> Risque horaire pour le moteur :", formatC(res_degrade$lambda, format = "e", digits = 3), "h^-1\n")
 cat("----------------------------------------------------\n")
-cat("FACTEUR D'AUGMENTATION DU RISQUE MOTEUR : x", round(res_degrade$lambda / res_opti$lambda, 2), "\n")
+cat("ANALYSE DE LA CASCADE :\n")
+cat(" 1. Les mèches s'usent", round(ratio_vie_meche, 2), "fois plus vite.\n")
+cat(" 2. Le risque moteur par outil est de x", round(facteur_brut_outil, 2), "(biais de durée).\n")
+cat("----------------------------------------------------\n")
+cat("IMPACT SYSTÉMIQUE RÉEL SUR LE MOTEUR : x", round(impact_cascade_reel, 2), "\n")
 cat("====================================================\n")
 ```
 
-Bien que le régime accéléré soit plus agressif, la structure de sa matrice de transition réduit le temps de séjour dans les états critiques au profit d'une rotation plus rapide des outils. Cela explique pourquoi le risque de choc moteur ($\lambda$) diminue de 38 % (facteur 0,62) : le moteur est exposé moins longtemps à une mèche dégradée, car celle-ci atteint l'état de rupture ou de remplacement beaucoup plus brutalement.
+Cette analyse met en lumière l’interdépendance critique entre la maintenance de la lubrification et la préservation des composants en aval de la chaîne cinématique. En passant d'une maintenance optimisée à un scénario négligé (80 %), l'espérance de vie des mèches s'effondre, passant de 165,59 h à seulement 49,43 h, soit une usure 3,35 fois plus rapide. Si le risque horaire semble paradoxalement plus faible dans le scénario dégradé ($4,833 \times 10^{-5}$ contre $7,265 \times 10^{-5}$), cela s'explique par un "biais de durée" : les mèches cassent si vite qu'elles n'ont pas le temps d'atteindre les états d'usure les plus dangereux pour le moteur. Cependant, l'impact systémique réel est sans appel : en raison du remplacement beaucoup plus fréquent d'outils atteignant prématurément des niveaux de dégradation critiques, le moteur subit un stress cumulé 1,42 fois plus élevé. Cette étude prouve que toute économie réalisée sur la lubrification est illusoire, car elle génère une réaction en chaîne augmentant radicalement la fréquence d'exposition du moteur aux risques de chocs.
 
 
-# Point 5
+# Point 5 MAINTENANCE GROUPÉE (OPPORTUNISTE)
+
+La stratégie de maintenance opportuniste repose sur l'idée que le coût le plus élevé d'une intervention n'est pas la main-d'œuvre ou la pièce, mais l'indisponibilité de l'outil de production. Dans notre station de perçage, chaque minute d'arrêt coûte cher. En synchronisant le remplacement d'une mèche (prévu par l'analyse de l'état 4) avec une opération de lubrification systématique, nous réduisons le nombre total d'ouvertures de la machine. Ce "groupage" permet d'économiser les temps de préparation, de sécurisation et de remise en route qui sont redondants lors de deux interventions séparées. L'enjeu est de calculer le gain de temps machine ($\Delta t$) et de le multiplier par le coût d'opportunité horaire pour quantifier l'économie annuelle réelle.
 
 ```{r}
 # --- POINT 5 : MAINTENANCE GROUPÉE (OPPORTUNISTE) ---
 
-# 1. Paramètres de coûts
-cout_arret_h <- 800
-duree_nettoyage_lub <- 0.25 # 15 min
-duree_changement_meche <- 0.5 # 30 min (si fait seul)
-duree_groupee <- 0.6 # Temps total si on fait les deux en même temps
+Q_trans_glob <- Q_glob[1:4, 1:4]
+mttf_glob <- sum(solve(-Q_trans_glob)[1, ])
 
-# 2. Analyse du gain sur un arrêt
-cout_separe <- (duree_nettoyage_lub * cout_arret_h) + (duree_changement_meche * cout_arret_h)
-cout_groupe <- (duree_groupee * cout_arret_h)
+# 2. Paramètres de coûts et durées (Alignés sur l'énoncé)
+cout_heure_arret <- 1500  # Coût de production de la station complète
+duree_lub_seule   <- 4.0   # 4h selon les données précédentes
+duree_meche_seule <- 0.67  # 40 min
+duree_intervention_groupee <- 4.2  # On estime un gain (ex: seulement 12 min de plus que la lub seule)
 
-gain_par_intervention <- cout_separe - cout_groupe
+# 3. Calcul des fréquences annuelles (Base 8760h pour être raccord avec le Point 3)
+nb_interv_lub_an <- k_star
+nb_interv_meche_an <- 8760 / mttf_glob
 
-# 3. Simulation annuelle (sur la base de k* nettoyages et des remplacements mèches)
-# Supposons k_opti nettoyages par an (issu du Point 2.1)
-k_opti <- 1 # Exemple selon vos résultats
-nb_changements_meche_an <- 50 # Estimation selon pi_glob
+# 4. Calcul du gain financier
+# Gain de temps = (Somme des durées séparées) - (Durée groupée)
+gain_temps_par_regroupement <- (duree_lub_seule + duree_meche_seule) - duree_intervention_groupee
+gain_argent_par_regroupement <- gain_temps_par_regroupement * cout_heure_arret
 
-economie_annuelle_groupee <- min(k_opti, nb_changements_meche_an) * gain_par_intervention
+# On peut grouper au maximum selon l'événement le moins fréquent
+nb_regroupements_possibles <- min(nb_interv_lub_an, nb_interv_meche_an)
+economie_annuelle_potentielle <- nb_regroupements_possibles * gain_argent_par_regroupement
 
-# 4. Affichage des résultats
-cat("====================================================\n")
-cat("POINT 5 : ÉCONOMIES PAR MAINTENANCE GROUPÉE\n")
-cat("====================================================\n")
-cat("Coût arrêts séparés (Lub + Mèche) :", cout_separe, "€\n")
-cat("Coût arrêt groupé (Simultané)     :", cout_groupe, "€\n")
+# 5. AFFICHAGE DES RÉSULTATS
+{
+
+cat("  POINT 5 : ANALYSE DE LA MAINTENANCE OPPORTUNISTE  \n")
+cat("Besoins annuels théoriques :\n")
+cat(" -> Maintenance Lubrification :", round(nb_interv_lub_an, 1), "fois/an\n")
+cat(" -> Changements de Mèches     :", round(nb_interv_meche_an, 1), "fois/an\n")
 cat("----------------------------------------------------\n")
-cat("Gain net par groupe d'intervention :", gain_par_intervention, "€\n")
-cat("ÉCONOMIE ANNUELLE ESTIMÉE          :", economie_annuelle_groupee, "€/an\n")
-cat("====================================================\n")
+cat("Gain de temps par groupage    :", round(gain_temps_par_regroupement * 60, 0), "minutes\n")
+cat("Gain financier unitaire       :", round(gain_argent_par_regroupement, 2), "€\n")
+cat("Nombre de groupages possibles :", round(nb_regroupements_possibles, 1), "fois/an\n")
+cat("----------------------------------------------------\n")
+cat("ÉCONOMIE ANNUELLE POTENTIELLE :", round(economie_annuelle_potentielle, 2), "€/an\n")
+}
 ```
 
-L'étude de la maintenance opportuniste démontre qu'en synchronisant des interventions de natures différentes (Nettoyage de la lubrification et Changement de la mèche), la station de perçage réalise une économie immédiate sur son poste de coût le plus critique : l'indisponibilité de production. Alors que deux interventions isolées totaliseraient 600 € de pertes d'exploitation, le groupement de ces tâches réduit la facture à 480 €, soit un gain net de 20 % par arrêt groupé.
-Cette stratégie repose sur l'optimisation du "temps de préparation" et de remise en route de la machine, qui ne sont facturés qu'une seule fois. Bien que l'économie annuelle calculée ici (120 €) paraisse modeste à l'échelle d'un seul cycle ($k=1$), l'application de ce principe à l'ensemble des organes de la station — incluant le moteur et les capteurs — est le levier fondamental pour minimiser le coût global de possession (LCC). En transformant chaque arrêt subi en une fenêtre d'opportunité technique, la maintenance passe d'un centre de coût à un outil de performance industrielle, garantissant une disponibilité maximale face à un coût d'arrêt de 800 €/h.
+L'analyse de la maintenance opportuniste met en lumière une forte disparité entre les cycles de vie des composants de la station. Avec un optimum de lubrification fixé à 0,5 intervention par an (soit une fois tous les deux ans), le potentiel de regroupement est structurellement bridé par la rareté de cette opération lourde. Bien que le changement de mèche soit fréquent (53 fois/an), l'opportunité de couplage ne se présente statistiquement qu'une seule fois sur deux ans. L'économie annuelle de 352,55 € reste donc marginale par rapport au budget global de 80 000 €.
 
-## Synthèse de l'Optimisation de la Station de Perçage
-
-Ce projet a permis de transformer une maintenance subie en une stratégie de gestion d'actifs pilotée par la donnée. Grâce à l'analyse de la loi de Weibull (Point 1), nous avons identifié que le moteur subit un vieillissement mécanique réel ($\beta \approx 2,36$), justifiant le passage au préventif.
-
-L'étude des dépendances (Point 4) a révélé que la fiabilité de la station est une chaîne : une lubrification optimisée protège la mèche, qui à son tour protège le moteur des chocs fatals. Enfin, la maintenance groupée (Point 5) permet de minimiser l'impact financier des arrêts de production, qui restent le poste de dépense le plus critique (800 €/h).
-
-Résultat final : En combinant l'âge de remplacement optimal du moteur, le cycle de nettoyage de la lubrification et le remplacement préventif des mèches à l'état 4, la station passe d'un coût de défaillance catastrophique à un régime de croisière stabilisé, sécurisant ainsi la production sur le long terme.
+Ce résultat démontre que, dans cette configuration, le coût d'arrêt élevé de la lubrification (4h à 1500 €/h) impose une stratégie de "rareté" qui empêche de capitaliser sur les synergies logistiques. Pour rendre cette maintenance groupée réellement attractive, il faudrait soit réduire la durée d'arrêt technique de la lubrification, soit augmenter sa fréquence réglementaire (par exemple une visite trimestrielle), ce qui porterait immédiatement le gain potentiel à 2 820 €/an.
