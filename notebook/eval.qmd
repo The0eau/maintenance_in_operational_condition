@@ -723,7 +723,7 @@ Pour ce composant spécifique, il est donc recommandé de maintenir une politiqu
 L'objectif est de caractériser la fiabilité du système de positionnement, composé de 4 capteurs dont au moins 3 doivent fonctionner pour assurer l'opération de la station. Dans un premier temps, nous modélisons la durée de bon fonctionnement individuelle de chaque capteur en utilisant les données de l'onglet sensor. Nous avons opté pour une distribution de Weibull, ajustée par la méthode de linéarisation (régression sur les rangs médians de Benard). Cette approche permet d'extraire le paramètre de forme ($\beta$) et d'échelle ($\eta$) spécifiques aux capteurs. Dans un second temps, le système global est modélisé par une loi binomiale de type $k$-parmi-$n$ ($3/4$). La fiabilité du système $R_{sys}(t)$ est ainsi définie comme la probabilité qu'au moins 3 capteurs soient fonctionnels à l'instant $t$, calculée à partir de la fiabilité individuelle $R_{indiv}(t)$.
 
 ```{r}
-#| label: question-11-sensors-fixed
+#| label: question-11-sensors
 #| message: false
 #| warning: false
 
@@ -787,44 +787,50 @@ L'objectif de cette étape est de déterminer l'intervalle d'inspection optimal 
 ```{r}
 # --- Optimisation des Capteurs (Point 2) ---
 
-# 1. Paramètres (Tableau 5)
+# 1. Paramètres (Tableau 5 & Enoncé)
 cout_arret_h <- 1500
-cout_rebut_h <- 800     # Coût horaire si < 3 capteurs fonctionnels
-duree_insp   <- 0.5     # 30 min
-cout_rempl   <- 225     # Prix pièce + MO
-duree_rempl  <- 0.25    # 15 min par capteur
+cout_rebut_h <- 1500     # Selon l'énoncé : "temps de production perdu" = revenu station
+duree_insp   <- 0.5      
+cout_insp_fixe <- 50     # Donnée Tableau 5
 
-# Coût fixe de l'inspection
-Cinsp <- duree_insp * cout_arret_h
+# Coût fixe de l'inspection (Temps d'arrêt + frais fixes)
+Cinsp <- (duree_insp * cout_arret_h) + cout_insp_fixe # 750 + 50 = 800€
 
-# Coût total d'UN remplacement (Pièce + Arrêt prod sup)
-C_un_remplacement <- cout_rempl + (duree_rempl * cout_arret_h)
+# Coût total d'UN remplacement (Pièce 225€ + Arrêt prod 0.25h*1500€)
+cout_piece_rempl <- 225
+duree_rempl      <- 0.25
+C_un_remplacement <- cout_piece_rempl + (duree_rempl * cout_arret_h) # 225 + 375 = 600€
 
 # 2. Fonction de coût par heure
 sensor_cost_function <- function(tau) {
   
-  R_t <- exp(-(tau / eta_s)^beta_s)
+  # Probabilité de panne d'un capteur seul à l'instant t
+  # (S'assure que beta_s et eta_s sont bien définis avant)
+  R_t_unitaire <- exp(-(tau / eta_s)^beta_s)
   
-  # A. Temps moyen de production de rebuts (Système HS)
-  # On intègre 1 - Rsys(t) car le système ne prévient pas quand il meurt
+  # A. Fiabilité du système 3-parmi-4 (Rsys)
   R_sys_t <- function(t) {
     p <- exp(-(t / eta_s)^beta_s)
+    # Formule : P(3 capteurs OK) + P(4 capteurs OK)
     return(choose(4, 3) * (p^3) * (1 - p) + (p^4))
   }
+  
+  # B. Espérance du temps passé en état de défaillance (Rebuts)
+  # Intégrale de l'indisponibilité (1 - Rsys) sur l'intervalle [0, tau]
   temps_rebuts <- integrate(function(t) 1 - sapply(t, R_sys_t), lower=0, upper=tau)$value
   
-  # B. Nombre moyen de capteurs à remplacer à l'instant tau
-  # Chaque capteur a une probabilité (1 - R_t) d'être en panne
-  nb_pannes_moyen <- 4 * (1 - R_t)
+  # C. Nombre moyen de capteurs à remplacer lors de l'inspection
+  # Loi Binomiale : n * p
+  nb_pannes_moyen <- 4 * (1 - R_t_unitaire)
   
-  # Coût total sur le cycle
+  # Coût total sur le cycle d'inspection
   cout_cycle <- Cinsp + (temps_rebuts * cout_rebut_h) + (nb_pannes_moyen * C_un_remplacement)
   
   return(cout_cycle / tau)
 }
 
 # 3. Optimisation
-opti_sensor <- optimize(sensor_cost_function, interval = c(50, 2000))
+opti_sensor <- optimize(sensor_cost_function, interval = c(50, 3000))
 
 tau_opti <- opti_sensor$minimum
 cout_horaire_sensor_min <- opti_sensor$objective
@@ -839,9 +845,9 @@ cat("--------------------------------------------------\n")
 
 La stratégie de maintenance des capteurs a été optimisée en modélisant le coût global par unité de temps, incluant les frais d'inspection, les coûts de remplacement et les pertes liées à la production de rebuts (lorsque le système descend sous le seuil de 3 capteurs fonctionnels).
 
-L'intervalle d'inspection optimal a été déterminé à 394,56 heures. À cet intervalle, le coût moyen de maintenance et de non-qualité est réduit à 3,00 €/h par station. 
+L'intervalle d'inspection optimal a été déterminé à 326,54 heures. À cet intervalle, le coût moyen de maintenance et de non-qualité est réduit à 3,8215 €/h par station. 
 
-Cette périodicité d'environ 400 heures (soit environ toutes les deux semaines en fonctionnement continu) constitue un compromis idéal. Elle permet de capitaliser sur la redondance "3-parmi-4" du système tout en limitant l'exposition au risque de rebuts, particulièrement coûteux pour la station. Contrairement au moteur, où le correctif pur était privilégié, le système de positionnement nécessite une surveillance périodique stricte en raison du caractère "caché" de ses défaillances.
+Cette périodicité d'environ 350 heures (soit environ toutes les deux semaines en fonctionnement continu) constitue un compromis idéal. Elle permet de capitaliser sur la redondance "3-parmi-4" du système tout en limitant l'exposition au risque de rebuts, particulièrement coûteux pour la station. Contrairement au moteur, où le correctif pur était privilégié, le système de positionnement nécessite une surveillance périodique stricte en raison du caractère "caché" de ses défaillances.
 
 
 ## Point 3 
