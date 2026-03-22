@@ -77,8 +77,6 @@ graph LR
 
 # Plateforme rotative
 
-## Point 1
-
 ### Question 2 : Estimation de la loi du temps avant défaillance
 
 Afin d'estimer la loi de probabilité régissant le temps avant défaillance de la plateforme rotative, nous utilisons une analyse de survie basée sur la distribution de Weibull. Ce modèle est privilégié en fiabilité industrielle car il permet de caractériser précisément la nature du taux de défaillance (jeunesse, hasard ou usure) à travers son paramètre de forme $\beta$. L'échantillon fourni contient 47 observations, dont plusieurs données censurées à droite (status = 0), correspondant aux équipements toujours en fonctionnement lors du relevé. L'utilisation de la bibliothèque flexsurv permet d'ajuster ce modèle par la méthode du Maximum de Vraisemblance (MLE), garantissant une estimation robuste des paramètres d'échelle ($\eta$) et de forme ($\beta$) tout en intégrant l'incertitude liée aux données censurées.
@@ -190,6 +188,7 @@ cat("Coût en politique corrective pure :", round(cout_correctif_pur, 4), "€/h
 cat("Gain économique espéré           :", round(cout_correctif_pur - cout_horaire_min, 2), "€/h\n")
 ```
 
+L'analyse des résultats d'optimisation pour la plateforme met en évidence la pertinence d'une stratégie de maintenance préventive systématique. Avec un coût de défaillance corrective ($C_c$) s'élevant à 17 599,75 €, soit près de trois fois le coût d'une intervention planifiée ($C_p$ de 6 159,43 €), l'arbitrage économique est fortement influencé par les pertes de production et les durées d'indisponibilité (10,06 h en correctif contre 3,16 h en préventif). L'âge optimal de remplacement ($T^*$) est ainsi fixé à 7 429 heures, permettant de ramener le coût horaire d'exploitation à 1,11 €/h. Bien que le gain horaire de 0,59 €/h puisse paraître modeste, il représente une réduction de 35 % des coûts par rapport à une politique de "correctif pur" (1,71 €/h). À l'échelle d'un parc de machines ou d'une exploitation annuelle longue durée, cette optimisation garantit une stabilité opérationnelle majeure tout en évitant des arrêts critiques coûteux et imprévisibles.
 
 
 ------------------------------------------------------------------------
@@ -289,7 +288,6 @@ L'objectif de cette étape est d'estimer la disponibilité moyenne ($\bar{A}$) d
 #| label: question-5-disponibilite-corrigee
 #| message: false
 #| warning: false
-#| label: question-5-disponibilite
 
 # 1. Horizon temporel (1 an en heures)
 T_cycle <- 8760 
