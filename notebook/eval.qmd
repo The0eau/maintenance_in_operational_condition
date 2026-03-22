@@ -539,6 +539,7 @@ cat("Gain annuel par rapport au pire scénario :", round(gain_max * 8760, 2), "�
 L'étude comparative des stratégies de remplacement pour les mèches de perçage démontre qu'une politique de maintenance préventive systématique à l'état 4 (Sévère) est la solution optimale. Les coûts horaires simulés chutent de 5,44 €/h en stratégie corrective pure (attendre la casse) à seulement 1,80 €/h en intervenant dès l'entrée dans l'état 4. Ce gain s'explique par le fait que l'état 4 est le point de bascule critique : le risque de transition immédiate vers la rupture (état 5) y est maximal. En acceptant de remplacer une pièce qui n'est pas encore brisée (coût réduit de 200 €), on évite les surcoûts liés à la casse (400 €) et les risques de dommages collatéraux sur la tête de perçage.
 
 Le gain financier identifié est massif : l'adoption de la stratégie Préventif_E4 permet de réaliser une économie annuelle de 31 891,19 € par rapport au pire scénario (le correctif pur). À l'inverse, un remplacement trop précoce (aux états 2 ou 3) s'avère moins efficace (4,12 €/h et 3,27 €/h respectivement), car il ne permet pas de rentabiliser suffisamment la durée de vie utile de l'outil. Cette analyse confirme qu'une surveillance précise des états de dégradation, plutôt qu'une maintenance subie, est un levier majeur de rentabilité pour la station de perçage.
+
 ----
 
 # Moteur
@@ -738,6 +739,7 @@ L'application du modèle de remplacement systématique à l'âge T pour le bloc 
 Le calcul montre que le coût horaire minimal pour un remplacement préventif (0,3143 €/h) reste supérieur au coût du correctif pur (0,2918 €/h). Ce résultat s'explique par le faible écart entre le coût d'une intervention préventive (3275 €) et d'une intervention corrective (3475 €). Le gain de fiabilité obtenu en remplaçant prématurément un moteur ne compense pas la perte de potentiel de vie résiduelle de l'équipement. 
 
 Pour ce composant spécifique, il est donc recommandé de maintenir une politique de "Run-to-Failure" (maintenance corrective), car le surcoût lié à la détection et au ré-usinage en cas de panne est négligeable face au coût global de remplacement et d'indisponibilité.
+
 ------------------------------------------------------------------------
 
 ### Question 11 : Fiabilité des Capteurs et Structure k-parmi-n
