@@ -571,8 +571,8 @@ L'objectif de cette étape est de construire un modèle de fiabilité opération
 # 1. Calcul de p(i) : Probabilité de rupture par choc selon l'état d'usure
 p_func <- function(i) {
   if(i == 1) return(0)
-  # Formule : 0.005 * (0.6 * (i-1))^3.8
-  return(0.005 * (0.6 * (i-1))^3.8)
+  # Formule stricte : 5e-3 * exp(3.8 * ln(0.6 * (i-1)))
+  return(5e-3 * exp(3.8 * log(0.6 * (i-1))))
 }
 p_vec <- sapply(1:5, p_func)
 
@@ -605,7 +605,7 @@ cat("Fiabilité globale du moteur                  :", round(R_moteur_global, 5)
 cat("Probabilité de défaillance cumulée à 500h    :", round(P_defaillance, 6), "\n")
 ```
 
-L'analyse de la fiabilité globale à 500 heures démontre que le moteur est soumis à un régime de risques concurrents où les défaillances accidentelles prédominent sur l'usure naturelle. Bien que la fiabilité intrinsèque du bloc moteur reste très élevée (99,957 %), c'est la fiabilité induite par les chocs liés aux mèches qui impacte le plus significativement le système (99,781 %). Avec une probabilité moyenne de rupture par choc de 0,00438, le risque "exogène" est environ cinq fois plus menaçant que le vieillissement du moteur lui-même à cet horizon. La fiabilité globale de 99,739 % confirme que la survie du moteur dépend moins de sa propre robustesse que de la maîtrise de l'état d'usure des mèches, validant ainsi l'importance d'une maintenance préventive rigoureuse sur les outils de coupe pour protéger l'organe noble de la station.
+L'analyse de la fiabilité globale à 500 heures démontre que le moteur est soumis à un régime de risques concurrents où les défaillances accidentelles prédominent largement sur l'usure naturelle. Bien que la fiabilité intrinsèque du bloc moteur reste très élevée (99,957 %), c'est la fiabilité induite par les chocs liés aux mèches qui impacte le plus significativement le système, chutant à 99,781 %. Avec une probabilité moyenne de rupture par choc ($\bar{p}$) de 0,00438, ce risque exogène s'avère environ cinq fois plus menaçant que le vieillissement propre de l'organe à cet horizon. La fiabilité globale de 99,739 % confirme ainsi que la survie du moteur dépend moins de sa propre robustesse que de la maîtrise statistique de l'état d'usure des outils qu'il actionne, validant l'aspect critique d'une maintenance préventive sur les mèches pour protéger cet organe noble.
 
 ------------------------------------------------------------------------
 
@@ -859,59 +859,71 @@ L'objectif final de cette étude est de quantifier l'impact combiné des optimis
 # SYNTHÈSE GLOBALE - STATION DE PERÇAGE (POINT 3)
 # ====================================================
 
-# 1. PARAMÈTRES DE BASE (Énoncé)
-revenu_horaire <- 1500     # Perte de prod par heure d'arrêt
-duree_arret_lub <- 4       # Heures
-duree_arret_meche <- 0.67  # 40 min en heures
-duree_arret_moteur <- 2.5  # Heures
-duree_insp_sensor <- 0.5   # 30 min en heures
+# --- 1. PARAMÈTRES DE BASE (Extraits des Tableaux 1 à 5) ---
+revenu_horaire      <- 1500   # Station complète
+revenu_h_tete       <- 750    # Perte si 1 seule tête est arrêtée (Mèches/Moteur)
+main_oeuvre_h       <- 100    # Facturation MO qualifiée
 
-# 2. CALCUL DE LA DISPONIBILITÉ PAR COMPOSANT (SCÉNARIO OPTIMISÉ)
+# Durées d'arrêt moyennes (MTTR)
+duree_arret_lub     <- 4.0    # Tableau 2
+duree_arret_meche   <- 0.67   # Tableau 3 (40 min)
+duree_arret_moteur  <- 2.5    # Tableau 4 (2h + 0.5h)
+duree_insp_sensor   <- 0.5    # Tableau 5 (30 min)
+
+# --- 2. CALCUL DE LA DISPONIBILITÉ PAR COMPOSANT (SCÉNARIO OPTIMISÉ) ---
 
 # A. Lubrification (Optimisée à k_star)
-# On ne considère que l'arrêt planifié pour maintenance
+# Disponibilité = (Temps total - Temps de maintenance préventive) / Temps total
 temps_mort_lub_annuel <- k_star * duree_arret_lub
-dispo_opti_lub <- (8760 - temps_mort_lub_annuel) / 8760
-cout_horaire_lub_min <- cost_min / 8760
+dispo_opti_lub        <- (8760 - temps_mort_lub_annuel) / 8760
+# Coût horaire moyen issu de optimisation Point 2
+cout_horaire_lub_min  <- cost_min / 8760
 
 # B. Mèches (Remplacement préventif à l'État 4)
-# Fréquence = Probabilité d'être en E4 * Taux de sortie vers E5
-freq_rempl_meche <- pi_glob[4] * abs(Q_glob[4,4])
+# On utilise la fréquence de ton modèle de Markov
+# freq_rempl_meche = pi_E4 * q_E4_E5 (nombre de remplacements par heure)
+freq_rempl_meche       <- pi_glob[4] * abs(Q_glob[4,4])
 indispo_meche_annuelle <- freq_rempl_meche * 8760 * duree_arret_meche
-dispo_opti_meches <- (8760 - indispo_meche_annuelle) / 8760
-
+dispo_opti_meches      <- (8760 - indispo_meche_annuelle) / 8760
 
 # C. Capteurs (Inspection à l'intervalle tau_opti)
+# Rsys(t) pour un système 3-parmi-4
 R_sys_t_func <- function(t) {
   p <- exp(-(t / eta_s)^beta_s)
   return(choose(4, 3) * (p^3) * (1 - p) + (p^4))
 }
-# Temps mort = Temps HS indétecté (intégrale de l'indisponibilité) + Temps d'inspection
-temps_HS_indetecte <- integrate(function(t) 1 - sapply(t, R_sys_t_func), lower = 0, upper = tau_opti)$value
+# Temps mort = Temps HS indétecté (Rebuts) + Temps d'arrêt pour inspection
+temps_HS_indetecte <- integrate(function(t) 1 - sapply(t, R_sys_t_func), 
+                                lower = 0, upper = tau_opti)$value
 dispo_opti_sensors <- (tau_opti - temps_HS_indetecte - duree_insp_sensor) / tau_opti
 
 # D. Moteur (Maintenance Corrective Pure - Résultat Q.9)
+# MTTF_total calculé avec la loi de Weibull (eta_mle, beta_mle)
 dispo_moteur <- MTTF_total / (MTTF_total + duree_arret_moteur)
 
-# 3. DISPONIBILITÉ GLOBALE DU SYSTÈME (Modèle en Série)
+# --- 3. DISPONIBILITÉ GLOBALE DU SYSTÈME (Modèle en Série) ---
+# La station tombe en panne si l'un des composants est à l'arrêt
 dispo_globale_optimisee <- dispo_opti_lub * dispo_opti_meches * dispo_opti_sensors * dispo_moteur
 
-# 4. BILAN FINANCIER ANNUEL GLOBAL
+# --- 4. BILAN FINANCIER ANNUEL GLOBAL (Coûts Horaires) ---
 
-# 1. On définit la variable manquante (Mèches)
-# Coût préventif = 200 (pièce) + 0.67h * 750 (perte prod tête)
-cout_interv_meche_P <- 200 + (0.67 * 750) 
-# Fréquence annuelle basée sur ta disponibilité de 99.8287%
-freq_annuelle_meche <- (1 - 0.998287) * 8760 / 0.67
-cout_horaire_B <- (freq_annuelle_meche * cout_interv_meche_P) / 8760
+# 1. Coût Mèches (Préventif E4) : Pièce 200€ + Arrêt 0.67h à 750€/h
+cout_unit_meche_P <- 200 + (duree_arret_meche * revenu_h_tete) 
+cout_horaire_meches <- freq_rempl_meche * cout_unit_meche_P
 
-# 2. On définit le coût correctif moteur (Q.9)
-cost_correctif_pur <- (2500 + (2.5 * 1500)) / (MTTF_total + 2.5)
+# 2. Coût Moteur (Correctif Pur) : Pièces/MO 1600€ + Arrêt 2.5h à 750€/h
+# On divise le coût d'un cycle par la durée totale du cycle (MTTF + MTTR)
+cout_unit_moteur_C <- 1600 + (duree_arret_moteur * revenu_h_tete)
+cout_horaire_moteur <- cout_unit_moteur_C / (MTTF_total + duree_arret_moteur)
 
-# 3. On calcule enfin le coût annuel total
-cout_annuel_total <- (cout_horaire_lub_min + cout_horaire_B + cout_horaire_sensor_min + cost_correctif_pur) * 8760
+# 3. Coût Capteurs (Optimisé à tau_opti)
+# Déjà calculé dans le script Point 2 (cout_horaire_sensor_min)
 
-# 5. AFFICHAGE DES RÉSULTATS
+# 4. Calcul du coût annuel total (Somme des coûts horaires * 8760)
+cout_annuel_total <- (cout_horaire_lub_min + cout_horaire_meches + 
+                      cout_horaire_sensor_min + cout_horaire_moteur) * 8760
+
+# --- 5. AFFICHAGE DES RÉSULTATS ---
 {
 cat("\n====================================================\n")
 cat("          BILAN DE SYNTHÈSE FINAL (POINT 3)         \n")
@@ -927,24 +939,21 @@ cat("----------------------------------------------------\n")
 
 cat("DISPONIBILITÉ GLOBALE STATION :", round(dispo_globale_optimisee * 100, 3), "%\n")
 cat("Heures d'arrêt totales / an   :", round((1 - dispo_globale_optimisee) * 8760, 2), "h\n")
-cat("COÛT DE MAINTENANCE TOTAL:", round(cout_annuel_total, 2), "€/an\n")
+cat("COÛT DE MAINTENANCE TOTAL     :", round(cout_annuel_total, 2), "€/an\n")
 
 cat("====================================================\n")
 }
 ```
 
-L'analyse finale de la station de perçage démontre une excellente maîtrise opérationnelle, avec une disponibilité globale de 99,54 %, ce qui limite l'indisponibilité totale à seulement 40,31 heures par an. Ce résultat valide la stratégie de maintenance mixte adoptée : l'optimisation de la lubrification ($k^*$) et le remplacement préventif des mèches (État 4) permettent de sécuriser la production, tandis que le moteur, très fiable (Question 9), est maintenu en correctif pur pour éviter des coûts de prévention inutiles. Le coût total de 80 255,12 €/an peut paraître élevé, mais il est largement dominé par le coût d'opportunité lié à la perte de production (1 500 €/h) ; investir dans ces interventions préventives est donc un choix économiquement rationnel car cela empêche des pannes aléatoires beaucoup plus longues et coûteuses. Le point critique identifié reste le système de capteurs, dont la fréquence d'inspection pèse le plus lourdement sur l'indisponibilité individuelle (99,75 %).
+L'analyse finale de la station de perçage démontre une excellente maîtrise opérationnelle, avec une disponibilité globale de 99,55 %, ce qui limite l'indisponibilité totale à seulement 39,34 heures par an. Ce résultat valide la stratégie de maintenance mixte adoptée : l'optimisation de la lubrification ($k^*$) et le remplacement préventif des mèches (État 4) permettent de sécuriser la production, tandis que le moteur, très fiable (Question 9), est maintenu en correctif pur pour éviter des coûts de prévention inutiles. Le coût total de 56 289,41 €/an peut paraître élevé, mais il est largement dominé par le coût d'opportunité lié à la perte de production (1 500 €/h) ; investir dans ces interventions préventives est donc un choix économiquement rationnel car cela empêche des pannes aléatoires beaucoup plus longues et coûteuses. Le point critique identifié reste le système de capteurs, dont la fréquence d'inspection pèse le plus lourdement sur l'indisponibilité individuelle (99,75 %).
 
 # Point 4 : mise en cascade
 
 L'étude de la maintenance ne peut se limiter à une analyse cloisonnée de chaque composant, car la dégradation d'un sous-système agit souvent comme un catalyseur d'usure pour les éléments situés en aval. Dans ce scénario, nous explorons l'interdépendance critique entre la lubrification (maintenance de base) et le bloc moteur (composant noble), via le vecteur de transmission que constituent les mèches de perçage.L'enjeu est de modéliser comment une indisponibilité de la lubrification modifie la dynamique de transition des mèches vers des états d'usure sévère. Mathématiquement, cela se traduit par la construction d'une matrice de transition hybride ($Q_{res}$), pondérée par le taux de service de la lubrification. En utilisant le formalisme des chaînes de Markov absorbantes et la matrice fondamentale ($N$), nous pouvons quantifier non seulement la réduction de la durée de vie des outils, mais surtout l'augmentation du risque résiduel pour le moteur. Cette approche systémique permet de mettre en évidence le "coût caché" d'une maintenance négligée : une économie apparente sur un consommable simple peut en réalité doubler la probabilité de défaillance catastrophique du moteur, illustrant parfaitement le concept de risque en cascade en milieu industriel.
 
 ```{r}
-# 1. Paramètres de base (issus des questions précédentes)
-p_vec <- c(0, 0.05, 0.15, 0.35, 1) # Probabilités de rupture par état
-nu <- 1e-3                        # Taux de sollicitation moteur
 
-# 2. Fonction de calcul des indicateurs de performance
+# 1. Fonction de calcul des indicateurs de performance
 calculer_indicateurs_cascade <- function(dispo_lub) {
   
   # A. Calcul de la matrice de transition hybride (Effet cascade Lub -> Mèche)
@@ -968,13 +977,13 @@ calculer_indicateurs_cascade <- function(dispo_lub) {
   return(list(mttf = mttf_meche, lambda = lambda_horaire_moteur))
 }
 
-# 3. Simulation des deux scénarios de maintenance
+# 2. Simulation des deux scénarios de maintenance
 # Scénario A : Maintenance préventive rigoureuse (99.93%)
 # Scénario B : Maintenance négligée (80.00%)
 res_opti    <- calculer_indicateurs_cascade(0.9993)
 res_degrade <- calculer_indicateurs_cascade(0.80)
 
-# 4. Calcul des facteurs d'impact
+# 3. Calcul des facteurs d'impact
 ratio_vie_meche <- res_opti$mttf / res_degrade$mttf
 facteur_brut_outil <- res_degrade$lambda / res_opti$lambda
 
@@ -982,7 +991,7 @@ facteur_brut_outil <- res_degrade$lambda / res_opti$lambda
 # On multiplie l'intensité du risque par la fréquence de remplacement
 impact_cascade_reel <- facteur_brut_outil * ratio_vie_meche
 
-# 5. AFFICHAGE DES RÉSULTATS
+# 4. AFFICHAGE DES RÉSULTATS
 cat("====================================================\n")
 cat("POINT 4 : QUANTIFICATION DES EFFETS EN CASCADE\n")
 cat("====================================================\n")
@@ -1002,7 +1011,7 @@ cat("IMPACT SYSTÉMIQUE RÉEL SUR LE MOTEUR : x", round(impact_cascade_reel, 2),
 cat("====================================================\n")
 ```
 
-Cette analyse met en lumière l’interdépendance critique entre la maintenance de la lubrification et la préservation des composants en aval de la chaîne cinématique. En passant d'une maintenance optimisée à un scénario négligé (80 %), l'espérance de vie des mèches s'effondre, passant de 165,59 h à seulement 49,43 h, soit une usure 3,35 fois plus rapide. Si le risque horaire semble paradoxalement plus faible dans le scénario dégradé ($4,833 \times 10^{-5}$ contre $7,265 \times 10^{-5}$), cela s'explique par un "biais de durée" : les mèches cassent si vite qu'elles n'ont pas le temps d'atteindre les états d'usure les plus dangereux pour le moteur. Cependant, l'impact systémique réel est sans appel : en raison du remplacement beaucoup plus fréquent d'outils atteignant prématurément des niveaux de dégradation critiques, le moteur subit un stress cumulé 2,23 fois plus élevé. Cette étude prouve que toute économie réalisée sur la lubrification est illusoire, car elle génère une réaction en chaîne augmentant radicalement la fréquence d'exposition du moteur aux risques de chocs.
+Cette analyse met en lumière l’interdépendance critique entre la maintenance de la lubrification et la préservation des composants en aval de la chaîne cinématique. En passant d'une maintenance optimisée à un scénario négligé (80 %), l'espérance de vie des mèches s'effondre, passant de 165,59 h à seulement 49,43 h, soit une usure 3,35 fois plus rapide. Si le risque horaire semble paradoxalement plus faible dans le scénario dégradé ($4,833 \times 10^{-5}$ contre $7,265 \times 10^{-5}$), cela s'explique par un "biais de durée" : les mèches cassent si vite qu'elles n'ont pas le temps d'atteindre les états d'usure les plus dangereux pour le moteur. Cependant, l'impact systémique réel est sans appel : en raison du remplacement beaucoup plus fréquent d'outils atteignant prématurément des niveaux de dégradation critiques, le moteur subit un stress cumulé 1,42 fois plus élevé. Cette étude prouve que toute économie réalisée sur la lubrification est illusoire, car elle génère une réaction en chaîne augmentant radicalement la fréquence d'exposition du moteur aux risques de chocs.
 
 
 # Point 5 MAINTENANCE GROUPÉE (OPPORTUNISTE)
@@ -1017,12 +1026,11 @@ mttf_glob <- sum(solve(-Q_trans_glob)[1, ])
 
 # 2. Paramètres de coûts et durées (Alignés sur l'énoncé)
 cout_heure_arret <- 1500  # Coût de production de la station complète
-duree_lub_seule   <- 4.0   # 4h selon tes données précédentes
+duree_lub_seule   <- 4.0   # 4h selon les données précédentes
 duree_meche_seule <- 0.67  # 40 min
 duree_intervention_groupee <- 4.2  # On estime un gain (ex: seulement 12 min de plus que la lub seule)
 
 # 3. Calcul des fréquences annuelles (Base 8760h pour être raccord avec le Point 3)
-# Essaye de changer juste cette ligne pour voir l'impact :
 nb_interv_lub_an <- k_star
 nb_interv_meche_an <- 8760 / mttf_glob
 
