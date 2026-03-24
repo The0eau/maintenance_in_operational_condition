@@ -54,45 +54,7 @@ Un ensemble de 4 capteurs assurant la précision du perçage.
 La station de perçage est modélisée par un Diagramme de Blocs de Fiabilité (RBD) constitué de trois blocs fonctionnels principaux disposés en série, car la défaillance d'un seul de ces blocs entraîne l'arrêt total de la production. 
 Le premier bloc représente la plateforme rotative, composant critique unique. Le second bloc est un système de positionnement en redondance partielle de type $k$ parmi $n$ ($3/4$), signifiant que la station reste opérationnelle tant qu'au moins trois capteurs sur quatre sont fonctionnels. Enfin, le troisième bloc modélise les trois têtes de perçage en parallèle : la station fonctionne tant qu'au moins une tête est active (redondance $1/3$). Chaque tête est elle-même une mise en série d'un moteur et d'une mèche, où la panne de l'un neutralise la tête concernée. Le système de lubrification, bien qu'influençant l'usure thermique, est exclu de la chaîne de disponibilité directe puisque l'énoncé confirme la possibilité d'un fonctionnement en mode dégradé sans ce dernier.
 
-```{mermaid}
-graph LR
-    %% Définition des styles
-    classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px;
-    
-    In((Entrée)) --> Plat[Plateforme Rotative]
-    
-    subgraph "Bloc Capteurs (3 parmi 4)"
-        Plat --> C1[Capteur 1]
-        Plat --> C2[Capteur 2]
-        Plat --> C3[Capteur 3]
-        Plat --> C4[Capteur 4]
-    end
-
-    subgraph "Bloc Têtes (1 parmi 3)"
-        direction TB
-        
-        %% Connexions Capteurs vers Têtes
-        C1 & C2 & C3 & C4 --> T1
-        C1 & C2 & C3 & C4 --> T2
-        C1 & C2 & C3 & C4 --> T3
-        
-        subgraph T1 [Tête 1]
-            M1[Moteur 1] --- Me1[Mèche 1]
-        end
-        subgraph T2 [Tête 2]
-            M2[Moteur 2] --- Me2[Mèche 2]
-        end
-        subgraph T3 [Tête 3]
-            M3[Moteur 3] --- Me3[Mèche 3]
-        end
-    end
-
-    T1 & T2 & T3 --> Out((Sortie))
-
-    %% Application du style noir aux flèches (liens)
-    linkStyle default stroke:#000,stroke-width:2px;
-
-```
+![Arbre de défaillance](../data/eval/arbre de défaillance.png)
 
 ------------------------------------------------------------------------
 
