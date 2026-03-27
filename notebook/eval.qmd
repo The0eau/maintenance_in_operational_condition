@@ -1330,46 +1330,43 @@ Cette analyse met en lumière l’interdépendance critique entre la maintenance
 La stratégie de maintenance opportuniste repose sur l'idée que le coût le plus élevé d'une intervention n'est pas la main-d'œuvre ou la pièce, mais l'indisponibilité de l'outil de production. Dans notre station de perçage, chaque minute d'arrêt coûte cher. En synchronisant le remplacement d'une mèche (prévu par l'analyse de l'état 4) avec une opération de lubrification systématique, nous réduisons le nombre total d'ouvertures de la machine. Ce "groupage" permet d'économiser les temps de préparation, de sécurisation et de remise en route qui sont redondants lors de deux interventions séparées. L'enjeu est de calculer le gain de temps machine ($\Delta t$) et de le multiplier par le coût d'opportunité horaire pour quantifier l'économie annuelle réelle.
 
 ```{r}
-# --- POINT 5 : MAINTENANCE OPPORTUNISTE ---
+# --- POINT 5 : MAINTENANCE GROUPÉE (OPPORTUNISTE) ---
 
-# 1. Calcul des fréquences
-nb_interv_lub_an <- 1 
+Q_trans_glob <- Q_glob[1:4, 1:4]
+mttf_glob <- sum(solve(-Q_trans_glob)[1, ])
+
+# 2. Paramètres de coûts et durées (Alignés sur l'énoncé)
+cout_heure_arret <- 1500  # Coût de production de la station complète
+duree_lub_seule   <- 4.0   # 4h selon les données précédentes
+duree_meche_seule <- 0.67  # 40 min
+duree_intervention_groupee <- 4.2  # On estime un gain (ex: seulement 12 min de plus que la lub seule)
+
+# 3. Calcul des fréquences annuelles (Base 8760h pour être raccord avec le Point 3)
+nb_interv_lub_an <- k_star
 nb_interv_meche_an <- 8760 / mttf_glob
 
-# 2. Paramètres de coûts et durées
-nb_stations <- 10
-cout_heure_arret <- 1500  
-duree_lub_seule   <- 4.0   
-duree_meche_seule <- 0.67  
-duree_intervention_groupee <- 4.2  
-
-# 3. Calcul des gains
-# Gain de temps par groupage (en heures)
+# 4. Calcul du gain financier
+# Gain de temps = (Somme des durées séparées) - (Durée groupée)
 gain_temps_par_regroupement <- (duree_lub_seule + duree_meche_seule) - duree_intervention_groupee
-# Gain financier par opération
 gain_argent_par_regroupement <- gain_temps_par_regroupement * cout_heure_arret
 
-# On ne peut grouper que selon l'événement le moins fréquent (la lubrification)
-nb_regroupements_par_station <- min(nb_interv_lub_an, nb_interv_meche_an)
+# On peut grouper au maximum selon l'événement le moins fréquent
+nb_regroupements_possibles <- min(nb_interv_lub_an, nb_interv_meche_an)
+economie_annuelle_potentielle <- nb_regroupements_possibles * gain_argent_par_regroupement
 
-# Économie pour TOUT L'ATELIER (10 stations)
-economie_annuelle_atelier <- nb_regroupements_par_station * gain_argent_par_regroupement * nb_stations
-
-# 4. AFFICHAGE DES RÉSULTATS
+# 5. AFFICHAGE DES RÉSULTATS
 {
-cat("====================================================\n")
+
 cat("  POINT 5 : ANALYSE DE LA MAINTENANCE OPPORTUNISTE  \n")
-cat("====================================================\n")
-cat("Besoins annuels par station :\n")
-cat(" -> Maintenance Lubrification :", round(nb_interv_lub_an, 2), "fois/an\n")
+cat("Besoins annuels théoriques :\n")
+cat(" -> Maintenance Lubrification :", round(nb_interv_lub_an, 1), "fois/an\n")
 cat(" -> Changements de Mèches     :", round(nb_interv_meche_an, 1), "fois/an\n")
 cat("----------------------------------------------------\n")
 cat("Gain de temps par groupage    :", round(gain_temps_par_regroupement * 60, 0), "minutes\n")
 cat("Gain financier unitaire       :", round(gain_argent_par_regroupement, 2), "€\n")
-cat("Nombre de groupages possibles :", round(nb_regroupements_par_station, 2), "fois/an\n")
+cat("Nombre de groupages possibles :", round(nb_regroupements_possibles, 1), "fois/an\n")
 cat("----------------------------------------------------\n")
-cat("ÉCONOMIE ANNUELLE ATELIER (10 STATIONS) :", round(economie_annuelle_atelier, 2), "€/an\n")
-cat("====================================================\n")
+cat("ÉCONOMIE ANNUELLE POTENTIELLE :", round(economie_annuelle_potentielle, 2), "€/an\n")
 }
 ```
 
@@ -1389,84 +1386,66 @@ En synchronisant le remplacement préventif de la plateforme ($t^* \approx 7\,40
 # POINT 5 : RÉ-OPTIMISATION - STRATÉGIE DE GROUPAGE
 # ====================================================
 
-# 1. Paramètres de l'arrêt groupé (Plateforme + Lubrification)
-cout_heure_indispo_station <- 1500 
-duree_plateforme           <- 3.0
-duree_lub_complete         <- 5.0
-duree_intervention_groupee  <- 5.5
 
-# 2. Définition des fréquences (Utilisation de t_star_plateforme du Point 2)
-# On aligne la lubrification sur le cycle de la plateforme
-freq_plateforme_opti <- 8760 / t_star_plateforme  
-freq_lub_annuel_opti <- freq_plateforme_opti      
+# --- 1. Paramètres Communs (Atelier 10 stations) ---
+nb_stations   <- 10
+cout_arret_h  <- 1500
+h_an          <- 8760
 
-# 3. Calcul du gain financier du groupage
-# Nombre de groupages possibles par an et par station
-nb_groupages_an_station <- freq_plateforme_opti 
+# Paramètres de remplacement (Coûts et durées)
+dur_M <- 0.67 ; cout_M <- 200    # Mèches
+dur_C <- 0.25 ; cout_C <- 225    # Capteurs
+dur_L <- 4.0  ; cout_L <- 1300   # Lubrification
+dur_P <- 3.0  ; cout_P <- 1100   # Plateforme
 
-# Gain de temps unitaire : (3h + 5h) - 5.5h = 2.5h
-gain_temps_unitaire  <- (duree_plateforme + duree_lub_complete) - duree_intervention_groupee
-gain_argent_unitaire <- gain_temps_unitaire * cout_heure_indispo_station
+# FRÉQUENCES OPTIMALES (Issues de vos résultats d'optimisation)
+T_M <- 165            # Cycle Mèches (53 fois/an)
+T_C <- 326            # Cycle Capteurs (26 fois/an)
+freq_L_an <- 0.5      # Lubrification (1 fois tous les 2 ans)
+T_P <- 7429           # Âge optimal Plateforme (T*)
 
-# 4. Impact global sur l'atelier (10 stations)
-nb_stations <- 10
-economie_totale_atelier <- gain_argent_unitaire * nb_groupages_an_station * nb_stations
+# --- 2. Stratégie 1 : AUCUN GROUPAGE (Isolé) ---
+cout_iso_M <- (h_an / T_M) * (cout_M + dur_M * cout_arret_h)
+cout_iso_C <- (h_an / T_C) * (cout_C + dur_C * cout_arret_h)
+cout_iso_L <- freq_L_an * (cout_L + dur_L * cout_arret_h)
+cout_iso_P <- (h_an / T_P) * (cout_P + dur_P * cout_arret_h)
 
-# 5. Affichage des résultats
+total_iso <- (cout_iso_M + cout_iso_C + cout_iso_L + cout_iso_P) * nb_stations
+
+# --- 3. Stratégie 2 : GRAND ARRÊT TOTAL (Alignement forcé sur Mèches) ---
+# On change TOUT toutes les 165h (très inefficace)
+dur_grand_arret <- 6.0
+f_grand_arret   <- h_an / T_M 
+cout_grand_arret <- f_grand_arret * (cout_M + cout_C + cout_L + cout_P + (dur_grand_arret * cout_arret_h))
+total_grand_arret <- cout_grand_arret * nb_stations
+
+# --- 4. Stratégie 3 : POUPÉES RUSSES (Optimisé) ---
+n_total_arrets <- floor(h_an / T_M)   # 53 arrêts total
+n_P_L          <- freq_L_an           # 0.5 fois (Grand entretien bisannuel)
+n_C            <- floor(h_an / T_C) - n_P_L 
+n_M_seul       <- n_total_arrets - n_C - n_P_L
+
+cout_poupees <- 
+  (n_M_seul * (cout_M + 0.67 * cout_arret_h)) +            # Mèche seule
+  (n_C      * (cout_M + cout_C + 0.8 * cout_arret_h)) +    # Mèche + Capteur (Synergie)
+  (n_P_L    * (cout_M + cout_C + cout_L + cout_P + 6.5 * cout_arret_h)) # Le "Tout-en-un"
+
+total_poupees <- cout_poupees * nb_stations
+
+# --- 5. Synthèse et Affichage ---
+resultats <- data.frame(
+  Strategie = c("Isolé (Standard)", "Grand Arrêt (Alignement forcé)", "Poupées Russes (Optimal)"),
+  Cout_Annuel_Atelier = c(total_iso, total_grand_arret, total_poupees)
+)
+
+cat("\n====================================================\n")
+cat("   BILAN COMPARATIF DES STRATÉGIES (10 STATIONS)    \n")
 cat("====================================================\n")
-cat("   RÉ-OPTIMISATION : STRATÉGIE DE GROUPAGE TOTAL    \n")
-cat("====================================================\n")
-cat("Nouvelles fréquences alignées (Atelier 10 stations) :\n")
-cat(" -> Fréquence Plateforme ré-optimisée :", round(freq_plateforme_opti, 2), "fois/an\n")
-cat(" -> Fréquence Lubrification alignée   :", round(freq_lub_annuel_opti, 2), "fois/an\n")
+print(resultats)
 cat("----------------------------------------------------\n")
-cat("Bilan du gain (Optimisation Systémique) :\n")
-cat(" -> Heures gagnées par station/an     :", round(gain_temps_unitaire * nb_groupages_an_station, 2), "h\n")
-cat(" -> Gain financier par station/an     :", round(gain_argent_unitaire * nb_groupages_an_station, 2), "€\n")
-cat("----------------------------------------------------\n")
-cat("ÉCONOMIE TOTALE ATELIER (10 STATIONS) :", round(economie_totale_atelier, 2), "€/an\n")
+cat("ÉCONOMIE 'POUPÉES RUSSES' VS ISOLÉ :", round(total_iso - total_poupees, 2), "€/an\n")
+cat("PERTE SI 'GRAND ARRÊT' SYSTÉMATIQUE :", round(total_grand_arret - total_poupees, 2), "€/an\n")
 cat("====================================================\n")
-
-
-# --- PRÉPARATION DES DONNÉES ---
-# Scénario 1 : Interventions séparées (3h + 5h)
-# Scénario 2 : Intervention groupée (5.5h)
-valeurs <- c(duree_plateforme + duree_lub_complete, duree_intervention_groupee)
-noms <- c("Séparées (Cumul)", "Groupée (Optimisée)")
-
-# --- CONFIGURATION DU GRAPHIQUE ---
-# On augmente la marge à gauche pour les labels
-par(mar=c(5, 10, 4, 2)) 
-
-# Création du barplot horizontal
-bp <- barplot(valeurs, 
-              horiz = TRUE, 
-              names.arg = noms, 
-              col = c("#E74C3C", "#2ECC71"), # Rouge pour perte, Vert pour gain
-              border = "white",
-              main = "Optimisation du Temps d'Arrêt (Point 5)",
-              xlab = "Heures d'arrêt machine",
-              xlim = c(0, 10),
-              las = 1)
-
-# Ajout des étiquettes de temps sur les barres
-text(x = valeurs - 0.5, y = bp, labels = paste(valeurs, "h"), 
-     col = "white", font = 2, cex = 1.2)
-
-# --- VISUALISATION DU GAIN ---
-# Dessiner une flèche montrant l'économie de temps
-arrows(x0 = 8, y0 = bp[1], x1 = 5.5, y1 = bp[2], 
-       col = "darkgreen", lwd = 2, length = 0.1)
-
-# Ajouter le texte du gain financier
-legend("topright", 
-       legend = c(paste("Gain de temps :", gain_temps_unitaire, "h"),
-                  paste("Économie / station :", round(gain_argent_unitaire, 0), "€"),
-                  paste("TOTAL ATELIER :", round(economie_totale_atelier, 0), "€/an")),
-       bty = "n", cex = 0.9, text.col = "darkgreen", text.font = 2)
-
-# Réinitialiser les marges
-par(mar=c(5, 4, 4, 2))
 ```
 
-L'analyse des résultats démontre de manière univoque la pertinence de la nouvelle stratégie de maintenance groupée, qui s'aligne sur les réalités économiques du système. En délaissant le couplage entre les mèches et la lubrification au profit d'une synchronisation des interventions lourdes (Plateforme et Nettoyage complet), vous avez identifié un levier d'optimisation majeur : le gain de 2,5 heures de temps machine par arrêt groupé permet de limiter l'indisponibilité totale de la station, dont le coût est critique (1 500 €/h). Ce pivot stratégique transforme une économie annuelle anecdotique de 352 € en un gain substantiel de 37 500 € pour l'ensemble des 10 stations, prouvant ainsi que la rentabilité ne réside pas dans la fréquence des regroupements, mais dans la mutualisation des composants dont la maintenance paralyse l'intégralité de la chaîne de production.
+L'analyse démontre que la stratégie des Poupées Russes est la seule viable économiquement, permettant une économie nette de 100 905 € par an pour l'atelier par rapport à une maintenance isolée. En synchronisant le remplacement des capteurs sur les arrêts fréquents des mèches et en groupant les opérations lourdes (lubrification et plateforme) lors d'un grand entretien bisannuel, on réduit drastiquement les pertes de production liées aux temps d'arrêt (1500 €/h). À l'inverse, l'alignement forcé de tous les composants sur le cycle le plus court (le "Grand Arrêt" toutes les 165h) s'avère catastrophique, générant une perte de plus de 5,4 millions d'euros due au remplacement prématuré et injustifié de pièces coûteuses encore fonctionnelles. Cette approche opportuniste transforme ainsi la maintenance d'un centre de coûts subi en un levier d'optimisation de la marge opérationnelle de l'usine.

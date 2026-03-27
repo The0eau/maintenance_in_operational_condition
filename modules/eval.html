@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Theau Aguet">
-<meta name="dcterms.date" content="2026-03-24">
+<meta name="dcterms.date" content="2026-03-27">
 
 <title>Analyse de Fiabilité et Maintenance : Poste de Perçage Multi-têtes</title>
 <style>
@@ -285,10 +285,11 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#description-du-système" id="toc-description-du-système" class="nav-link" data-scroll-target="#description-du-système"><span class="header-section-number">1.1</span> Description du Système</a>
   <ul class="collapse">
-  <li><a href="#le-système-de-lubrification" id="toc-le-système-de-lubrification" class="nav-link" data-scroll-target="#le-système-de-lubrification"><span class="header-section-number">1.1.1</span> 1. Le Système de Lubrification</a></li>
-  <li><a href="#les-mèches-de-perçage-outils" id="toc-les-mèches-de-perçage-outils" class="nav-link" data-scroll-target="#les-mèches-de-perçage-outils"><span class="header-section-number">1.1.2</span> 2. Les Mèches de Perçage (Outils)</a></li>
-  <li><a href="#le-bloc-moteur" id="toc-le-bloc-moteur" class="nav-link" data-scroll-target="#le-bloc-moteur"><span class="header-section-number">1.1.3</span> 3. Le Bloc Moteur</a></li>
-  <li><a href="#le-système-de-positionnement-capteurs" id="toc-le-système-de-positionnement-capteurs" class="nav-link" data-scroll-target="#le-système-de-positionnement-capteurs"><span class="header-section-number">1.1.4</span> 4. Le Système de Positionnement (Capteurs)</a></li>
+  <li><a href="#la-plateforme-rotative-châssis-et-indexation" id="toc-la-plateforme-rotative-châssis-et-indexation" class="nav-link" data-scroll-target="#la-plateforme-rotative-châssis-et-indexation"><span class="header-section-number">1.1.1</span> 1. La Plateforme Rotative (Châssis et Indexation)</a></li>
+  <li><a href="#le-système-de-lubrification" id="toc-le-système-de-lubrification" class="nav-link" data-scroll-target="#le-système-de-lubrification"><span class="header-section-number">1.1.2</span> 2. Le Système de Lubrification</a></li>
+  <li><a href="#les-mèches-de-perçage-outils" id="toc-les-mèches-de-perçage-outils" class="nav-link" data-scroll-target="#les-mèches-de-perçage-outils"><span class="header-section-number">1.1.3</span> 3. Les Mèches de Perçage (Outils)</a></li>
+  <li><a href="#le-bloc-moteur" id="toc-le-bloc-moteur" class="nav-link" data-scroll-target="#le-bloc-moteur"><span class="header-section-number">1.1.4</span> 4. Le Bloc Moteur</a></li>
+  <li><a href="#le-système-de-positionnement-capteurs" id="toc-le-système-de-positionnement-capteurs" class="nav-link" data-scroll-target="#le-système-de-positionnement-capteurs"><span class="header-section-number">1.1.5</span> 5. Le Système de Positionnement (Capteurs)</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#analyse-individuelle-des-sous-systèmes" id="toc-analyse-individuelle-des-sous-systèmes" class="nav-link" data-scroll-target="#analyse-individuelle-des-sous-systèmes"><span class="header-section-number">2</span> Analyse Individuelle des Sous-systèmes</a></li>
@@ -325,6 +326,7 @@ window.Quarto = {
   </ul></li>
   <li><a href="#point-4-mise-en-cascade" id="toc-point-4-mise-en-cascade" class="nav-link" data-scroll-target="#point-4-mise-en-cascade"><span class="header-section-number">7</span> Point 4 : mise en cascade</a></li>
   <li><a href="#point-5-maintenance-opportuniste" id="toc-point-5-maintenance-opportuniste" class="nav-link" data-scroll-target="#point-5-maintenance-opportuniste"><span class="header-section-number">8</span> Point 5 Maintenance opportuniste</a></li>
+  <li><a href="#nouvelle-stratégie-de-maintenance-groupée-plateforme-lubrification" id="toc-nouvelle-stratégie-de-maintenance-groupée-plateforme-lubrification" class="nav-link" data-scroll-target="#nouvelle-stratégie-de-maintenance-groupée-plateforme-lubrification"><span class="header-section-number">9</span> Nouvelle stratégie de maintenance groupée (Plateforme + Lubrification)</a></li>
   </ul>
 </nav>
 </div>
@@ -352,7 +354,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 24, 2026</p>
+      <p class="date">March 27, 2026</p>
     </div>
   </div>
   
@@ -366,25 +368,29 @@ window.Quarto = {
 
 <section id="introduction-et-contexte-du-projet" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Introduction et Contexte du Projet</h1>
-<p>Ce projet s’inscrit dans une démarche d’optimisation de la <strong>Sûreté de Fonctionnement (SdF)</strong> d’une station de perçage industrielle haute performance. L’objectif est de passer d’une maintenance subie (corrective) à une maintenance pilotée (préventive et prédictive) afin de garantir une disponibilité maximale tout en minimisant les coûts d’exploitation.</p>
+<p>Ce projet s’inscrit dans une démarche d’optimisation de la Sûreté de Fonctionnement (SdF) d’une station de perçage industrielle haute performance. L’objectif est de passer d’une maintenance subie (corrective) à une maintenance pilotée (préventive et prédictive) afin de garantir une disponibilité maximale tout en minimisant les coûts d’exploitation.</p>
 <section id="description-du-système" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="description-du-système"><span class="header-section-number">1.1</span> Description du Système</h2>
-<p>La station de perçage est un système complexe composé de quatre sous-ensembles critiques interdépendants. Sa performance globale dépend de la santé de chaque maillon, suivant un modèle de fiabilité en série.</p>
-<section id="le-système-de-lubrification" class="level3" data-number="1.1.1">
-<h3 data-number="1.1.1" class="anchored" data-anchor-id="le-système-de-lubrification"><span class="header-section-number">1.1.1</span> 1. Le Système de Lubrification</h3>
-<p>C’est le “poumon” de la station. Il assure le refroidissement et la réduction de la friction lors de l’usinage. * <strong>Fonctionnement :</strong> Basé sur des cycles de nettoyage (complets ou partiels). * <strong>Criticité :</strong> Une défaillance ici entraîne un effet “cascade” immédiat sur l’usure des outils de coupe.</p>
+<p>La station de perçage est un système complexe composé de cinq sous-ensembles critiques interdépendants. Sa performance globale dépend de la santé de chaque maillon, suivant un modèle de fiabilité en série : si l’un de ces blocs tombe en panne, l’ensemble de la station s’arrête.</p>
+<section id="la-plateforme-rotative-châssis-et-indexation" class="level3" data-number="1.1.1">
+<h3 data-number="1.1.1" class="anchored" data-anchor-id="la-plateforme-rotative-châssis-et-indexation"><span class="header-section-number">1.1.1</span> 1. La Plateforme Rotative (Châssis et Indexation)</h3>
+<p>Il s’agit de la base mécanique qui supporte et positionne les pièces à usiner sous les têtes de perçage. * Fonctionnement : Elle assure la rotation et le verrouillage précis des pièces. Sa fiabilité suit une loi de Weibull avec un paramètre de forme <span class="math inline">\(\beta &gt; 1\)</span>, indiquant un phénomène d’usure mécanique marqué. * Maintenance : Étant un composant à arrêt long et coûteux, son optimisation repose sur un âge de remplacement préventif afin d’éviter des casses imprévues qui paralysent l’ensemble de la ligne.</p>
 </section>
-<section id="les-mèches-de-perçage-outils" class="level3" data-number="1.1.2">
-<h3 data-number="1.1.2" class="anchored" data-anchor-id="les-mèches-de-perçage-outils"><span class="header-section-number">1.1.2</span> 2. Les Mèches de Perçage (Outils)</h3>
-<p>Composants consommables soumis à une usure continue, modélisée par des <strong>chaînes de Markov</strong>. * <strong>États d’usure :</strong> Le système évolue de l’état “Neuf” à “Cassé” à travers plusieurs stades de dégradation. * <strong>Interaction :</strong> La vitesse de dégradation est directement corrélée à la qualité de la lubrification.</p>
+<section id="le-système-de-lubrification" class="level3" data-number="1.1.2">
+<h3 data-number="1.1.2" class="anchored" data-anchor-id="le-système-de-lubrification"><span class="header-section-number">1.1.2</span> 2. Le Système de Lubrification</h3>
+<p>C’est le “poumon” de la station. Il assure le refroidissement et la réduction de la friction lors de l’usinage. * Fonctionnement : Basé sur des cycles de nettoyage (complets ou partiels). Les interventions partielles sont modélisées comme des “réparations minimales” (NHPP). * Criticité : Une défaillance de lubrification entraîne un effet “cascade” immédiat, accélérant drastiquement l’usure des outils de coupe.</p>
 </section>
-<section id="le-bloc-moteur" class="level3" data-number="1.1.3">
-<h3 data-number="1.1.3" class="anchored" data-anchor-id="le-bloc-moteur"><span class="header-section-number">1.1.3</span> 3. Le Bloc Moteur</h3>
-<p>L’organe moteur de la tête de perçage, dont la fiabilité suit une <strong>loi de Weibull</strong>. * <strong>Usure :</strong> Contrairement aux mèches, le moteur subit une usure intrinsèque (vieillissement) mais est aussi exposé à des <strong>risques concurrents</strong> (chocs accidentels transmis par une mèche défaillante). * <strong>Enjeu :</strong> C’est l’actif le plus coûteux à remplacer en cas de casse majeure.</p>
+<section id="les-mèches-de-perçage-outils" class="level3" data-number="1.1.3">
+<h3 data-number="1.1.3" class="anchored" data-anchor-id="les-mèches-de-perçage-outils"><span class="header-section-number">1.1.3</span> 3. Les Mèches de Perçage (Outils)</h3>
+<p>Composants consommables soumis à une usure continue, modélisée par des chaînes de Markov. * États d’usure : L’outil évolue de l’état “Neuf” à “Cassé” à travers plusieurs stades de dégradation. * Impact Cadence : Le remplacement d’une mèche (correctif ou préventif) entraîne un ralentissement de la cadence de production, impactant directement la rentabilité économique de la station.</p>
 </section>
-<section id="le-système-de-positionnement-capteurs" class="level3" data-number="1.1.4">
-<h3 data-number="1.1.4" class="anchored" data-anchor-id="le-système-de-positionnement-capteurs"><span class="header-section-number">1.1.4</span> 4. Le Système de Positionnement (Capteurs)</h3>
-<p>Un ensemble de 4 capteurs assurant la précision du perçage. * <strong>Architecture :</strong> Configuré en redondance de type <strong>3-parmi-4</strong> (le système fonctionne tant que 3 capteurs sur 4 sont opérationnels). * <strong>Maintenance :</strong> Optimisée par des intervalles d’inspection périodiques pour détecter les pannes “dormantes”.</p>
+<section id="le-bloc-moteur" class="level3" data-number="1.1.4">
+<h3 data-number="1.1.4" class="anchored" data-anchor-id="le-bloc-moteur"><span class="header-section-number">1.1.4</span> 4. Le Bloc Moteur</h3>
+<p>L’organe moteur de la tête de perçage, dont la fiabilité suit également une loi de Weibull. * Usure : Le moteur subit une usure intrinsèque (vieillissement) mais est aussi exposé à des risques concurrents (chocs accidentels transmis par une mèche défaillante). * Enjeu : C’est l’actif le plus coûteux de la tête ; sa préservation est la priorité de la politique de maintenance des mèches.</p>
+</section>
+<section id="le-système-de-positionnement-capteurs" class="level3" data-number="1.1.5">
+<h3 data-number="1.1.5" class="anchored" data-anchor-id="le-système-de-positionnement-capteurs"><span class="header-section-number">1.1.5</span> 5. Le Système de Positionnement (Capteurs)</h3>
+<p>Un ensemble de 4 capteurs assurant la précision du perçage. * Architecture : Configuré en redondance de type 3-parmi-4 (le système fonctionne tant que 3 capteurs sur 4 sont opérationnels). * Maintenance : Le risque principal réside dans les pannes “dormantes”, nécessitant des inspections périodiques pour maintenir le niveau de sécurité requis.</p>
 <hr>
 </section>
 </section>
@@ -1330,35 +1336,40 @@ window.Quarto = {
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb122"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Optimisation des Mèches de Perçage (Point 2) ---</span></span>
 <span id="cb122-2"><a href="#cb122-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb122-3"><a href="#cb122-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Paramètres du Tableau 3 et énoncé</span></span>
-<span id="cb122-4"><a href="#cb122-4" aria-hidden="true" tabindex="-1"></a>cost_perte_h_tete <span class="ot">&lt;-</span> <span class="dv">750</span>    <span class="co"># Coût de l'arrêt d'une seule tête</span></span>
-<span id="cb122-5"><a href="#cb122-5" aria-hidden="true" tabindex="-1"></a>t_stop_meche      <span class="ot">&lt;-</span> <span class="fl">0.67</span>   <span class="co"># 40 minutes</span></span>
-<span id="cb122-6"><a href="#cb122-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb122-7"><a href="#cb122-7" aria-hidden="true" tabindex="-1"></a>cout_total_P <span class="ot">&lt;-</span> <span class="dv">200</span> <span class="sc">+</span> (t_stop_meche <span class="sc">*</span> cost_perte_h_tete) <span class="co"># 702.5€</span></span>
-<span id="cb122-8"><a href="#cb122-8" aria-hidden="true" tabindex="-1"></a>cout_total_C <span class="ot">&lt;-</span> <span class="dv">400</span> <span class="sc">+</span> (t_stop_meche <span class="sc">*</span> cost_perte_h_tete) <span class="co"># 902.5€</span></span>
-<span id="cb122-9"><a href="#cb122-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb122-10"><a href="#cb122-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Définition des options (Remplacer à l'état 2, 3, 4 ou attendre 5)</span></span>
-<span id="cb122-11"><a href="#cb122-11" aria-hidden="true" tabindex="-1"></a>etats_test <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">5</span></span>
-<span id="cb122-12"><a href="#cb122-12" aria-hidden="true" tabindex="-1"></a>couts_horaires <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">length</span>(etats_test))</span>
-<span id="cb122-13"><a href="#cb122-13" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(couts_horaires) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Préventif_E2"</span>, <span class="st">"Préventif_E3"</span>, <span class="st">"Préventif_E4"</span>, <span class="st">"Correctif_E5"</span>)</span>
-<span id="cb122-14"><a href="#cb122-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb122-15"><a href="#cb122-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Boucle de calcul</span></span>
-<span id="cb122-16"><a href="#cb122-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>) {</span>
-<span id="cb122-17"><a href="#cb122-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Fréquence de remplacement à l'état i = pi_i * taux de sortie vers i+1</span></span>
-<span id="cb122-18"><a href="#cb122-18" aria-hidden="true" tabindex="-1"></a>  frequence <span class="ot">&lt;-</span> pi_glob[i] <span class="sc">*</span> <span class="fu">abs</span>(Q_glob[i,i])</span>
-<span id="cb122-19"><a href="#cb122-19" aria-hidden="true" tabindex="-1"></a>  couts_horaires[i<span class="dv">-1</span>] <span class="ot">&lt;-</span> frequence <span class="sc">*</span> cout_total_P</span>
-<span id="cb122-20"><a href="#cb122-20" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb122-21"><a href="#cb122-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb122-22"><a href="#cb122-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Cas correctif pur (E5)</span></span>
-<span id="cb122-23"><a href="#cb122-23" aria-hidden="true" tabindex="-1"></a>couts_horaires[<span class="dv">4</span>] <span class="ot">&lt;-</span> pi_glob[<span class="dv">5</span>] <span class="sc">*</span> <span class="fu">abs</span>(Q_glob[<span class="dv">5</span>,<span class="dv">5</span>]) <span class="sc">*</span> cout_total_C</span>
-<span id="cb122-24"><a href="#cb122-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb122-25"><a href="#cb122-25" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Identification du meilleur</span></span>
-<span id="cb122-26"><a href="#cb122-26" aria-hidden="true" tabindex="-1"></a>optimum_etat <span class="ot">&lt;-</span> <span class="fu">names</span>(<span class="fu">which.min</span>(couts_horaires))</span>
-<span id="cb122-27"><a href="#cb122-27" aria-hidden="true" tabindex="-1"></a>gain_max <span class="ot">&lt;-</span> <span class="fu">max</span>(couts_horaires) <span class="sc">-</span> <span class="fu">min</span>(couts_horaires)</span>
-<span id="cb122-28"><a href="#cb122-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb122-29"><a href="#cb122-29" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"--- OPTIMISATION FINALE DES MÈCHES ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb122-4"><a href="#cb122-4" aria-hidden="true" tabindex="-1"></a>cout_mèche_P <span class="ot">&lt;-</span> <span class="dv">200</span>  <span class="co"># Préventif</span></span>
+<span id="cb122-5"><a href="#cb122-5" aria-hidden="true" tabindex="-1"></a>cout_mèche_C <span class="ot">&lt;-</span> <span class="dv">400</span>  <span class="co"># Correctif (200 + 200 de pénalité de casse)</span></span>
+<span id="cb122-6"><a href="#cb122-6" aria-hidden="true" tabindex="-1"></a>cout_indispo <span class="ot">&lt;-</span> <span class="fl">0.67</span> <span class="sc">*</span> <span class="dv">750</span> <span class="co"># Impact du ralentissement de la station (502.5€)</span></span>
+<span id="cb122-7"><a href="#cb122-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb122-8"><a href="#cb122-8" aria-hidden="true" tabindex="-1"></a>cout_total_P <span class="ot">&lt;-</span> cout_mèche_P <span class="sc">+</span> cout_indispo <span class="co"># Soit 702.5 €</span></span>
+<span id="cb122-9"><a href="#cb122-9" aria-hidden="true" tabindex="-1"></a>cout_total_C <span class="ot">&lt;-</span> cout_mèche_C <span class="sc">+</span> cout_indispo <span class="co"># Soit 902.5 €</span></span>
+<span id="cb122-10"><a href="#cb122-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb122-11"><a href="#cb122-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Définition des options (Remplacer à l'état 2, 3, 4 ou attendre 5)</span></span>
+<span id="cb122-12"><a href="#cb122-12" aria-hidden="true" tabindex="-1"></a>etats_test <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">5</span></span>
+<span id="cb122-13"><a href="#cb122-13" aria-hidden="true" tabindex="-1"></a>couts_horaires <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">length</span>(etats_test))</span>
+<span id="cb122-14"><a href="#cb122-14" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(couts_horaires) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Préventif_E2"</span>, <span class="st">"Préventif_E3"</span>, <span class="st">"Préventif_E4"</span>, <span class="st">"Correctif_E5"</span>)</span>
+<span id="cb122-15"><a href="#cb122-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb122-16"><a href="#cb122-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Boucle de calcul</span></span>
+<span id="cb122-17"><a href="#cb122-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>) {</span>
+<span id="cb122-18"><a href="#cb122-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Fréquence de remplacement à l'état i = pi_i * taux de sortie vers i+1</span></span>
+<span id="cb122-19"><a href="#cb122-19" aria-hidden="true" tabindex="-1"></a>  frequence <span class="ot">&lt;-</span> pi_glob[i] <span class="sc">*</span> <span class="fu">abs</span>(Q_glob[i,i])</span>
+<span id="cb122-20"><a href="#cb122-20" aria-hidden="true" tabindex="-1"></a>  couts_horaires[i<span class="dv">-1</span>] <span class="ot">&lt;-</span> frequence <span class="sc">*</span> cout_total_P</span>
+<span id="cb122-21"><a href="#cb122-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb122-22"><a href="#cb122-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb122-23"><a href="#cb122-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Cas correctif pur (E5)</span></span>
+<span id="cb122-24"><a href="#cb122-24" aria-hidden="true" tabindex="-1"></a>couts_horaires[<span class="dv">4</span>] <span class="ot">&lt;-</span> pi_glob[<span class="dv">5</span>] <span class="sc">*</span> <span class="fu">abs</span>(Q_glob[<span class="dv">5</span>,<span class="dv">5</span>]) <span class="sc">*</span> cout_total_C</span>
+<span id="cb122-25"><a href="#cb122-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb122-26"><a href="#cb122-26" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Identification du meilleur</span></span>
+<span id="cb122-27"><a href="#cb122-27" aria-hidden="true" tabindex="-1"></a>optimum_etat <span class="ot">&lt;-</span> <span class="fu">names</span>(<span class="fu">which.min</span>(couts_horaires))</span>
+<span id="cb122-28"><a href="#cb122-28" aria-hidden="true" tabindex="-1"></a>gain_max_unitaire <span class="ot">&lt;-</span> <span class="fu">max</span>(couts_horaires) <span class="sc">-</span> <span class="fu">min</span>(couts_horaires)</span>
+<span id="cb122-29"><a href="#cb122-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb122-30"><a href="#cb122-30" aria-hidden="true" tabindex="-1"></a><span class="co"># PRISE EN COMPTE DES 10 STATIONS</span></span>
+<span id="cb122-31"><a href="#cb122-31" aria-hidden="true" tabindex="-1"></a>nb_stations <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb122-32"><a href="#cb122-32" aria-hidden="true" tabindex="-1"></a>gain_annuel_atelier <span class="ot">&lt;-</span> gain_max_unitaire <span class="sc">*</span> <span class="dv">8760</span> <span class="sc">*</span> nb_stations</span>
+<span id="cb122-33"><a href="#cb122-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb122-34"><a href="#cb122-34" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"--- OPTIMISATION FINALE DES MÈCHES (ATELIER) ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>--- OPTIMISATION FINALE DES MÈCHES ---</code></pre>
+<pre><code>--- OPTIMISATION FINALE DES MÈCHES (ATELIER) ---</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
@@ -1384,10 +1395,10 @@ window.Quarto = {
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb130"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Gain annuel par rapport au pire scénario :"</span>, <span class="fu">round</span>(gain_max <span class="sc">*</span> <span class="dv">8760</span>, <span class="dv">2</span>), <span class="st">"€/an</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb130"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Gain annuel pour l'ATELIER (10 stations) :"</span>, <span class="fu">round</span>(gain_annuel_atelier, <span class="dv">2</span>), <span class="st">"€/an</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Gain annuel par rapport au pire scénario : 31892.48 €/an</code></pre>
+<pre><code>Gain annuel pour l'ATELIER (10 stations) : 318924.8 €/an</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
@@ -1885,90 +1896,101 @@ window.Quarto = {
 <div class="cell">
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb181"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb181-1"><a href="#cb181-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Chargement et nettoyage strict</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb181"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb181-1"><a href="#cb181-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Chargement et préparation des données</span></span>
 <span id="cb181-2"><a href="#cb181-2" aria-hidden="true" tabindex="-1"></a>df_sensor <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">read_excel</span>(path, <span class="at">sheet =</span> <span class="st">"sensor"</span>))</span>
 <span id="cb181-3"><a href="#cb181-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb181-4"><a href="#cb181-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Nettoyage : On filtre les données de la colonne 'time' </span></span>
-<span id="cb181-5"><a href="#cb181-5" aria-hidden="true" tabindex="-1"></a><span class="co"># On suppose que status == 1 ou 'failed' représente une panne</span></span>
-<span id="cb181-6"><a href="#cb181-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Si toutes les lignes sont des pannes, on garde tout ce qui est &gt; 0</span></span>
-<span id="cb181-7"><a href="#cb181-7" aria-hidden="true" tabindex="-1"></a>ttf_sensor_raw <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(df_sensor<span class="sc">$</span>time)</span>
-<span id="cb181-8"><a href="#cb181-8" aria-hidden="true" tabindex="-1"></a>ttf_sensor <span class="ot">&lt;-</span> <span class="fu">sort</span>(ttf_sensor_raw[<span class="sc">!</span><span class="fu">is.na</span>(ttf_sensor_raw) <span class="sc">&amp;</span> ttf_sensor_raw <span class="sc">&gt;</span> <span class="dv">0</span>])</span>
-<span id="cb181-9"><a href="#cb181-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb181-10"><a href="#cb181-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialisation après nettoyage pour garantir l'égalité des longueurs</span></span>
-<span id="cb181-11"><a href="#cb181-11" aria-hidden="true" tabindex="-1"></a>n_s <span class="ot">&lt;-</span> <span class="fu">length</span>(ttf_sensor)</span>
-<span id="cb181-12"><a href="#cb181-12" aria-hidden="true" tabindex="-1"></a>j_s <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span>n_s</span>
-<span id="cb181-13"><a href="#cb181-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb181-14"><a href="#cb181-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Estimation des paramètres de Weibull (Linéarisation)</span></span>
-<span id="cb181-15"><a href="#cb181-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Formule des rangs médians pour éviter F = 1</span></span>
-<span id="cb181-16"><a href="#cb181-16" aria-hidden="true" tabindex="-1"></a>F_hat_s <span class="ot">&lt;-</span> (j_s <span class="sc">-</span> <span class="fl">0.3</span>) <span class="sc">/</span> (n_s <span class="sc">+</span> <span class="fl">0.4</span>)</span>
-<span id="cb181-17"><a href="#cb181-17" aria-hidden="true" tabindex="-1"></a>Y_s <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> F_hat_s))</span>
-<span id="cb181-18"><a href="#cb181-18" aria-hidden="true" tabindex="-1"></a>X_s <span class="ot">&lt;-</span> <span class="fu">log</span>(ttf_sensor)</span>
+<span id="cb181-4"><a href="#cb181-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Nettoyage et formatage pour l'analyse de survie</span></span>
+<span id="cb181-5"><a href="#cb181-5" aria-hidden="true" tabindex="-1"></a>df_sensor<span class="sc">$</span>time <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(df_sensor<span class="sc">$</span>time)</span>
+<span id="cb181-6"><a href="#cb181-6" aria-hidden="true" tabindex="-1"></a>df_sensor<span class="sc">$</span>status <span class="ot">&lt;-</span> <span class="dv">1</span> </span>
+<span id="cb181-7"><a href="#cb181-7" aria-hidden="true" tabindex="-1"></a>df_clean <span class="ot">&lt;-</span> df_sensor[<span class="sc">!</span><span class="fu">is.na</span>(df_sensor<span class="sc">$</span>time) <span class="sc">&amp;</span> df_sensor<span class="sc">$</span>time <span class="sc">&gt;</span> <span class="dv">0</span>, ]</span>
+<span id="cb181-8"><a href="#cb181-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb181-9"><a href="#cb181-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Estimation par Maximum de Vraisemblance (Weibull) avec flexsurv</span></span>
+<span id="cb181-10"><a href="#cb181-10" aria-hidden="true" tabindex="-1"></a>fit_flex <span class="ot">&lt;-</span> <span class="fu">flexsurvreg</span>(<span class="fu">Surv</span>(time, status) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> df_clean, <span class="at">dist =</span> <span class="st">"weibull"</span>)</span>
+<span id="cb181-11"><a href="#cb181-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb181-12"><a href="#cb181-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Extraction des paramètres</span></span>
+<span id="cb181-13"><a href="#cb181-13" aria-hidden="true" tabindex="-1"></a>beta_s <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(fit_flex<span class="sc">$</span>res[<span class="dv">1</span>, <span class="dv">1</span>]) <span class="co"># shape</span></span>
+<span id="cb181-14"><a href="#cb181-14" aria-hidden="true" tabindex="-1"></a>eta_s  <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(fit_flex<span class="sc">$</span>res[<span class="dv">2</span>, <span class="dv">1</span>]) <span class="co"># scale</span></span>
+<span id="cb181-15"><a href="#cb181-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb181-16"><a href="#cb181-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Calcul de la courbe de Kaplan-Meier (Données réelles)</span></span>
+<span id="cb181-17"><a href="#cb181-17" aria-hidden="true" tabindex="-1"></a><span class="co"># INDISPENSABLE pour le tracé plot(km_fit, ...)</span></span>
+<span id="cb181-18"><a href="#cb181-18" aria-hidden="true" tabindex="-1"></a>km_fit <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(time, status) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> df_clean)</span>
 <span id="cb181-19"><a href="#cb181-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb181-20"><a href="#cb181-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Vérification et Régression</span></span>
-<span id="cb181-21"><a href="#cb181-21" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(n_s <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
-<span id="cb181-22"><a href="#cb181-22" aria-hidden="true" tabindex="-1"></a>  fit_s <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y_s <span class="sc">~</span> X_s)</span>
-<span id="cb181-23"><a href="#cb181-23" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb181-24"><a href="#cb181-24" aria-hidden="true" tabindex="-1"></a>  beta_s <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">coef</span>(fit_s)[<span class="dv">2</span>])</span>
-<span id="cb181-25"><a href="#cb181-25" aria-hidden="true" tabindex="-1"></a>  eta_s <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="fu">as.numeric</span>(<span class="fu">coef</span>(fit_s)[<span class="dv">1</span>]) <span class="sc">/</span> beta_s)</span>
-<span id="cb181-26"><a href="#cb181-26" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb181-27"><a href="#cb181-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3. Calcul de la fiabilité individuelle à t = 500h</span></span>
-<span id="cb181-28"><a href="#cb181-28" aria-hidden="true" tabindex="-1"></a>  t_eval <span class="ot">&lt;-</span> <span class="dv">500</span></span>
-<span id="cb181-29"><a href="#cb181-29" aria-hidden="true" tabindex="-1"></a>  R_indiv <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>(t_eval <span class="sc">/</span> eta_s)<span class="sc">^</span>beta_s)</span>
-<span id="cb181-30"><a href="#cb181-30" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb181-31"><a href="#cb181-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 4. Modèle k-parmi-n (3 parmi 4 nécessaires)</span></span>
-<span id="cb181-32"><a href="#cb181-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># R_sys = P(X=3) + P(X=4)</span></span>
-<span id="cb181-33"><a href="#cb181-33" aria-hidden="true" tabindex="-1"></a>  R_sys <span class="ot">&lt;-</span> <span class="fu">choose</span>(<span class="dv">4</span>, <span class="dv">3</span>) <span class="sc">*</span> (R_indiv<span class="sc">^</span><span class="dv">3</span>) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> R_indiv) <span class="sc">+</span> (R_indiv<span class="sc">^</span><span class="dv">4</span>)</span>
-<span id="cb181-34"><a href="#cb181-34" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb181-35"><a href="#cb181-35" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Affichage des résultats</span></span>
-<span id="cb181-36"><a href="#cb181-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"--- Résultats Capteurs (Colonnes: time/status) ---</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb181-37"><a href="#cb181-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Nombre de capteurs analysés :"</span>, n_s, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb181-38"><a href="#cb181-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Paramètre de forme (beta)   :"</span>, <span class="fu">round</span>(beta_s, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb181-39"><a href="#cb181-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Paramètre d'échelle (eta)   :"</span>, <span class="fu">round</span>(eta_s, <span class="dv">4</span>), <span class="st">"h</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb181-40"><a href="#cb181-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"--------------------------------------------------</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb181-41"><a href="#cb181-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Fiabilité individuelle à 500h           :"</span>, <span class="fu">round</span>(R_indiv, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb181-42"><a href="#cb181-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Fiabilité système (3-parmi-4) à 500h    :"</span>, <span class="fu">round</span>(R_sys, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb181-43"><a href="#cb181-43" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb181-44"><a href="#cb181-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Erreur : Aucune donnée valide trouvée dans la colonne 'time'.</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb181-45"><a href="#cb181-45" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb181-20"><a href="#cb181-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Calcul de la fiabilité à t = 500h</span></span>
+<span id="cb181-21"><a href="#cb181-21" aria-hidden="true" tabindex="-1"></a>t_eval <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb181-22"><a href="#cb181-22" aria-hidden="true" tabindex="-1"></a>R_indiv_500 <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>(t_eval <span class="sc">/</span> eta_s)<span class="sc">^</span>beta_s)</span>
+<span id="cb181-23"><a href="#cb181-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Modèle k-parmi-n (3 parmi 4 nécessaires)</span></span>
+<span id="cb181-24"><a href="#cb181-24" aria-hidden="true" tabindex="-1"></a>R_sys_500 <span class="ot">&lt;-</span> <span class="fu">choose</span>(<span class="dv">4</span>, <span class="dv">3</span>) <span class="sc">*</span> (R_indiv_500<span class="sc">^</span><span class="dv">3</span>) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> R_indiv_500) <span class="sc">+</span> (R_indiv_500<span class="sc">^</span><span class="dv">4</span>)</span>
+<span id="cb181-25"><a href="#cb181-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb181-26"><a href="#cb181-26" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Affichage des résultats numériques</span></span>
+<span id="cb181-27"><a href="#cb181-27" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"--- Résultats Capteurs (Estimation flexsurv/MLE) ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>--- Résultats Capteurs (Colonnes: time/status) ---
-Nombre de capteurs analysés : 122 
-Paramètre de forme (beta)   : 1.0209 
-Paramètre d'échelle (eta)   : 14584.42 h
---------------------------------------------------
-Fiabilité individuelle à 500h           : 0.96855 
-Fiabilité système (3-parmi-4) à 500h    : 0.99431 </code></pre>
+<pre><code>--- Résultats Capteurs (Estimation flexsurv/MLE) ---</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb183"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb183-1"><a href="#cb183-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Visualisation de l'apport de la redondance (k-parmi-n)</span></span>
-<span id="cb183-2"><a href="#cb183-2" aria-hidden="true" tabindex="-1"></a>t_seq_s <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">2000</span>, <span class="at">length.out =</span> <span class="dv">100</span>)</span>
-<span id="cb183-3"><a href="#cb183-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb183-4"><a href="#cb183-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Fiabilité individuelle</span></span>
-<span id="cb183-5"><a href="#cb183-5" aria-hidden="true" tabindex="-1"></a>R_indiv_seq <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>(t_seq_s <span class="sc">/</span> eta_s)<span class="sc">^</span>beta_s)</span>
-<span id="cb183-6"><a href="#cb183-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb183-7"><a href="#cb183-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Fiabilité système (3-parmi-4)</span></span>
-<span id="cb183-8"><a href="#cb183-8" aria-hidden="true" tabindex="-1"></a>R_sys_seq <span class="ot">&lt;-</span> <span class="fu">choose</span>(<span class="dv">4</span>, <span class="dv">3</span>) <span class="sc">*</span> (R_indiv_seq<span class="sc">^</span><span class="dv">3</span>) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> R_indiv_seq) <span class="sc">+</span> (R_indiv_seq<span class="sc">^</span><span class="dv">4</span>)</span>
-<span id="cb183-9"><a href="#cb183-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb183-10"><a href="#cb183-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Graphique</span></span>
-<span id="cb183-11"><a href="#cb183-11" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(t_seq_s, R_indiv_seq, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">lwd =</span> <span class="dv">2</span>,</span>
-<span id="cb183-12"><a href="#cb183-12" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Fiabilité des Capteurs : Individuelle vs Système (3/4)"</span>,</span>
-<span id="cb183-13"><a href="#cb183-13" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Temps (heures)"</span>, <span class="at">ylab =</span> <span class="st">"Fiabilité R(t)"</span>,</span>
-<span id="cb183-14"><a href="#cb183-14" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
-<span id="cb183-15"><a href="#cb183-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb183-16"><a href="#cb183-16" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(t_seq_s, R_sys_seq, <span class="at">col =</span> <span class="st">"blue"</span>, <span class="at">lwd =</span> <span class="dv">3</span>)</span>
-<span id="cb183-17"><a href="#cb183-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb183-18"><a href="#cb183-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Marquage du point à 500h</span></span>
-<span id="cb183-19"><a href="#cb183-19" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="dv">500</span>, <span class="at">col =</span> <span class="st">"gray"</span>, <span class="at">lty =</span> <span class="dv">3</span>)</span>
-<span id="cb183-20"><a href="#cb183-20" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="dv">500</span>, R_sys, <span class="at">col =</span> <span class="st">"darkgreen"</span>, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">cex =</span> <span class="fl">1.2</span>)</span>
-<span id="cb183-21"><a href="#cb183-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb183-22"><a href="#cb183-22" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"bottomleft"</span>, </span>
-<span id="cb183-23"><a href="#cb183-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Un seul capteur"</span>, <span class="st">"Système 3-parmi-4"</span>, <span class="st">"Cible 500h"</span>),</span>
-<span id="cb183-24"><a href="#cb183-24" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"red"</span>, <span class="st">"blue"</span>, <span class="st">"darkgreen"</span>), </span>
-<span id="cb183-25"><a href="#cb183-25" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="cn">NA</span>), <span class="at">pch =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, <span class="dv">19</span>), <span class="at">lwd =</span> <span class="dv">2</span>)</span>
-<span id="cb183-26"><a href="#cb183-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb183-27"><a href="#cb183-27" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb183"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb183-1"><a href="#cb183-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Paramètre de forme (beta) :"</span>, <span class="fu">round</span>(beta_s, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Paramètre de forme (beta) : 1.0386 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb185"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb185-1"><a href="#cb185-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Paramètre d'échelle (eta) :"</span>, <span class="fu">round</span>(eta_s, <span class="dv">4</span>), <span class="st">"h</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Paramètre d'échelle (eta) : 14580.93 h</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb187"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb187-1"><a href="#cb187-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"--------------------------------------------------</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--------------------------------------------------</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb189"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb189-1"><a href="#cb189-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Fiabilité individuelle à 500h :"</span>, <span class="fu">round</span>(R_indiv_500, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fiabilité individuelle à 500h : 0.97034 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb191"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb191-1"><a href="#cb191-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Fiabilité système (3/4) à 500h :"</span>, <span class="fu">round</span>(R_sys_500, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fiabilité système (3/4) à 500h : 0.99493 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb193"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb193-1"><a href="#cb193-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. Visualisation comparative</span></span>
+<span id="cb193-2"><a href="#cb193-2" aria-hidden="true" tabindex="-1"></a>t_seq_s <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">max</span>(df_clean<span class="sc">$</span>time) <span class="sc">*</span> <span class="fl">1.2</span>, <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb193-3"><a href="#cb193-3" aria-hidden="true" tabindex="-1"></a>R_indiv_seq <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>(t_seq_s <span class="sc">/</span> eta_s)<span class="sc">^</span>beta_s)</span>
+<span id="cb193-4"><a href="#cb193-4" aria-hidden="true" tabindex="-1"></a>R_sys_seq   <span class="ot">&lt;-</span> <span class="fu">choose</span>(<span class="dv">4</span>, <span class="dv">3</span>) <span class="sc">*</span> (R_indiv_seq<span class="sc">^</span><span class="dv">3</span>) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> R_indiv_seq) <span class="sc">+</span> (R_indiv_seq<span class="sc">^</span><span class="dv">4</span>)</span>
+<span id="cb193-5"><a href="#cb193-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb193-6"><a href="#cb193-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Tracé des marches d'escalier (Kaplan-Meier)</span></span>
+<span id="cb193-7"><a href="#cb193-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(km_fit, <span class="at">conf.int =</span> <span class="cn">FALSE</span>, <span class="at">mark.time =</span> <span class="cn">TRUE</span>, <span class="at">lwd =</span> <span class="dv">2</span>,</span>
+<span id="cb193-8"><a href="#cb193-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Fiabilité des Capteurs : Données Réelles vs Modèles"</span>,</span>
+<span id="cb193-9"><a href="#cb193-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Temps (heures)"</span>, <span class="at">ylab =</span> <span class="st">"Fiabilité R(t)"</span>,</span>
+<span id="cb193-10"><a href="#cb193-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">max</span>(t_seq_s)), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb193-11"><a href="#cb193-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb193-12"><a href="#cb193-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Modèle de Weibull théorique (Individuel)</span></span>
+<span id="cb193-13"><a href="#cb193-13" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(t_seq_s, R_indiv_seq, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb193-14"><a href="#cb193-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb193-15"><a href="#cb193-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Courbe du Système Redondant (3-parmi-4)</span></span>
+<span id="cb193-16"><a href="#cb193-16" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(t_seq_s, R_sys_seq, <span class="at">col =</span> <span class="st">"blue"</span>, <span class="at">lwd =</span> <span class="dv">3</span>)</span>
+<span id="cb193-17"><a href="#cb193-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb193-18"><a href="#cb193-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Marquage de l'objectif 500h</span></span>
+<span id="cb193-19"><a href="#cb193-19" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(t_eval, R_sys_500, <span class="at">col =</span> <span class="st">"darkgreen"</span>, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">cex =</span> <span class="fl">1.2</span>)</span>
+<span id="cb193-20"><a href="#cb193-20" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(t_eval, R_sys_500, <span class="at">labels =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(R_sys_500<span class="sc">*</span><span class="dv">100</span>,<span class="dv">1</span>),<span class="st">"%"</span>), <span class="at">pos =</span> <span class="dv">3</span>, <span class="at">col =</span> <span class="st">"darkgreen"</span>)</span>
+<span id="cb193-21"><a href="#cb193-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb193-22"><a href="#cb193-22" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"bottomleft"</span>, </span>
+<span id="cb193-23"><a href="#cb193-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Données réelles (KM)"</span>, <span class="st">"Modèle Weibull (Indiv)"</span>, <span class="st">"Système 3-parmi-4"</span>, <span class="st">"Cible 500h"</span>),</span>
+<span id="cb193-24"><a href="#cb193-24" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"red"</span>, <span class="st">"blue"</span>, <span class="st">"darkgreen"</span>), </span>
+<span id="cb193-25"><a href="#cb193-25" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="cn">NA</span>), <span class="at">pch =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="dv">19</span>), <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb193-26"><a href="#cb193-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb193-27"><a href="#cb193-27" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -1988,106 +2010,106 @@ Fiabilité système (3-parmi-4) à 500h    : 0.99431 </code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb184"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb184-1"><a href="#cb184-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Optimisation des Capteurs (Point 2) ---</span></span>
-<span id="cb184-2"><a href="#cb184-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb184-3"><a href="#cb184-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Paramètres (Tableau 5 &amp; Enoncé)</span></span>
-<span id="cb184-4"><a href="#cb184-4" aria-hidden="true" tabindex="-1"></a>cout_arret_h <span class="ot">&lt;-</span> <span class="dv">1500</span></span>
-<span id="cb184-5"><a href="#cb184-5" aria-hidden="true" tabindex="-1"></a>cout_rebut_h <span class="ot">&lt;-</span> <span class="dv">1500</span>     <span class="co"># Selon l'énoncé : "temps de production perdu" = revenu station</span></span>
-<span id="cb184-6"><a href="#cb184-6" aria-hidden="true" tabindex="-1"></a>duree_insp   <span class="ot">&lt;-</span> <span class="fl">0.5</span>      </span>
-<span id="cb184-7"><a href="#cb184-7" aria-hidden="true" tabindex="-1"></a>cout_insp_fixe <span class="ot">&lt;-</span> <span class="dv">50</span>     <span class="co"># Donnée Tableau 5</span></span>
-<span id="cb184-8"><a href="#cb184-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb184-9"><a href="#cb184-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Coût fixe de l'inspection (Temps d'arrêt + frais fixes)</span></span>
-<span id="cb184-10"><a href="#cb184-10" aria-hidden="true" tabindex="-1"></a>Cinsp <span class="ot">&lt;-</span> (duree_insp <span class="sc">*</span> cout_arret_h) <span class="sc">+</span> cout_insp_fixe <span class="co"># 750 + 50 = 800€</span></span>
-<span id="cb184-11"><a href="#cb184-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb184-12"><a href="#cb184-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Coût total d'UN remplacement (Pièce 225€ + Arrêt prod 0.25h*1500€)</span></span>
-<span id="cb184-13"><a href="#cb184-13" aria-hidden="true" tabindex="-1"></a>cout_piece_rempl <span class="ot">&lt;-</span> <span class="dv">225</span></span>
-<span id="cb184-14"><a href="#cb184-14" aria-hidden="true" tabindex="-1"></a>duree_rempl      <span class="ot">&lt;-</span> <span class="fl">0.25</span></span>
-<span id="cb184-15"><a href="#cb184-15" aria-hidden="true" tabindex="-1"></a>C_un_remplacement <span class="ot">&lt;-</span> cout_piece_rempl <span class="sc">+</span> (duree_rempl <span class="sc">*</span> cout_arret_h) <span class="co"># 225 + 375 = 600€</span></span>
-<span id="cb184-16"><a href="#cb184-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb184-17"><a href="#cb184-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Fonction de coût par heure</span></span>
-<span id="cb184-18"><a href="#cb184-18" aria-hidden="true" tabindex="-1"></a>sensor_cost_function <span class="ot">&lt;-</span> <span class="cf">function</span>(tau) {</span>
-<span id="cb184-19"><a href="#cb184-19" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb184-20"><a href="#cb184-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Probabilité de panne d'un capteur seul à l'instant t</span></span>
-<span id="cb184-21"><a href="#cb184-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># (S'assure que beta_s et eta_s sont bien définis avant)</span></span>
-<span id="cb184-22"><a href="#cb184-22" aria-hidden="true" tabindex="-1"></a>  R_t_unitaire <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>(tau <span class="sc">/</span> eta_s)<span class="sc">^</span>beta_s)</span>
-<span id="cb184-23"><a href="#cb184-23" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb184-24"><a href="#cb184-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># A. Fiabilité du système 3-parmi-4 (Rsys)</span></span>
-<span id="cb184-25"><a href="#cb184-25" aria-hidden="true" tabindex="-1"></a>  R_sys_t <span class="ot">&lt;-</span> <span class="cf">function</span>(t) {</span>
-<span id="cb184-26"><a href="#cb184-26" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>(t <span class="sc">/</span> eta_s)<span class="sc">^</span>beta_s)</span>
-<span id="cb184-27"><a href="#cb184-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Formule : P(3 capteurs OK) + P(4 capteurs OK)</span></span>
-<span id="cb184-28"><a href="#cb184-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">choose</span>(<span class="dv">4</span>, <span class="dv">3</span>) <span class="sc">*</span> (p<span class="sc">^</span><span class="dv">3</span>) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p) <span class="sc">+</span> (p<span class="sc">^</span><span class="dv">4</span>))</span>
-<span id="cb184-29"><a href="#cb184-29" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb184-30"><a href="#cb184-30" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb184-31"><a href="#cb184-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># B. Espérance du temps passé en état de défaillance (Rebuts)</span></span>
-<span id="cb184-32"><a href="#cb184-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Intégrale de l'indisponibilité (1 - Rsys) sur l'intervalle [0, tau]</span></span>
-<span id="cb184-33"><a href="#cb184-33" aria-hidden="true" tabindex="-1"></a>  temps_rebuts <span class="ot">&lt;-</span> <span class="fu">integrate</span>(<span class="cf">function</span>(t) <span class="dv">1</span> <span class="sc">-</span> <span class="fu">sapply</span>(t, R_sys_t), <span class="at">lower=</span><span class="dv">0</span>, <span class="at">upper=</span>tau)<span class="sc">$</span>value</span>
-<span id="cb184-34"><a href="#cb184-34" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb184-35"><a href="#cb184-35" aria-hidden="true" tabindex="-1"></a>  <span class="co"># C. Nombre moyen de capteurs à remplacer lors de l'inspection</span></span>
-<span id="cb184-36"><a href="#cb184-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Loi Binomiale : n * p</span></span>
-<span id="cb184-37"><a href="#cb184-37" aria-hidden="true" tabindex="-1"></a>  nb_pannes_moyen <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> R_t_unitaire)</span>
-<span id="cb184-38"><a href="#cb184-38" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb184-39"><a href="#cb184-39" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Coût total sur le cycle d'inspection</span></span>
-<span id="cb184-40"><a href="#cb184-40" aria-hidden="true" tabindex="-1"></a>  cout_cycle <span class="ot">&lt;-</span> Cinsp <span class="sc">+</span> (temps_rebuts <span class="sc">*</span> cout_rebut_h) <span class="sc">+</span> (nb_pannes_moyen <span class="sc">*</span> C_un_remplacement)</span>
-<span id="cb184-41"><a href="#cb184-41" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb184-42"><a href="#cb184-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(cout_cycle <span class="sc">/</span> tau)</span>
-<span id="cb184-43"><a href="#cb184-43" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb184-44"><a href="#cb184-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb184-45"><a href="#cb184-45" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Optimisation</span></span>
-<span id="cb184-46"><a href="#cb184-46" aria-hidden="true" tabindex="-1"></a>opti_sensor <span class="ot">&lt;-</span> <span class="fu">optimize</span>(sensor_cost_function, <span class="at">interval =</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">3000</span>))</span>
-<span id="cb184-47"><a href="#cb184-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb184-48"><a href="#cb184-48" aria-hidden="true" tabindex="-1"></a>tau_opti <span class="ot">&lt;-</span> opti_sensor<span class="sc">$</span>minimum</span>
-<span id="cb184-49"><a href="#cb184-49" aria-hidden="true" tabindex="-1"></a>cout_horaire_sensor_min <span class="ot">&lt;-</span> opti_sensor<span class="sc">$</span>objective</span>
-<span id="cb184-50"><a href="#cb184-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb184-51"><a href="#cb184-51" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Affichage des résultats</span></span>
-<span id="cb184-52"><a href="#cb184-52" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"--- OPTIMISATION DU SYSTÈME DE POSITIONNEMENT ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb194"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb194-1"><a href="#cb194-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Optimisation des Capteurs (Point 2) ---</span></span>
+<span id="cb194-2"><a href="#cb194-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-3"><a href="#cb194-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Paramètres (Tableau 5 &amp; Enoncé)</span></span>
+<span id="cb194-4"><a href="#cb194-4" aria-hidden="true" tabindex="-1"></a>cout_arret_h <span class="ot">&lt;-</span> <span class="dv">1500</span></span>
+<span id="cb194-5"><a href="#cb194-5" aria-hidden="true" tabindex="-1"></a>cout_rebut_h <span class="ot">&lt;-</span> <span class="dv">1500</span>     <span class="co"># Selon l'énoncé : "temps de production perdu" = revenu station</span></span>
+<span id="cb194-6"><a href="#cb194-6" aria-hidden="true" tabindex="-1"></a>duree_insp   <span class="ot">&lt;-</span> <span class="fl">0.5</span>      </span>
+<span id="cb194-7"><a href="#cb194-7" aria-hidden="true" tabindex="-1"></a>cout_insp_fixe <span class="ot">&lt;-</span> <span class="dv">50</span>     <span class="co"># Donnée Tableau 5</span></span>
+<span id="cb194-8"><a href="#cb194-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-9"><a href="#cb194-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Coût fixe de l'inspection (Temps d'arrêt + frais fixes)</span></span>
+<span id="cb194-10"><a href="#cb194-10" aria-hidden="true" tabindex="-1"></a>Cinsp <span class="ot">&lt;-</span> (duree_insp <span class="sc">*</span> cout_arret_h) <span class="sc">+</span> cout_insp_fixe <span class="co"># 750 + 50 = 800€</span></span>
+<span id="cb194-11"><a href="#cb194-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-12"><a href="#cb194-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Coût total d'UN remplacement (Pièce 225€ + Arrêt prod 0.25h*1500€)</span></span>
+<span id="cb194-13"><a href="#cb194-13" aria-hidden="true" tabindex="-1"></a>cout_piece_rempl <span class="ot">&lt;-</span> <span class="dv">225</span></span>
+<span id="cb194-14"><a href="#cb194-14" aria-hidden="true" tabindex="-1"></a>duree_rempl      <span class="ot">&lt;-</span> <span class="fl">0.25</span></span>
+<span id="cb194-15"><a href="#cb194-15" aria-hidden="true" tabindex="-1"></a>C_un_remplacement <span class="ot">&lt;-</span> cout_piece_rempl <span class="sc">+</span> (duree_rempl <span class="sc">*</span> cout_arret_h) <span class="co"># 225 + 375 = 600€</span></span>
+<span id="cb194-16"><a href="#cb194-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-17"><a href="#cb194-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Fonction de coût par heure</span></span>
+<span id="cb194-18"><a href="#cb194-18" aria-hidden="true" tabindex="-1"></a>sensor_cost_function <span class="ot">&lt;-</span> <span class="cf">function</span>(tau) {</span>
+<span id="cb194-19"><a href="#cb194-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb194-20"><a href="#cb194-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Probabilité de panne d'un capteur seul à l'instant t</span></span>
+<span id="cb194-21"><a href="#cb194-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># (S'assure que beta_s et eta_s sont bien définis avant)</span></span>
+<span id="cb194-22"><a href="#cb194-22" aria-hidden="true" tabindex="-1"></a>  R_t_unitaire <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>(tau <span class="sc">/</span> eta_s)<span class="sc">^</span>beta_s)</span>
+<span id="cb194-23"><a href="#cb194-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb194-24"><a href="#cb194-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># A. Fiabilité du système 3-parmi-4 (Rsys)</span></span>
+<span id="cb194-25"><a href="#cb194-25" aria-hidden="true" tabindex="-1"></a>  R_sys_t <span class="ot">&lt;-</span> <span class="cf">function</span>(t) {</span>
+<span id="cb194-26"><a href="#cb194-26" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>(t <span class="sc">/</span> eta_s)<span class="sc">^</span>beta_s)</span>
+<span id="cb194-27"><a href="#cb194-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Formule : P(3 capteurs OK) + P(4 capteurs OK)</span></span>
+<span id="cb194-28"><a href="#cb194-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">choose</span>(<span class="dv">4</span>, <span class="dv">3</span>) <span class="sc">*</span> (p<span class="sc">^</span><span class="dv">3</span>) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p) <span class="sc">+</span> (p<span class="sc">^</span><span class="dv">4</span>))</span>
+<span id="cb194-29"><a href="#cb194-29" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb194-30"><a href="#cb194-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb194-31"><a href="#cb194-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># B. Espérance du temps passé en état de défaillance (Rebuts)</span></span>
+<span id="cb194-32"><a href="#cb194-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Intégrale de l'indisponibilité (1 - Rsys) sur l'intervalle [0, tau]</span></span>
+<span id="cb194-33"><a href="#cb194-33" aria-hidden="true" tabindex="-1"></a>  temps_rebuts <span class="ot">&lt;-</span> <span class="fu">integrate</span>(<span class="cf">function</span>(t) <span class="dv">1</span> <span class="sc">-</span> <span class="fu">sapply</span>(t, R_sys_t), <span class="at">lower=</span><span class="dv">0</span>, <span class="at">upper=</span>tau)<span class="sc">$</span>value</span>
+<span id="cb194-34"><a href="#cb194-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb194-35"><a href="#cb194-35" aria-hidden="true" tabindex="-1"></a>  <span class="co"># C. Nombre moyen de capteurs à remplacer lors de l'inspection</span></span>
+<span id="cb194-36"><a href="#cb194-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Loi Binomiale : n * p</span></span>
+<span id="cb194-37"><a href="#cb194-37" aria-hidden="true" tabindex="-1"></a>  nb_pannes_moyen <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> R_t_unitaire)</span>
+<span id="cb194-38"><a href="#cb194-38" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb194-39"><a href="#cb194-39" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Coût total sur le cycle d'inspection</span></span>
+<span id="cb194-40"><a href="#cb194-40" aria-hidden="true" tabindex="-1"></a>  cout_cycle <span class="ot">&lt;-</span> Cinsp <span class="sc">+</span> (temps_rebuts <span class="sc">*</span> cout_rebut_h) <span class="sc">+</span> (nb_pannes_moyen <span class="sc">*</span> C_un_remplacement)</span>
+<span id="cb194-41"><a href="#cb194-41" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb194-42"><a href="#cb194-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(cout_cycle <span class="sc">/</span> tau)</span>
+<span id="cb194-43"><a href="#cb194-43" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb194-44"><a href="#cb194-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-45"><a href="#cb194-45" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Optimisation</span></span>
+<span id="cb194-46"><a href="#cb194-46" aria-hidden="true" tabindex="-1"></a>opti_sensor <span class="ot">&lt;-</span> <span class="fu">optimize</span>(sensor_cost_function, <span class="at">interval =</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">3000</span>))</span>
+<span id="cb194-47"><a href="#cb194-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-48"><a href="#cb194-48" aria-hidden="true" tabindex="-1"></a>tau_opti <span class="ot">&lt;-</span> opti_sensor<span class="sc">$</span>minimum</span>
+<span id="cb194-49"><a href="#cb194-49" aria-hidden="true" tabindex="-1"></a>cout_horaire_sensor_min <span class="ot">&lt;-</span> opti_sensor<span class="sc">$</span>objective</span>
+<span id="cb194-50"><a href="#cb194-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb194-51"><a href="#cb194-51" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Affichage des résultats</span></span>
+<span id="cb194-52"><a href="#cb194-52" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"--- OPTIMISATION DU SYSTÈME DE POSITIONNEMENT ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>--- OPTIMISATION DU SYSTÈME DE POSITIONNEMENT ---</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb186"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb186-1"><a href="#cb186-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Intervalle d'inspection optimal (tau*) :"</span>, <span class="fu">round</span>(tau_opti, <span class="dv">2</span>), <span class="st">"heures</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb196"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb196-1"><a href="#cb196-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Intervalle d'inspection optimal (tau*) :"</span>, <span class="fu">round</span>(tau_opti, <span class="dv">2</span>), <span class="st">"heures</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Intervalle d'inspection optimal (tau*) : 326.54 heures</code></pre>
+<pre><code>Intervalle d'inspection optimal (tau*) : 340.19 heures</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb188"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb188-1"><a href="#cb188-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Coût moyen minimal par heure          :"</span>, <span class="fu">round</span>(cout_horaire_sensor_min, <span class="dv">4</span>), <span class="st">"€/h</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb198"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb198-1"><a href="#cb198-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Coût moyen minimal par heure          :"</span>, <span class="fu">round</span>(cout_horaire_sensor_min, <span class="dv">4</span>), <span class="st">"€/h</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Coût moyen minimal par heure          : 3.8215 €/h</code></pre>
+<pre><code>Coût moyen minimal par heure          : 3.6429 €/h</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb190"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb190-1"><a href="#cb190-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"--------------------------------------------------</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb200"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb200-1"><a href="#cb200-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"--------------------------------------------------</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>--------------------------------------------------</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb192"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb192-1"><a href="#cb192-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Visualisation de l'optimisation des inspections</span></span>
-<span id="cb192-2"><a href="#cb192-2" aria-hidden="true" tabindex="-1"></a>tau_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">50</span>, <span class="dv">3000</span>, <span class="at">length.out =</span> <span class="dv">100</span>)</span>
-<span id="cb192-3"><a href="#cb192-3" aria-hidden="true" tabindex="-1"></a>costs_sensor <span class="ot">&lt;-</span> <span class="fu">sapply</span>(tau_seq, sensor_cost_function)</span>
-<span id="cb192-4"><a href="#cb192-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb192-5"><a href="#cb192-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(tau_seq, costs_sensor, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">col =</span> <span class="st">"purple"</span>, <span class="at">lwd =</span> <span class="dv">2</span>,</span>
-<span id="cb192-6"><a href="#cb192-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Optimisation de l'intervalle d'inspection (Capteurs)"</span>,</span>
-<span id="cb192-7"><a href="#cb192-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Intervalle d'inspection tau (heures)"</span>,</span>
-<span id="cb192-8"><a href="#cb192-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Coût moyen horaire (€/h)"</span>,</span>
-<span id="cb192-9"><a href="#cb192-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">c</span>(<span class="fu">min</span>(costs_sensor), <span class="fu">min</span>(costs_sensor) <span class="sc">*</span> <span class="dv">2</span>))</span>
-<span id="cb192-10"><a href="#cb192-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb192-11"><a href="#cb192-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Marquage de l'optimum tau*</span></span>
-<span id="cb192-12"><a href="#cb192-12" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(tau_opti, cout_horaire_sensor_min, <span class="at">col =</span> <span class="st">"darkgreen"</span>, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">cex =</span> <span class="fl">1.5</span>)</span>
-<span id="cb192-13"><a href="#cb192-13" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> tau_opti, <span class="at">col =</span> <span class="st">"darkgreen"</span>, <span class="at">lty =</span> <span class="dv">3</span>)</span>
-<span id="cb192-14"><a href="#cb192-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb192-15"><a href="#cb192-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajout d'une légende</span></span>
-<span id="cb192-16"><a href="#cb192-16" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, </span>
-<span id="cb192-17"><a href="#cb192-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Fonction de coût C(tau)"</span>, <span class="fu">paste</span>(<span class="st">"Optimum tau* ="</span>, <span class="fu">round</span>(tau_opti, <span class="dv">0</span>), <span class="st">"h"</span>)),</span>
-<span id="cb192-18"><a href="#cb192-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"purple"</span>, <span class="st">"darkgreen"</span>), </span>
-<span id="cb192-19"><a href="#cb192-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>), <span class="at">pch =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">19</span>), <span class="at">lwd =</span> <span class="dv">2</span>)</span>
-<span id="cb192-20"><a href="#cb192-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb192-21"><a href="#cb192-21" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb202"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb202-1"><a href="#cb202-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Visualisation de l'optimisation des inspections</span></span>
+<span id="cb202-2"><a href="#cb202-2" aria-hidden="true" tabindex="-1"></a>tau_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">50</span>, <span class="dv">3000</span>, <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb202-3"><a href="#cb202-3" aria-hidden="true" tabindex="-1"></a>costs_sensor <span class="ot">&lt;-</span> <span class="fu">sapply</span>(tau_seq, sensor_cost_function)</span>
+<span id="cb202-4"><a href="#cb202-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb202-5"><a href="#cb202-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(tau_seq, costs_sensor, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">col =</span> <span class="st">"purple"</span>, <span class="at">lwd =</span> <span class="dv">2</span>,</span>
+<span id="cb202-6"><a href="#cb202-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Optimisation de l'intervalle d'inspection (Capteurs)"</span>,</span>
+<span id="cb202-7"><a href="#cb202-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Intervalle d'inspection tau (heures)"</span>,</span>
+<span id="cb202-8"><a href="#cb202-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Coût moyen horaire (€/h)"</span>,</span>
+<span id="cb202-9"><a href="#cb202-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">c</span>(<span class="fu">min</span>(costs_sensor), <span class="fu">min</span>(costs_sensor) <span class="sc">*</span> <span class="dv">2</span>))</span>
+<span id="cb202-10"><a href="#cb202-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb202-11"><a href="#cb202-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Marquage de l'optimum tau*</span></span>
+<span id="cb202-12"><a href="#cb202-12" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(tau_opti, cout_horaire_sensor_min, <span class="at">col =</span> <span class="st">"darkgreen"</span>, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">cex =</span> <span class="fl">1.5</span>)</span>
+<span id="cb202-13"><a href="#cb202-13" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> tau_opti, <span class="at">col =</span> <span class="st">"darkgreen"</span>, <span class="at">lty =</span> <span class="dv">3</span>)</span>
+<span id="cb202-14"><a href="#cb202-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb202-15"><a href="#cb202-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajout d'une légende</span></span>
+<span id="cb202-16"><a href="#cb202-16" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, </span>
+<span id="cb202-17"><a href="#cb202-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Fonction de coût C(tau)"</span>, <span class="fu">paste</span>(<span class="st">"Optimum tau* ="</span>, <span class="fu">round</span>(tau_opti, <span class="dv">0</span>), <span class="st">"h"</span>)),</span>
+<span id="cb202-18"><a href="#cb202-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"purple"</span>, <span class="st">"darkgreen"</span>), </span>
+<span id="cb202-19"><a href="#cb202-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>), <span class="at">pch =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">19</span>), <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb202-20"><a href="#cb202-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb202-21"><a href="#cb202-21" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -2108,94 +2130,94 @@ Fiabilité système (3-parmi-4) à 500h    : 0.99431 </code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb193"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb193-1"><a href="#cb193-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ====================================================</span></span>
-<span id="cb193-2"><a href="#cb193-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SYNTHÈSE GLOBALE - STATION DE PERÇAGE (POINT 3)</span></span>
-<span id="cb193-3"><a href="#cb193-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ====================================================</span></span>
-<span id="cb193-4"><a href="#cb193-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-5"><a href="#cb193-5" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 1. PARAMÈTRES DE BASE (Extraits des Tableaux 1 à 5) ---</span></span>
-<span id="cb193-6"><a href="#cb193-6" aria-hidden="true" tabindex="-1"></a>revenu_horaire      <span class="ot">&lt;-</span> <span class="dv">1500</span>   <span class="co"># Station complète</span></span>
-<span id="cb193-7"><a href="#cb193-7" aria-hidden="true" tabindex="-1"></a>revenu_h_tete       <span class="ot">&lt;-</span> <span class="dv">750</span>    <span class="co"># Perte si 1 seule tête est arrêtée (Mèches/Moteur)</span></span>
-<span id="cb193-8"><a href="#cb193-8" aria-hidden="true" tabindex="-1"></a>main_oeuvre_h       <span class="ot">&lt;-</span> <span class="dv">100</span>    <span class="co"># Facturation MO qualifiée</span></span>
-<span id="cb193-9"><a href="#cb193-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-10"><a href="#cb193-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Durées d'arrêt moyennes (MTTR)</span></span>
-<span id="cb193-11"><a href="#cb193-11" aria-hidden="true" tabindex="-1"></a>duree_arret_lub     <span class="ot">&lt;-</span> <span class="fl">4.0</span>    <span class="co"># Tableau 2</span></span>
-<span id="cb193-12"><a href="#cb193-12" aria-hidden="true" tabindex="-1"></a>duree_arret_meche   <span class="ot">&lt;-</span> <span class="fl">0.67</span>   <span class="co"># Tableau 3 (40 min)</span></span>
-<span id="cb193-13"><a href="#cb193-13" aria-hidden="true" tabindex="-1"></a>duree_arret_moteur  <span class="ot">&lt;-</span> <span class="fl">2.5</span>    <span class="co"># Tableau 4 (2h + 0.5h)</span></span>
-<span id="cb193-14"><a href="#cb193-14" aria-hidden="true" tabindex="-1"></a>duree_insp_sensor   <span class="ot">&lt;-</span> <span class="fl">0.5</span>    <span class="co"># Tableau 5 (30 min)</span></span>
-<span id="cb193-15"><a href="#cb193-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-16"><a href="#cb193-16" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 2. CALCUL DE LA DISPONIBILITÉ PAR COMPOSANT (SCÉNARIO OPTIMISÉ) ---</span></span>
-<span id="cb193-17"><a href="#cb193-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-18"><a href="#cb193-18" aria-hidden="true" tabindex="-1"></a><span class="co"># A. Lubrification (Optimisée à k_star)</span></span>
-<span id="cb193-19"><a href="#cb193-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Disponibilité = (Temps total - Temps de maintenance préventive) / Temps total</span></span>
-<span id="cb193-20"><a href="#cb193-20" aria-hidden="true" tabindex="-1"></a>temps_mort_lub_annuel <span class="ot">&lt;-</span> k_star <span class="sc">*</span> duree_arret_lub</span>
-<span id="cb193-21"><a href="#cb193-21" aria-hidden="true" tabindex="-1"></a>dispo_opti_lub        <span class="ot">&lt;-</span> (<span class="dv">8760</span> <span class="sc">-</span> temps_mort_lub_annuel) <span class="sc">/</span> <span class="dv">8760</span></span>
-<span id="cb193-22"><a href="#cb193-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Coût horaire moyen issu de optimisation Point 2</span></span>
-<span id="cb193-23"><a href="#cb193-23" aria-hidden="true" tabindex="-1"></a>cout_horaire_lub_min  <span class="ot">&lt;-</span> cost_min <span class="sc">/</span> <span class="dv">8760</span></span>
-<span id="cb193-24"><a href="#cb193-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-25"><a href="#cb193-25" aria-hidden="true" tabindex="-1"></a><span class="co"># B. Mèches (Remplacement préventif à l'État 4)</span></span>
-<span id="cb193-26"><a href="#cb193-26" aria-hidden="true" tabindex="-1"></a><span class="co"># On utilise la fréquence de ton modèle de Markov</span></span>
-<span id="cb193-27"><a href="#cb193-27" aria-hidden="true" tabindex="-1"></a><span class="co"># freq_rempl_meche = pi_E4 * q_E4_E5 (nombre de remplacements par heure)</span></span>
-<span id="cb193-28"><a href="#cb193-28" aria-hidden="true" tabindex="-1"></a>freq_rempl_meche       <span class="ot">&lt;-</span> pi_glob[<span class="dv">4</span>] <span class="sc">*</span> <span class="fu">abs</span>(Q_glob[<span class="dv">4</span>,<span class="dv">4</span>])</span>
-<span id="cb193-29"><a href="#cb193-29" aria-hidden="true" tabindex="-1"></a>indispo_meche_annuelle <span class="ot">&lt;-</span> freq_rempl_meche <span class="sc">*</span> <span class="dv">8760</span> <span class="sc">*</span> duree_arret_meche</span>
-<span id="cb193-30"><a href="#cb193-30" aria-hidden="true" tabindex="-1"></a>dispo_opti_meches      <span class="ot">&lt;-</span> (<span class="dv">8760</span> <span class="sc">-</span> indispo_meche_annuelle) <span class="sc">/</span> <span class="dv">8760</span></span>
-<span id="cb193-31"><a href="#cb193-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-32"><a href="#cb193-32" aria-hidden="true" tabindex="-1"></a><span class="co"># C. Capteurs (Inspection à l'intervalle tau_opti)</span></span>
-<span id="cb193-33"><a href="#cb193-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Rsys(t) pour un système 3-parmi-4</span></span>
-<span id="cb193-34"><a href="#cb193-34" aria-hidden="true" tabindex="-1"></a>R_sys_t_func <span class="ot">&lt;-</span> <span class="cf">function</span>(t) {</span>
-<span id="cb193-35"><a href="#cb193-35" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>(t <span class="sc">/</span> eta_s)<span class="sc">^</span>beta_s)</span>
-<span id="cb193-36"><a href="#cb193-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">choose</span>(<span class="dv">4</span>, <span class="dv">3</span>) <span class="sc">*</span> (p<span class="sc">^</span><span class="dv">3</span>) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p) <span class="sc">+</span> (p<span class="sc">^</span><span class="dv">4</span>))</span>
-<span id="cb193-37"><a href="#cb193-37" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb193-38"><a href="#cb193-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Temps mort = Temps HS indétecté (Rebuts) + Temps d'arrêt pour inspection</span></span>
-<span id="cb193-39"><a href="#cb193-39" aria-hidden="true" tabindex="-1"></a>temps_HS_indetecte <span class="ot">&lt;-</span> <span class="fu">integrate</span>(<span class="cf">function</span>(t) <span class="dv">1</span> <span class="sc">-</span> <span class="fu">sapply</span>(t, R_sys_t_func), </span>
-<span id="cb193-40"><a href="#cb193-40" aria-hidden="true" tabindex="-1"></a>                                <span class="at">lower =</span> <span class="dv">0</span>, <span class="at">upper =</span> tau_opti)<span class="sc">$</span>value</span>
-<span id="cb193-41"><a href="#cb193-41" aria-hidden="true" tabindex="-1"></a>dispo_opti_sensors <span class="ot">&lt;-</span> (tau_opti <span class="sc">-</span> temps_HS_indetecte <span class="sc">-</span> duree_insp_sensor) <span class="sc">/</span> tau_opti</span>
-<span id="cb193-42"><a href="#cb193-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-43"><a href="#cb193-43" aria-hidden="true" tabindex="-1"></a><span class="co"># D. Moteur (Maintenance Corrective Pure - Résultat Q.9)</span></span>
-<span id="cb193-44"><a href="#cb193-44" aria-hidden="true" tabindex="-1"></a><span class="co"># MTTF_total calculé avec la loi de Weibull (eta_mle, beta_mle)</span></span>
-<span id="cb193-45"><a href="#cb193-45" aria-hidden="true" tabindex="-1"></a>dispo_moteur <span class="ot">&lt;-</span> MTTF_total <span class="sc">/</span> (MTTF_total <span class="sc">+</span> duree_arret_moteur)</span>
-<span id="cb193-46"><a href="#cb193-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-47"><a href="#cb193-47" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 3. DISPONIBILITÉ GLOBALE DU SYSTÈME (Modèle en Série) ---</span></span>
-<span id="cb193-48"><a href="#cb193-48" aria-hidden="true" tabindex="-1"></a><span class="co"># La station tombe en panne si l'un des composants est à l'arrêt</span></span>
-<span id="cb193-49"><a href="#cb193-49" aria-hidden="true" tabindex="-1"></a>dispo_globale_optimisee <span class="ot">&lt;-</span> dispo_opti_lub <span class="sc">*</span> dispo_opti_meches <span class="sc">*</span> dispo_opti_sensors <span class="sc">*</span> dispo_moteur</span>
-<span id="cb193-50"><a href="#cb193-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-51"><a href="#cb193-51" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 4. BILAN FINANCIER ANNUEL GLOBAL (Coûts Horaires) ---</span></span>
-<span id="cb193-52"><a href="#cb193-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-53"><a href="#cb193-53" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Coût Mèches (Préventif E4) : Pièce 200€ + Arrêt 0.67h à 750€/h</span></span>
-<span id="cb193-54"><a href="#cb193-54" aria-hidden="true" tabindex="-1"></a>cout_unit_meche_P <span class="ot">&lt;-</span> <span class="dv">200</span> <span class="sc">+</span> (duree_arret_meche <span class="sc">*</span> revenu_h_tete) </span>
-<span id="cb193-55"><a href="#cb193-55" aria-hidden="true" tabindex="-1"></a>cout_horaire_meches <span class="ot">&lt;-</span> freq_rempl_meche <span class="sc">*</span> cout_unit_meche_P</span>
-<span id="cb193-56"><a href="#cb193-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-57"><a href="#cb193-57" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Coût Moteur (Correctif Pur) : Pièces/MO 1600€ + Arrêt 2.5h à 750€/h</span></span>
-<span id="cb193-58"><a href="#cb193-58" aria-hidden="true" tabindex="-1"></a><span class="co"># On divise le coût d'un cycle par la durée totale du cycle (MTTF + MTTR)</span></span>
-<span id="cb193-59"><a href="#cb193-59" aria-hidden="true" tabindex="-1"></a>cout_unit_moteur_C <span class="ot">&lt;-</span> <span class="dv">1600</span> <span class="sc">+</span> (duree_arret_moteur <span class="sc">*</span> revenu_h_tete)</span>
-<span id="cb193-60"><a href="#cb193-60" aria-hidden="true" tabindex="-1"></a>cout_horaire_moteur <span class="ot">&lt;-</span> cout_unit_moteur_C <span class="sc">/</span> (MTTF_total <span class="sc">+</span> duree_arret_moteur)</span>
-<span id="cb193-61"><a href="#cb193-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-62"><a href="#cb193-62" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Coût Capteurs (Optimisé à tau_opti)</span></span>
-<span id="cb193-63"><a href="#cb193-63" aria-hidden="true" tabindex="-1"></a><span class="co"># Déjà calculé dans le script Point 2 (cout_horaire_sensor_min)</span></span>
-<span id="cb193-64"><a href="#cb193-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-65"><a href="#cb193-65" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Calcul du coût annuel total (Somme des coûts horaires * 8760)</span></span>
-<span id="cb193-66"><a href="#cb193-66" aria-hidden="true" tabindex="-1"></a>cout_annuel_total <span class="ot">&lt;-</span> (cout_horaire_lub_min <span class="sc">+</span> cout_horaire_meches <span class="sc">+</span> </span>
-<span id="cb193-67"><a href="#cb193-67" aria-hidden="true" tabindex="-1"></a>                      cout_horaire_sensor_min <span class="sc">+</span> cout_horaire_moteur) <span class="sc">*</span> <span class="dv">8760</span></span>
-<span id="cb193-68"><a href="#cb193-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-69"><a href="#cb193-69" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 5. AFFICHAGE DES RÉSULTATS ---</span></span>
-<span id="cb193-70"><a href="#cb193-70" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb193-71"><a href="#cb193-71" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">====================================================</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb193-72"><a href="#cb193-72" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"          BILAN DE SYNTHÈSE FINAL (POINT 3)         </span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb193-73"><a href="#cb193-73" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"====================================================</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb193-74"><a href="#cb193-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-75"><a href="#cb193-75" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Disponibilité Individuelle :</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb193-76"><a href="#cb193-76" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" - Lubrification :"</span>, <span class="fu">round</span>(dispo_opti_lub <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">4</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb193-77"><a href="#cb193-77" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" - Mèches        :"</span>, <span class="fu">round</span>(dispo_opti_meches <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">4</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb193-78"><a href="#cb193-78" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" - Capteurs      :"</span>, <span class="fu">round</span>(dispo_opti_sensors <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">4</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb193-79"><a href="#cb193-79" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" - Moteur        :"</span>, <span class="fu">round</span>(dispo_moteur <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">4</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb193-80"><a href="#cb193-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-81"><a href="#cb193-81" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"----------------------------------------------------</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb193-82"><a href="#cb193-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-83"><a href="#cb193-83" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"DISPONIBILITÉ GLOBALE STATION :"</span>, <span class="fu">round</span>(dispo_globale_optimisee <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">3</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb193-84"><a href="#cb193-84" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Heures d'arrêt totales / an   :"</span>, <span class="fu">round</span>((<span class="dv">1</span> <span class="sc">-</span> dispo_globale_optimisee) <span class="sc">*</span> <span class="dv">8760</span>, <span class="dv">2</span>), <span class="st">"h</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb193-85"><a href="#cb193-85" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"COÛT DE MAINTENANCE TOTAL     :"</span>, <span class="fu">round</span>(cout_annuel_total, <span class="dv">2</span>), <span class="st">"€/an</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb193-86"><a href="#cb193-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb193-87"><a href="#cb193-87" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"====================================================</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb193-88"><a href="#cb193-88" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb203"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb203-1"><a href="#cb203-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ====================================================</span></span>
+<span id="cb203-2"><a href="#cb203-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SYNTHÈSE GLOBALE - STATION DE PERÇAGE (POINT 3)</span></span>
+<span id="cb203-3"><a href="#cb203-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ====================================================</span></span>
+<span id="cb203-4"><a href="#cb203-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-5"><a href="#cb203-5" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 1. PARAMÈTRES DE BASE (Extraits des Tableaux 1 à 5) ---</span></span>
+<span id="cb203-6"><a href="#cb203-6" aria-hidden="true" tabindex="-1"></a>revenu_horaire      <span class="ot">&lt;-</span> <span class="dv">1500</span>   <span class="co"># Station complète</span></span>
+<span id="cb203-7"><a href="#cb203-7" aria-hidden="true" tabindex="-1"></a>revenu_h_tete       <span class="ot">&lt;-</span> <span class="dv">750</span>    <span class="co"># Perte si 1 seule tête est arrêtée (Mèches/Moteur)</span></span>
+<span id="cb203-8"><a href="#cb203-8" aria-hidden="true" tabindex="-1"></a>main_oeuvre_h       <span class="ot">&lt;-</span> <span class="dv">100</span>    <span class="co"># Facturation MO qualifiée</span></span>
+<span id="cb203-9"><a href="#cb203-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-10"><a href="#cb203-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Durées d'arrêt moyennes (MTTR)</span></span>
+<span id="cb203-11"><a href="#cb203-11" aria-hidden="true" tabindex="-1"></a>duree_arret_lub     <span class="ot">&lt;-</span> <span class="fl">4.0</span>    <span class="co"># Tableau 2</span></span>
+<span id="cb203-12"><a href="#cb203-12" aria-hidden="true" tabindex="-1"></a>duree_arret_meche   <span class="ot">&lt;-</span> <span class="fl">0.67</span>   <span class="co"># Tableau 3 (40 min)</span></span>
+<span id="cb203-13"><a href="#cb203-13" aria-hidden="true" tabindex="-1"></a>duree_arret_moteur  <span class="ot">&lt;-</span> <span class="fl">2.5</span>    <span class="co"># Tableau 4 (2h + 0.5h)</span></span>
+<span id="cb203-14"><a href="#cb203-14" aria-hidden="true" tabindex="-1"></a>duree_insp_sensor   <span class="ot">&lt;-</span> <span class="fl">0.5</span>    <span class="co"># Tableau 5 (30 min)</span></span>
+<span id="cb203-15"><a href="#cb203-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-16"><a href="#cb203-16" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 2. CALCUL DE LA DISPONIBILITÉ PAR COMPOSANT (SCÉNARIO OPTIMISÉ) ---</span></span>
+<span id="cb203-17"><a href="#cb203-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-18"><a href="#cb203-18" aria-hidden="true" tabindex="-1"></a><span class="co"># A. Lubrification (Optimisée à k_star)</span></span>
+<span id="cb203-19"><a href="#cb203-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Disponibilité = (Temps total - Temps de maintenance préventive) / Temps total</span></span>
+<span id="cb203-20"><a href="#cb203-20" aria-hidden="true" tabindex="-1"></a>temps_mort_lub_annuel <span class="ot">&lt;-</span> k_star <span class="sc">*</span> duree_arret_lub</span>
+<span id="cb203-21"><a href="#cb203-21" aria-hidden="true" tabindex="-1"></a>dispo_opti_lub        <span class="ot">&lt;-</span> (<span class="dv">8760</span> <span class="sc">-</span> temps_mort_lub_annuel) <span class="sc">/</span> <span class="dv">8760</span></span>
+<span id="cb203-22"><a href="#cb203-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Coût horaire moyen issu de optimisation Point 2</span></span>
+<span id="cb203-23"><a href="#cb203-23" aria-hidden="true" tabindex="-1"></a>cout_horaire_lub_min  <span class="ot">&lt;-</span> cost_min <span class="sc">/</span> <span class="dv">8760</span></span>
+<span id="cb203-24"><a href="#cb203-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-25"><a href="#cb203-25" aria-hidden="true" tabindex="-1"></a><span class="co"># B. Mèches (Remplacement préventif à l'État 4)</span></span>
+<span id="cb203-26"><a href="#cb203-26" aria-hidden="true" tabindex="-1"></a><span class="co"># On utilise la fréquence de ton modèle de Markov</span></span>
+<span id="cb203-27"><a href="#cb203-27" aria-hidden="true" tabindex="-1"></a><span class="co"># freq_rempl_meche = pi_E4 * q_E4_E5 (nombre de remplacements par heure)</span></span>
+<span id="cb203-28"><a href="#cb203-28" aria-hidden="true" tabindex="-1"></a>freq_rempl_meche       <span class="ot">&lt;-</span> pi_glob[<span class="dv">4</span>] <span class="sc">*</span> <span class="fu">abs</span>(Q_glob[<span class="dv">4</span>,<span class="dv">4</span>])</span>
+<span id="cb203-29"><a href="#cb203-29" aria-hidden="true" tabindex="-1"></a>indispo_meche_annuelle <span class="ot">&lt;-</span> freq_rempl_meche <span class="sc">*</span> <span class="dv">8760</span> <span class="sc">*</span> duree_arret_meche</span>
+<span id="cb203-30"><a href="#cb203-30" aria-hidden="true" tabindex="-1"></a>dispo_opti_meches      <span class="ot">&lt;-</span> (<span class="dv">8760</span> <span class="sc">-</span> indispo_meche_annuelle) <span class="sc">/</span> <span class="dv">8760</span></span>
+<span id="cb203-31"><a href="#cb203-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-32"><a href="#cb203-32" aria-hidden="true" tabindex="-1"></a><span class="co"># C. Capteurs (Inspection à l'intervalle tau_opti)</span></span>
+<span id="cb203-33"><a href="#cb203-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Rsys(t) pour un système 3-parmi-4</span></span>
+<span id="cb203-34"><a href="#cb203-34" aria-hidden="true" tabindex="-1"></a>R_sys_t_func <span class="ot">&lt;-</span> <span class="cf">function</span>(t) {</span>
+<span id="cb203-35"><a href="#cb203-35" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>(t <span class="sc">/</span> eta_s)<span class="sc">^</span>beta_s)</span>
+<span id="cb203-36"><a href="#cb203-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">choose</span>(<span class="dv">4</span>, <span class="dv">3</span>) <span class="sc">*</span> (p<span class="sc">^</span><span class="dv">3</span>) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p) <span class="sc">+</span> (p<span class="sc">^</span><span class="dv">4</span>))</span>
+<span id="cb203-37"><a href="#cb203-37" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb203-38"><a href="#cb203-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Temps mort = Temps HS indétecté (Rebuts) + Temps d'arrêt pour inspection</span></span>
+<span id="cb203-39"><a href="#cb203-39" aria-hidden="true" tabindex="-1"></a>temps_HS_indetecte <span class="ot">&lt;-</span> <span class="fu">integrate</span>(<span class="cf">function</span>(t) <span class="dv">1</span> <span class="sc">-</span> <span class="fu">sapply</span>(t, R_sys_t_func), </span>
+<span id="cb203-40"><a href="#cb203-40" aria-hidden="true" tabindex="-1"></a>                                <span class="at">lower =</span> <span class="dv">0</span>, <span class="at">upper =</span> tau_opti)<span class="sc">$</span>value</span>
+<span id="cb203-41"><a href="#cb203-41" aria-hidden="true" tabindex="-1"></a>dispo_opti_sensors <span class="ot">&lt;-</span> (tau_opti <span class="sc">-</span> temps_HS_indetecte <span class="sc">-</span> duree_insp_sensor) <span class="sc">/</span> tau_opti</span>
+<span id="cb203-42"><a href="#cb203-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-43"><a href="#cb203-43" aria-hidden="true" tabindex="-1"></a><span class="co"># D. Moteur (Maintenance Corrective Pure - Résultat Q.9)</span></span>
+<span id="cb203-44"><a href="#cb203-44" aria-hidden="true" tabindex="-1"></a><span class="co"># MTTF_total calculé avec la loi de Weibull (eta_mle, beta_mle)</span></span>
+<span id="cb203-45"><a href="#cb203-45" aria-hidden="true" tabindex="-1"></a>dispo_moteur <span class="ot">&lt;-</span> MTTF_total <span class="sc">/</span> (MTTF_total <span class="sc">+</span> duree_arret_moteur)</span>
+<span id="cb203-46"><a href="#cb203-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-47"><a href="#cb203-47" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 3. DISPONIBILITÉ GLOBALE DU SYSTÈME (Modèle en Série) ---</span></span>
+<span id="cb203-48"><a href="#cb203-48" aria-hidden="true" tabindex="-1"></a><span class="co"># La station tombe en panne si l'un des composants est à l'arrêt</span></span>
+<span id="cb203-49"><a href="#cb203-49" aria-hidden="true" tabindex="-1"></a>dispo_globale_optimisee <span class="ot">&lt;-</span> dispo_opti_lub <span class="sc">*</span> dispo_opti_meches <span class="sc">*</span> dispo_opti_sensors <span class="sc">*</span> dispo_moteur</span>
+<span id="cb203-50"><a href="#cb203-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-51"><a href="#cb203-51" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 4. BILAN FINANCIER ANNUEL GLOBAL (Coûts Horaires) ---</span></span>
+<span id="cb203-52"><a href="#cb203-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-53"><a href="#cb203-53" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Coût Mèches (Préventif E4) : Pièce 200€ + Arrêt 0.67h à 750€/h</span></span>
+<span id="cb203-54"><a href="#cb203-54" aria-hidden="true" tabindex="-1"></a>cout_unit_meche_P <span class="ot">&lt;-</span> <span class="dv">200</span> <span class="sc">+</span> (duree_arret_meche <span class="sc">*</span> revenu_h_tete) </span>
+<span id="cb203-55"><a href="#cb203-55" aria-hidden="true" tabindex="-1"></a>cout_horaire_meches <span class="ot">&lt;-</span> freq_rempl_meche <span class="sc">*</span> cout_unit_meche_P</span>
+<span id="cb203-56"><a href="#cb203-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-57"><a href="#cb203-57" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Coût Moteur (Correctif Pur) : Pièces/MO 1600€ + Arrêt 2.5h à 750€/h</span></span>
+<span id="cb203-58"><a href="#cb203-58" aria-hidden="true" tabindex="-1"></a><span class="co"># On divise le coût d'un cycle par la durée totale du cycle (MTTF + MTTR)</span></span>
+<span id="cb203-59"><a href="#cb203-59" aria-hidden="true" tabindex="-1"></a>cout_unit_moteur_C <span class="ot">&lt;-</span> <span class="dv">1600</span> <span class="sc">+</span> (duree_arret_moteur <span class="sc">*</span> revenu_h_tete)</span>
+<span id="cb203-60"><a href="#cb203-60" aria-hidden="true" tabindex="-1"></a>cout_horaire_moteur <span class="ot">&lt;-</span> cout_unit_moteur_C <span class="sc">/</span> (MTTF_total <span class="sc">+</span> duree_arret_moteur)</span>
+<span id="cb203-61"><a href="#cb203-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-62"><a href="#cb203-62" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Coût Capteurs (Optimisé à tau_opti)</span></span>
+<span id="cb203-63"><a href="#cb203-63" aria-hidden="true" tabindex="-1"></a><span class="co"># Déjà calculé dans le script Point 2 (cout_horaire_sensor_min)</span></span>
+<span id="cb203-64"><a href="#cb203-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-65"><a href="#cb203-65" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Calcul du coût annuel total (Somme des coûts horaires * 8760)</span></span>
+<span id="cb203-66"><a href="#cb203-66" aria-hidden="true" tabindex="-1"></a>cout_annuel_total <span class="ot">&lt;-</span> (cout_horaire_lub_min <span class="sc">+</span> cout_horaire_meches <span class="sc">+</span> </span>
+<span id="cb203-67"><a href="#cb203-67" aria-hidden="true" tabindex="-1"></a>                      cout_horaire_sensor_min <span class="sc">+</span> cout_horaire_moteur) <span class="sc">*</span> <span class="dv">8760</span></span>
+<span id="cb203-68"><a href="#cb203-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-69"><a href="#cb203-69" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 5. AFFICHAGE DES RÉSULTATS ---</span></span>
+<span id="cb203-70"><a href="#cb203-70" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb203-71"><a href="#cb203-71" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">====================================================</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb203-72"><a href="#cb203-72" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"          BILAN DE SYNTHÈSE FINAL (POINT 3)         </span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb203-73"><a href="#cb203-73" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"====================================================</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb203-74"><a href="#cb203-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-75"><a href="#cb203-75" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Disponibilité Individuelle :</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb203-76"><a href="#cb203-76" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" - Lubrification :"</span>, <span class="fu">round</span>(dispo_opti_lub <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">4</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb203-77"><a href="#cb203-77" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" - Mèches        :"</span>, <span class="fu">round</span>(dispo_opti_meches <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">4</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb203-78"><a href="#cb203-78" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" - Capteurs      :"</span>, <span class="fu">round</span>(dispo_opti_sensors <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">4</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb203-79"><a href="#cb203-79" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" - Moteur        :"</span>, <span class="fu">round</span>(dispo_moteur <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">4</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb203-80"><a href="#cb203-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-81"><a href="#cb203-81" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"----------------------------------------------------</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb203-82"><a href="#cb203-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-83"><a href="#cb203-83" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"DISPONIBILITÉ GLOBALE STATION :"</span>, <span class="fu">round</span>(dispo_globale_optimisee <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">3</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb203-84"><a href="#cb203-84" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Heures d'arrêt totales / an   :"</span>, <span class="fu">round</span>((<span class="dv">1</span> <span class="sc">-</span> dispo_globale_optimisee) <span class="sc">*</span> <span class="dv">8760</span>, <span class="dv">2</span>), <span class="st">"h</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb203-85"><a href="#cb203-85" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"COÛT DE MAINTENANCE TOTAL     :"</span>, <span class="fu">round</span>(cout_annuel_total, <span class="dv">2</span>), <span class="st">"€/an</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb203-86"><a href="#cb203-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-87"><a href="#cb203-87" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"====================================================</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb203-88"><a href="#cb203-88" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -2205,12 +2227,12 @@ Fiabilité système (3-parmi-4) à 500h    : 0.99431 </code></pre>
 Disponibilité Individuelle :
  - Lubrification : 99.9772 %
  - Mèches        : 99.8287 %
- - Capteurs      : 99.7655 %
+ - Capteurs      : 99.7763 %
  - Moteur        : 99.979 %
 ----------------------------------------------------
-DISPONIBILITÉ GLOBALE STATION : 99.551 %
-Heures d'arrêt totales / an   : 39.34 h
-COÛT DE MAINTENANCE TOTAL     : 55934.81 €/an
+DISPONIBILITÉ GLOBALE STATION : 99.562 %
+Heures d'arrêt totales / an   : 38.39 h
+COÛT DE MAINTENANCE TOTAL     : 54370.56 €/an
 ====================================================</code></pre>
 </div>
 </div>
@@ -2223,151 +2245,151 @@ COÛT DE MAINTENANCE TOTAL     : 55934.81 €/an
 <div class="cell">
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb195"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb195-1"><a href="#cb195-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Fonction de calcul des indicateurs de performance</span></span>
-<span id="cb195-2"><a href="#cb195-2" aria-hidden="true" tabindex="-1"></a>calculer_indicateurs_cascade <span class="ot">&lt;-</span> <span class="cf">function</span>(dispo_lub) {</span>
-<span id="cb195-3"><a href="#cb195-3" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb195-4"><a href="#cb195-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># A. Calcul de la matrice de transition hybride (Effet cascade Lub -&gt; Mèche)</span></span>
-<span id="cb195-5"><a href="#cb195-5" aria-hidden="true" tabindex="-1"></a>  Q_res <span class="ot">&lt;-</span> (dispo_lub <span class="sc">*</span> Q_std) <span class="sc">+</span> ((<span class="dv">1</span> <span class="sc">-</span> dispo_lub) <span class="sc">*</span> Q_acc)</span>
-<span id="cb195-6"><a href="#cb195-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb195-7"><a href="#cb195-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># B. Matrice fondamentale N (Temps passé dans les états transitoires)</span></span>
-<span id="cb195-8"><a href="#cb195-8" aria-hidden="true" tabindex="-1"></a>  Q_trans <span class="ot">&lt;-</span> Q_res[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span>
-<span id="cb195-9"><a href="#cb195-9" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="sc">-</span>Q_trans)</span>
-<span id="cb195-10"><a href="#cb195-10" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb195-11"><a href="#cb195-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># C. MTTF : Espérance de vie moyenne de la mèche (en heures)</span></span>
-<span id="cb195-12"><a href="#cb195-12" aria-hidden="true" tabindex="-1"></a>  mttf_meche <span class="ot">&lt;-</span> <span class="fu">sum</span>(N[<span class="dv">1</span>, ])</span>
-<span id="cb195-13"><a href="#cb195-13" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb195-14"><a href="#cb195-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># D. Risque de choc cumulé sur LA VIE ENTIÈRE de la mèche</span></span>
-<span id="cb195-15"><a href="#cb195-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># C'est l'intégrale du risque sur la durée de vie</span></span>
-<span id="cb195-16"><a href="#cb195-16" aria-hidden="true" tabindex="-1"></a>  risque_cumule_cycle <span class="ot">&lt;-</span> <span class="fu">sum</span>(N[<span class="dv">1</span>, ] <span class="sc">*</span> (nu <span class="sc">*</span> p_vec[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]))</span>
-<span id="cb195-17"><a href="#cb195-17" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb195-18"><a href="#cb195-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># E. TAUX DE RISQUE HORAIRE (Intensité du danger pendant la production)</span></span>
-<span id="cb195-19"><a href="#cb195-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># On ramène le risque à une base comparable : 1 heure de perçage effectif</span></span>
-<span id="cb195-20"><a href="#cb195-20" aria-hidden="true" tabindex="-1"></a>  lambda_horaire_moteur <span class="ot">&lt;-</span> risque_cumule_cycle <span class="sc">/</span> mttf_meche</span>
-<span id="cb195-21"><a href="#cb195-21" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb195-22"><a href="#cb195-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">mttf =</span> mttf_meche, <span class="at">lambda =</span> lambda_horaire_moteur))</span>
-<span id="cb195-23"><a href="#cb195-23" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb195-24"><a href="#cb195-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb195-25"><a href="#cb195-25" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Simulation des deux scénarios de maintenance</span></span>
-<span id="cb195-26"><a href="#cb195-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Scénario A : Maintenance préventive rigoureuse (99.93%)</span></span>
-<span id="cb195-27"><a href="#cb195-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Scénario B : Maintenance négligée (80.00%)</span></span>
-<span id="cb195-28"><a href="#cb195-28" aria-hidden="true" tabindex="-1"></a>res_opti    <span class="ot">&lt;-</span> <span class="fu">calculer_indicateurs_cascade</span>(<span class="fl">0.9993</span>)</span>
-<span id="cb195-29"><a href="#cb195-29" aria-hidden="true" tabindex="-1"></a>res_degrade <span class="ot">&lt;-</span> <span class="fu">calculer_indicateurs_cascade</span>(<span class="fl">0.80</span>)</span>
-<span id="cb195-30"><a href="#cb195-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb195-31"><a href="#cb195-31" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Calcul des facteurs d'impact</span></span>
-<span id="cb195-32"><a href="#cb195-32" aria-hidden="true" tabindex="-1"></a>ratio_vie_meche <span class="ot">&lt;-</span> res_opti<span class="sc">$</span>mttf <span class="sc">/</span> res_degrade<span class="sc">$</span>mttf</span>
-<span id="cb195-33"><a href="#cb195-33" aria-hidden="true" tabindex="-1"></a>facteur_brut_outil <span class="ot">&lt;-</span> res_degrade<span class="sc">$</span>lambda <span class="sc">/</span> res_opti<span class="sc">$</span>lambda</span>
-<span id="cb195-34"><a href="#cb195-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb195-35"><a href="#cb195-35" aria-hidden="true" tabindex="-1"></a><span class="co"># FACTEUR CASCADE RÉEL (Sur une base de production fixe)</span></span>
-<span id="cb195-36"><a href="#cb195-36" aria-hidden="true" tabindex="-1"></a><span class="co"># On multiplie l'intensité du risque par la fréquence de remplacement</span></span>
-<span id="cb195-37"><a href="#cb195-37" aria-hidden="true" tabindex="-1"></a>impact_cascade_reel <span class="ot">&lt;-</span> facteur_brut_outil <span class="sc">*</span> ratio_vie_meche</span>
-<span id="cb195-38"><a href="#cb195-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb195-39"><a href="#cb195-39" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. AFFICHAGE DES RÉSULTATS</span></span>
-<span id="cb195-40"><a href="#cb195-40" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"====================================================</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb205"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb205-1"><a href="#cb205-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Fonction de calcul des indicateurs de performance</span></span>
+<span id="cb205-2"><a href="#cb205-2" aria-hidden="true" tabindex="-1"></a>calculer_indicateurs_cascade <span class="ot">&lt;-</span> <span class="cf">function</span>(dispo_lub) {</span>
+<span id="cb205-3"><a href="#cb205-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb205-4"><a href="#cb205-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># A. Calcul de la matrice de transition hybride (Effet cascade Lub -&gt; Mèche)</span></span>
+<span id="cb205-5"><a href="#cb205-5" aria-hidden="true" tabindex="-1"></a>  Q_res <span class="ot">&lt;-</span> (dispo_lub <span class="sc">*</span> Q_std) <span class="sc">+</span> ((<span class="dv">1</span> <span class="sc">-</span> dispo_lub) <span class="sc">*</span> Q_acc)</span>
+<span id="cb205-6"><a href="#cb205-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb205-7"><a href="#cb205-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># B. Matrice fondamentale N (Temps passé dans les états transitoires)</span></span>
+<span id="cb205-8"><a href="#cb205-8" aria-hidden="true" tabindex="-1"></a>  Q_trans <span class="ot">&lt;-</span> Q_res[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span>
+<span id="cb205-9"><a href="#cb205-9" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="sc">-</span>Q_trans)</span>
+<span id="cb205-10"><a href="#cb205-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb205-11"><a href="#cb205-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># C. MTTF : Espérance de vie moyenne de la mèche (en heures)</span></span>
+<span id="cb205-12"><a href="#cb205-12" aria-hidden="true" tabindex="-1"></a>  mttf_meche <span class="ot">&lt;-</span> <span class="fu">sum</span>(N[<span class="dv">1</span>, ])</span>
+<span id="cb205-13"><a href="#cb205-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb205-14"><a href="#cb205-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># D. Risque de choc cumulé sur LA VIE ENTIÈRE de la mèche</span></span>
+<span id="cb205-15"><a href="#cb205-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># C'est l'intégrale du risque sur la durée de vie</span></span>
+<span id="cb205-16"><a href="#cb205-16" aria-hidden="true" tabindex="-1"></a>  risque_cumule_cycle <span class="ot">&lt;-</span> <span class="fu">sum</span>(N[<span class="dv">1</span>, ] <span class="sc">*</span> (nu <span class="sc">*</span> p_vec[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]))</span>
+<span id="cb205-17"><a href="#cb205-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb205-18"><a href="#cb205-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># E. TAUX DE RISQUE HORAIRE (Intensité du danger pendant la production)</span></span>
+<span id="cb205-19"><a href="#cb205-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># On ramène le risque à une base comparable : 1 heure de perçage effectif</span></span>
+<span id="cb205-20"><a href="#cb205-20" aria-hidden="true" tabindex="-1"></a>  lambda_horaire_moteur <span class="ot">&lt;-</span> risque_cumule_cycle <span class="sc">/</span> mttf_meche</span>
+<span id="cb205-21"><a href="#cb205-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb205-22"><a href="#cb205-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">mttf =</span> mttf_meche, <span class="at">lambda =</span> lambda_horaire_moteur))</span>
+<span id="cb205-23"><a href="#cb205-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb205-24"><a href="#cb205-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb205-25"><a href="#cb205-25" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Simulation des deux scénarios de maintenance</span></span>
+<span id="cb205-26"><a href="#cb205-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Scénario A : Maintenance préventive rigoureuse (99.93%)</span></span>
+<span id="cb205-27"><a href="#cb205-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Scénario B : Maintenance négligée (80.00%)</span></span>
+<span id="cb205-28"><a href="#cb205-28" aria-hidden="true" tabindex="-1"></a>res_opti    <span class="ot">&lt;-</span> <span class="fu">calculer_indicateurs_cascade</span>(<span class="fl">0.9993</span>)</span>
+<span id="cb205-29"><a href="#cb205-29" aria-hidden="true" tabindex="-1"></a>res_degrade <span class="ot">&lt;-</span> <span class="fu">calculer_indicateurs_cascade</span>(<span class="fl">0.80</span>)</span>
+<span id="cb205-30"><a href="#cb205-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb205-31"><a href="#cb205-31" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Calcul des facteurs d'impact</span></span>
+<span id="cb205-32"><a href="#cb205-32" aria-hidden="true" tabindex="-1"></a>ratio_vie_meche <span class="ot">&lt;-</span> res_opti<span class="sc">$</span>mttf <span class="sc">/</span> res_degrade<span class="sc">$</span>mttf</span>
+<span id="cb205-33"><a href="#cb205-33" aria-hidden="true" tabindex="-1"></a>facteur_brut_outil <span class="ot">&lt;-</span> res_degrade<span class="sc">$</span>lambda <span class="sc">/</span> res_opti<span class="sc">$</span>lambda</span>
+<span id="cb205-34"><a href="#cb205-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb205-35"><a href="#cb205-35" aria-hidden="true" tabindex="-1"></a><span class="co"># FACTEUR CASCADE RÉEL (Sur une base de production fixe)</span></span>
+<span id="cb205-36"><a href="#cb205-36" aria-hidden="true" tabindex="-1"></a><span class="co"># On multiplie l'intensité du risque par la fréquence de remplacement</span></span>
+<span id="cb205-37"><a href="#cb205-37" aria-hidden="true" tabindex="-1"></a>impact_cascade_reel <span class="ot">&lt;-</span> facteur_brut_outil <span class="sc">*</span> ratio_vie_meche</span>
+<span id="cb205-38"><a href="#cb205-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb205-39"><a href="#cb205-39" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. AFFICHAGE DES RÉSULTATS</span></span>
+<span id="cb205-40"><a href="#cb205-40" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"====================================================</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>====================================================</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb197"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb197-1"><a href="#cb197-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"POINT 4 : QUANTIFICATION DES EFFETS EN CASCADE</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb207"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb207-1"><a href="#cb207-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"POINT 4 : QUANTIFICATION DES EFFETS EN CASCADE</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>POINT 4 : QUANTIFICATION DES EFFETS EN CASCADE</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb199"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb199-1"><a href="#cb199-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"====================================================</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb209"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb209-1"><a href="#cb209-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"====================================================</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>====================================================</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb201"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb201-1"><a href="#cb201-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"SCÉNARIO A : Lubrification OPTIMISÉE (99.93%)</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb211"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb211-1"><a href="#cb211-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"SCÉNARIO A : Lubrification OPTIMISÉE (99.93%)</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>SCÉNARIO A : Lubrification OPTIMISÉE (99.93%)</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb203"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb203-1"><a href="#cb203-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" -&gt; Espérance de vie mèche (MTTF) :"</span>, <span class="fu">round</span>(res_opti<span class="sc">$</span>mttf, <span class="dv">2</span>), <span class="st">"h</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb213"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb213-1"><a href="#cb213-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" -&gt; Espérance de vie mèche (MTTF) :"</span>, <span class="fu">round</span>(res_opti<span class="sc">$</span>mttf, <span class="dv">2</span>), <span class="st">"h</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> -&gt; Espérance de vie mèche (MTTF) : 165.59 h</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb205"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb205-1"><a href="#cb205-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" -&gt; Risque horaire pour le moteur :"</span>, <span class="fu">formatC</span>(res_opti<span class="sc">$</span>lambda, <span class="at">format =</span> <span class="st">"e"</span>, <span class="at">digits =</span> <span class="dv">3</span>), <span class="st">"h^-1</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb215"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb215-1"><a href="#cb215-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" -&gt; Risque horaire pour le moteur :"</span>, <span class="fu">formatC</span>(res_opti<span class="sc">$</span>lambda, <span class="at">format =</span> <span class="st">"e"</span>, <span class="at">digits =</span> <span class="dv">3</span>), <span class="st">"h^-1</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> -&gt; Risque horaire pour le moteur : 4.394e-06 h^-1</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb207"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb207-1"><a href="#cb207-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"SCÉNARIO B : Lubrification NÉGLIGÉE (80.00%)</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb217"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb217-1"><a href="#cb217-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"SCÉNARIO B : Lubrification NÉGLIGÉE (80.00%)</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>SCÉNARIO B : Lubrification NÉGLIGÉE (80.00%)</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb209"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb209-1"><a href="#cb209-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" -&gt; Espérance de vie mèche (MTTF) :"</span>, <span class="fu">round</span>(res_degrade<span class="sc">$</span>mttf, <span class="dv">2</span>), <span class="st">"h</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb219"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb219-1"><a href="#cb219-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" -&gt; Espérance de vie mèche (MTTF) :"</span>, <span class="fu">round</span>(res_degrade<span class="sc">$</span>mttf, <span class="dv">2</span>), <span class="st">"h</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> -&gt; Espérance de vie mèche (MTTF) : 49.43 h</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb211"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb211-1"><a href="#cb211-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" -&gt; Risque horaire pour le moteur :"</span>, <span class="fu">formatC</span>(res_degrade<span class="sc">$</span>lambda, <span class="at">format =</span> <span class="st">"e"</span>, <span class="at">digits =</span> <span class="dv">3</span>), <span class="st">"h^-1</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb221"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb221-1"><a href="#cb221-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" -&gt; Risque horaire pour le moteur :"</span>, <span class="fu">formatC</span>(res_degrade<span class="sc">$</span>lambda, <span class="at">format =</span> <span class="st">"e"</span>, <span class="at">digits =</span> <span class="dv">3</span>), <span class="st">"h^-1</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> -&gt; Risque horaire pour le moteur : 1.868e-06 h^-1</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb213"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb213-1"><a href="#cb213-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"----------------------------------------------------</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb223"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb223-1"><a href="#cb223-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"----------------------------------------------------</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>----------------------------------------------------</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb215"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb215-1"><a href="#cb215-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"ANALYSE DE LA CASCADE :</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb225"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb225-1"><a href="#cb225-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"ANALYSE DE LA CASCADE :</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>ANALYSE DE LA CASCADE :</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb217"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb217-1"><a href="#cb217-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" 1. Les mèches s'usent"</span>, <span class="fu">round</span>(ratio_vie_meche, <span class="dv">2</span>), <span class="st">"fois plus vite.</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb227"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb227-1"><a href="#cb227-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" 1. Les mèches s'usent"</span>, <span class="fu">round</span>(ratio_vie_meche, <span class="dv">2</span>), <span class="st">"fois plus vite.</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> 1. Les mèches s'usent 3.35 fois plus vite.</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb219"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb219-1"><a href="#cb219-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" 2. Le risque moteur par outil est de x"</span>, <span class="fu">round</span>(facteur_brut_outil, <span class="dv">2</span>), <span class="st">"(biais de durée).</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb229"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb229-1"><a href="#cb229-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" 2. Le risque moteur par outil est de x"</span>, <span class="fu">round</span>(facteur_brut_outil, <span class="dv">2</span>), <span class="st">"(biais de durée).</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> 2. Le risque moteur par outil est de x 0.43 (biais de durée).</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb221"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb221-1"><a href="#cb221-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"----------------------------------------------------</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb231"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb231-1"><a href="#cb231-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"----------------------------------------------------</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>----------------------------------------------------</code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb223"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb223-1"><a href="#cb223-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"IMPACT SYSTÉMIQUE RÉEL SUR LE MOTEUR : x"</span>, <span class="fu">round</span>(impact_cascade_reel, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb233"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb233-1"><a href="#cb233-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"IMPACT SYSTÉMIQUE RÉEL SUR LE MOTEUR : x"</span>, <span class="fu">round</span>(impact_cascade_reel, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>IMPACT SYSTÉMIQUE RÉEL SUR LE MOTEUR : x 1.42 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb225"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb225-1"><a href="#cb225-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"====================================================</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb235"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb235-1"><a href="#cb235-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"====================================================</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>====================================================</code></pre>
@@ -2381,44 +2403,44 @@ COÛT DE MAINTENANCE TOTAL     : 55934.81 €/an
 <div class="cell">
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb227"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb227-1"><a href="#cb227-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- POINT 5 : Maintenance opportuniste ---</span></span>
-<span id="cb227-2"><a href="#cb227-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb227-3"><a href="#cb227-3" aria-hidden="true" tabindex="-1"></a>Q_trans_glob <span class="ot">&lt;-</span> Q_glob[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span>
-<span id="cb227-4"><a href="#cb227-4" aria-hidden="true" tabindex="-1"></a>mttf_glob <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">solve</span>(<span class="sc">-</span>Q_trans_glob)[<span class="dv">1</span>, ])</span>
-<span id="cb227-5"><a href="#cb227-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb227-6"><a href="#cb227-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Paramètres de coûts et durées (Alignés sur l'énoncé)</span></span>
-<span id="cb227-7"><a href="#cb227-7" aria-hidden="true" tabindex="-1"></a>cout_heure_arret <span class="ot">&lt;-</span> <span class="dv">1500</span>  <span class="co"># Coût de production de la station complète</span></span>
-<span id="cb227-8"><a href="#cb227-8" aria-hidden="true" tabindex="-1"></a>duree_lub_seule   <span class="ot">&lt;-</span> <span class="fl">4.0</span>   <span class="co"># 4h selon les données précédentes</span></span>
-<span id="cb227-9"><a href="#cb227-9" aria-hidden="true" tabindex="-1"></a>duree_meche_seule <span class="ot">&lt;-</span> <span class="fl">0.67</span>  <span class="co"># 40 min</span></span>
-<span id="cb227-10"><a href="#cb227-10" aria-hidden="true" tabindex="-1"></a>duree_intervention_groupee <span class="ot">&lt;-</span> <span class="fl">4.2</span>  <span class="co"># On estime un gain (ex: seulement 12 min de plus que la lub seule)</span></span>
-<span id="cb227-11"><a href="#cb227-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb227-12"><a href="#cb227-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Calcul des fréquences annuelles (Base 8760h pour être raccord avec le Point 3)</span></span>
-<span id="cb227-13"><a href="#cb227-13" aria-hidden="true" tabindex="-1"></a>nb_interv_lub_an <span class="ot">&lt;-</span> k_star</span>
-<span id="cb227-14"><a href="#cb227-14" aria-hidden="true" tabindex="-1"></a>nb_interv_meche_an <span class="ot">&lt;-</span> <span class="dv">8760</span> <span class="sc">/</span> mttf_glob</span>
-<span id="cb227-15"><a href="#cb227-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb227-16"><a href="#cb227-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Calcul du gain financier</span></span>
-<span id="cb227-17"><a href="#cb227-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Gain de temps = (Somme des durées séparées) - (Durée groupée)</span></span>
-<span id="cb227-18"><a href="#cb227-18" aria-hidden="true" tabindex="-1"></a>gain_temps_par_regroupement <span class="ot">&lt;-</span> (duree_lub_seule <span class="sc">+</span> duree_meche_seule) <span class="sc">-</span> duree_intervention_groupee</span>
-<span id="cb227-19"><a href="#cb227-19" aria-hidden="true" tabindex="-1"></a>gain_argent_par_regroupement <span class="ot">&lt;-</span> gain_temps_par_regroupement <span class="sc">*</span> cout_heure_arret</span>
-<span id="cb227-20"><a href="#cb227-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb227-21"><a href="#cb227-21" aria-hidden="true" tabindex="-1"></a><span class="co"># On peut grouper au maximum selon l'événement le moins fréquent</span></span>
-<span id="cb227-22"><a href="#cb227-22" aria-hidden="true" tabindex="-1"></a>nb_regroupements_possibles <span class="ot">&lt;-</span> <span class="fu">min</span>(nb_interv_lub_an, nb_interv_meche_an)</span>
-<span id="cb227-23"><a href="#cb227-23" aria-hidden="true" tabindex="-1"></a>economie_annuelle_potentielle <span class="ot">&lt;-</span> nb_regroupements_possibles <span class="sc">*</span> gain_argent_par_regroupement</span>
-<span id="cb227-24"><a href="#cb227-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb227-25"><a href="#cb227-25" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. AFFICHAGE DES RÉSULTATS</span></span>
-<span id="cb227-26"><a href="#cb227-26" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb227-27"><a href="#cb227-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb227-28"><a href="#cb227-28" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  POINT 5 : ANALYSE DE LA MAINTENANCE OPPORTUNISTE  </span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb227-29"><a href="#cb227-29" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Besoins annuels théoriques :</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb227-30"><a href="#cb227-30" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" -&gt; Maintenance Lubrification :"</span>, <span class="fu">round</span>(nb_interv_lub_an, <span class="dv">1</span>), <span class="st">"fois/an</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb227-31"><a href="#cb227-31" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" -&gt; Changements de Mèches     :"</span>, <span class="fu">round</span>(nb_interv_meche_an, <span class="dv">1</span>), <span class="st">"fois/an</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb227-32"><a href="#cb227-32" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"----------------------------------------------------</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb227-33"><a href="#cb227-33" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Gain de temps par groupage    :"</span>, <span class="fu">round</span>(gain_temps_par_regroupement <span class="sc">*</span> <span class="dv">60</span>, <span class="dv">0</span>), <span class="st">"minutes</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb227-34"><a href="#cb227-34" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Gain financier unitaire       :"</span>, <span class="fu">round</span>(gain_argent_par_regroupement, <span class="dv">2</span>), <span class="st">"€</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb227-35"><a href="#cb227-35" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Nombre de groupages possibles :"</span>, <span class="fu">round</span>(nb_regroupements_possibles, <span class="dv">1</span>), <span class="st">"fois/an</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb227-36"><a href="#cb227-36" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"----------------------------------------------------</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb227-37"><a href="#cb227-37" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"ÉCONOMIE ANNUELLE POTENTIELLE :"</span>, <span class="fu">round</span>(economie_annuelle_potentielle, <span class="dv">2</span>), <span class="st">"€/an</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb227-38"><a href="#cb227-38" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb237"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb237-1"><a href="#cb237-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- POINT 5 : MAINTENANCE GROUPÉE (OPPORTUNISTE) ---</span></span>
+<span id="cb237-2"><a href="#cb237-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb237-3"><a href="#cb237-3" aria-hidden="true" tabindex="-1"></a>Q_trans_glob <span class="ot">&lt;-</span> Q_glob[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span>
+<span id="cb237-4"><a href="#cb237-4" aria-hidden="true" tabindex="-1"></a>mttf_glob <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">solve</span>(<span class="sc">-</span>Q_trans_glob)[<span class="dv">1</span>, ])</span>
+<span id="cb237-5"><a href="#cb237-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb237-6"><a href="#cb237-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Paramètres de coûts et durées (Alignés sur l'énoncé)</span></span>
+<span id="cb237-7"><a href="#cb237-7" aria-hidden="true" tabindex="-1"></a>cout_heure_arret <span class="ot">&lt;-</span> <span class="dv">1500</span>  <span class="co"># Coût de production de la station complète</span></span>
+<span id="cb237-8"><a href="#cb237-8" aria-hidden="true" tabindex="-1"></a>duree_lub_seule   <span class="ot">&lt;-</span> <span class="fl">4.0</span>   <span class="co"># 4h selon les données précédentes</span></span>
+<span id="cb237-9"><a href="#cb237-9" aria-hidden="true" tabindex="-1"></a>duree_meche_seule <span class="ot">&lt;-</span> <span class="fl">0.67</span>  <span class="co"># 40 min</span></span>
+<span id="cb237-10"><a href="#cb237-10" aria-hidden="true" tabindex="-1"></a>duree_intervention_groupee <span class="ot">&lt;-</span> <span class="fl">4.2</span>  <span class="co"># On estime un gain (ex: seulement 12 min de plus que la lub seule)</span></span>
+<span id="cb237-11"><a href="#cb237-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb237-12"><a href="#cb237-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Calcul des fréquences annuelles (Base 8760h pour être raccord avec le Point 3)</span></span>
+<span id="cb237-13"><a href="#cb237-13" aria-hidden="true" tabindex="-1"></a>nb_interv_lub_an <span class="ot">&lt;-</span> k_star</span>
+<span id="cb237-14"><a href="#cb237-14" aria-hidden="true" tabindex="-1"></a>nb_interv_meche_an <span class="ot">&lt;-</span> <span class="dv">8760</span> <span class="sc">/</span> mttf_glob</span>
+<span id="cb237-15"><a href="#cb237-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb237-16"><a href="#cb237-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Calcul du gain financier</span></span>
+<span id="cb237-17"><a href="#cb237-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Gain de temps = (Somme des durées séparées) - (Durée groupée)</span></span>
+<span id="cb237-18"><a href="#cb237-18" aria-hidden="true" tabindex="-1"></a>gain_temps_par_regroupement <span class="ot">&lt;-</span> (duree_lub_seule <span class="sc">+</span> duree_meche_seule) <span class="sc">-</span> duree_intervention_groupee</span>
+<span id="cb237-19"><a href="#cb237-19" aria-hidden="true" tabindex="-1"></a>gain_argent_par_regroupement <span class="ot">&lt;-</span> gain_temps_par_regroupement <span class="sc">*</span> cout_heure_arret</span>
+<span id="cb237-20"><a href="#cb237-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb237-21"><a href="#cb237-21" aria-hidden="true" tabindex="-1"></a><span class="co"># On peut grouper au maximum selon l'événement le moins fréquent</span></span>
+<span id="cb237-22"><a href="#cb237-22" aria-hidden="true" tabindex="-1"></a>nb_regroupements_possibles <span class="ot">&lt;-</span> <span class="fu">min</span>(nb_interv_lub_an, nb_interv_meche_an)</span>
+<span id="cb237-23"><a href="#cb237-23" aria-hidden="true" tabindex="-1"></a>economie_annuelle_potentielle <span class="ot">&lt;-</span> nb_regroupements_possibles <span class="sc">*</span> gain_argent_par_regroupement</span>
+<span id="cb237-24"><a href="#cb237-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb237-25"><a href="#cb237-25" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. AFFICHAGE DES RÉSULTATS</span></span>
+<span id="cb237-26"><a href="#cb237-26" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb237-27"><a href="#cb237-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb237-28"><a href="#cb237-28" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  POINT 5 : ANALYSE DE LA MAINTENANCE OPPORTUNISTE  </span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb237-29"><a href="#cb237-29" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Besoins annuels théoriques :</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb237-30"><a href="#cb237-30" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" -&gt; Maintenance Lubrification :"</span>, <span class="fu">round</span>(nb_interv_lub_an, <span class="dv">1</span>), <span class="st">"fois/an</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb237-31"><a href="#cb237-31" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" -&gt; Changements de Mèches     :"</span>, <span class="fu">round</span>(nb_interv_meche_an, <span class="dv">1</span>), <span class="st">"fois/an</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb237-32"><a href="#cb237-32" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"----------------------------------------------------</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb237-33"><a href="#cb237-33" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Gain de temps par groupage    :"</span>, <span class="fu">round</span>(gain_temps_par_regroupement <span class="sc">*</span> <span class="dv">60</span>, <span class="dv">0</span>), <span class="st">"minutes</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb237-34"><a href="#cb237-34" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Gain financier unitaire       :"</span>, <span class="fu">round</span>(gain_argent_par_regroupement, <span class="dv">2</span>), <span class="st">"€</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb237-35"><a href="#cb237-35" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Nombre de groupages possibles :"</span>, <span class="fu">round</span>(nb_regroupements_possibles, <span class="dv">1</span>), <span class="st">"fois/an</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb237-36"><a href="#cb237-36" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"----------------------------------------------------</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb237-37"><a href="#cb237-37" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"ÉCONOMIE ANNUELLE POTENTIELLE :"</span>, <span class="fu">round</span>(economie_annuelle_potentielle, <span class="dv">2</span>), <span class="st">"€/an</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb237-38"><a href="#cb237-38" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  POINT 5 : ANALYSE DE LA MAINTENANCE OPPORTUNISTE  
@@ -2433,8 +2455,132 @@ Nombre de groupages possibles : 0.5 fois/an
 ÉCONOMIE ANNUELLE POTENTIELLE : 352.55 €/an</code></pre>
 </div>
 </div>
-<p>L’analyse de la maintenance opportuniste met en lumière une forte disparité entre les cycles de vie des composants de la station. Avec un optimum de lubrification fixé à 0,5 intervention par an (soit une fois tous les deux ans), le potentiel de regroupement est structurellement bridé par la rareté de cette opération lourde. Bien que le changement de mèche soit fréquent (53 fois/an), l’opportunité de couplage ne se présente statistiquement qu’une seule fois sur deux ans. L’économie annuelle de 352,55 € reste donc marginale par rapport au budget global de 80 000 €.</p>
-<p>Ce résultat démontre que, dans cette configuration, le coût d’arrêt élevé de la lubrification (4h à 1500 €/h) impose une stratégie de “rareté” qui empêche de capitaliser sur les synergies logistiques. Pour rendre cette maintenance groupée réellement attractive, il faudrait soit réduire la durée d’arrêt technique de la lubrification, soit augmenter sa fréquence réglementaire (par exemple une visite trimestrielle), ce qui porterait immédiatement le gain potentiel à 2 820 €/an.</p>
+<p>L’analyse de la maintenance opportuniste révèle une disparité critique entre les cycles de vie des composants, l’optimum de lubrification étant désormais fixé à une fréquence très basse de <span class="math inline">\(k^ = 0,12\)</span> intervention par an* (soit environ une fois tous les huit ans). Bien que le remplacement des mèches soit fréquent (53 fois/an) et que le gain par intervention groupée soit de 28 minutes (705 € d’économie de non-production), la rareté de l’opération de lubrification bride structurellement le potentiel de synergie : à l’échelle des 10 stations de l’atelier, l’économie annuelle totale ne s’élève qu’à 872,58 €.</p>
+<p>Ce résultat démontre que le coût d’arrêt élevé de la lubrification (1 500 €/h) impose une stratégie de « rareté » qui rend le couplage avec des consommables à cycle court peu attractif financièrement. Pour générer des gains significatifs, il apparaît donc préférable de pivoter vers un groupage des interventions lourdes, comme la plateforme et la lubrification, où la synchronisation permet de maximiser réellement la disponibilité globale de l’atelier.</p>
+</section>
+<section id="nouvelle-stratégie-de-maintenance-groupée-plateforme-lubrification" class="level1" data-number="9">
+<h1 data-number="9"><span class="header-section-number">9</span> Nouvelle stratégie de maintenance groupée (Plateforme + Lubrification)</h1>
+<p>L’analyse précédente a démontré que le groupage de composants aux cycles de vie très disparates, comme les mèches (fréquentes) et la lubrification (rare), n’offre qu’un gain marginal. Pour optimiser réellement la disponibilité de l’atelier, il est plus pertinent de se concentrer sur les interventions lourdes et pénalisantes. La plateforme rotative et le nettoyage complet du système de lubrification partagent une caractéristique commune : leur maintenance nécessite l’arrêt intégral de la station, facturé à 1 500 €/h.</p>
+<p>En synchronisant le remplacement préventif de la plateforme (<span class="math inline">\(t^* \approx 7\,400\)</span> h) avec l’entretien annuel du circuit de lubrification, nous mutualisons ces temps d’arrêt. Cette stratégie de ‘maintenance groupée de structure’ vise à supprimer une fenêtre d’indisponibilité majeure par an et par station, transformant des contraintes techniques en leviers d’économie d’échelle pour l’ensemble des 10 stations de l’atelier.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb239"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb239-1"><a href="#cb239-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ====================================================</span></span>
+<span id="cb239-2"><a href="#cb239-2" aria-hidden="true" tabindex="-1"></a><span class="co"># POINT 5 : RÉ-OPTIMISATION - STRATÉGIE DE GROUPAGE</span></span>
+<span id="cb239-3"><a href="#cb239-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ====================================================</span></span>
+<span id="cb239-4"><a href="#cb239-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb239-5"><a href="#cb239-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb239-6"><a href="#cb239-6" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 1. Paramètres Communs (Atelier 10 stations) ---</span></span>
+<span id="cb239-7"><a href="#cb239-7" aria-hidden="true" tabindex="-1"></a>nb_stations   <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb239-8"><a href="#cb239-8" aria-hidden="true" tabindex="-1"></a>cout_arret_h  <span class="ot">&lt;-</span> <span class="dv">1500</span></span>
+<span id="cb239-9"><a href="#cb239-9" aria-hidden="true" tabindex="-1"></a>h_an          <span class="ot">&lt;-</span> <span class="dv">8760</span></span>
+<span id="cb239-10"><a href="#cb239-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb239-11"><a href="#cb239-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Paramètres de remplacement (Coûts et durées)</span></span>
+<span id="cb239-12"><a href="#cb239-12" aria-hidden="true" tabindex="-1"></a>dur_M <span class="ot">&lt;-</span> <span class="fl">0.67</span> ; cout_M <span class="ot">&lt;-</span> <span class="dv">200</span>    <span class="co"># Mèches</span></span>
+<span id="cb239-13"><a href="#cb239-13" aria-hidden="true" tabindex="-1"></a>dur_C <span class="ot">&lt;-</span> <span class="fl">0.25</span> ; cout_C <span class="ot">&lt;-</span> <span class="dv">225</span>    <span class="co"># Capteurs</span></span>
+<span id="cb239-14"><a href="#cb239-14" aria-hidden="true" tabindex="-1"></a>dur_L <span class="ot">&lt;-</span> <span class="fl">4.0</span>  ; cout_L <span class="ot">&lt;-</span> <span class="dv">1300</span>   <span class="co"># Lubrification</span></span>
+<span id="cb239-15"><a href="#cb239-15" aria-hidden="true" tabindex="-1"></a>dur_P <span class="ot">&lt;-</span> <span class="fl">3.0</span>  ; cout_P <span class="ot">&lt;-</span> <span class="dv">1100</span>   <span class="co"># Plateforme</span></span>
+<span id="cb239-16"><a href="#cb239-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb239-17"><a href="#cb239-17" aria-hidden="true" tabindex="-1"></a><span class="co"># FRÉQUENCES OPTIMALES (Issues de vos résultats d'optimisation)</span></span>
+<span id="cb239-18"><a href="#cb239-18" aria-hidden="true" tabindex="-1"></a>T_M <span class="ot">&lt;-</span> <span class="dv">165</span>            <span class="co"># Cycle Mèches (53 fois/an)</span></span>
+<span id="cb239-19"><a href="#cb239-19" aria-hidden="true" tabindex="-1"></a>T_C <span class="ot">&lt;-</span> <span class="dv">326</span>            <span class="co"># Cycle Capteurs (26 fois/an)</span></span>
+<span id="cb239-20"><a href="#cb239-20" aria-hidden="true" tabindex="-1"></a>freq_L_an <span class="ot">&lt;-</span> <span class="fl">0.5</span>      <span class="co"># Lubrification (1 fois tous les 2 ans)</span></span>
+<span id="cb239-21"><a href="#cb239-21" aria-hidden="true" tabindex="-1"></a>T_P <span class="ot">&lt;-</span> <span class="dv">7429</span>           <span class="co"># Âge optimal Plateforme (T*)</span></span>
+<span id="cb239-22"><a href="#cb239-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb239-23"><a href="#cb239-23" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 2. Stratégie 1 : AUCUN GROUPAGE (Isolé) ---</span></span>
+<span id="cb239-24"><a href="#cb239-24" aria-hidden="true" tabindex="-1"></a>cout_iso_M <span class="ot">&lt;-</span> (h_an <span class="sc">/</span> T_M) <span class="sc">*</span> (cout_M <span class="sc">+</span> dur_M <span class="sc">*</span> cout_arret_h)</span>
+<span id="cb239-25"><a href="#cb239-25" aria-hidden="true" tabindex="-1"></a>cout_iso_C <span class="ot">&lt;-</span> (h_an <span class="sc">/</span> T_C) <span class="sc">*</span> (cout_C <span class="sc">+</span> dur_C <span class="sc">*</span> cout_arret_h)</span>
+<span id="cb239-26"><a href="#cb239-26" aria-hidden="true" tabindex="-1"></a>cout_iso_L <span class="ot">&lt;-</span> freq_L_an <span class="sc">*</span> (cout_L <span class="sc">+</span> dur_L <span class="sc">*</span> cout_arret_h)</span>
+<span id="cb239-27"><a href="#cb239-27" aria-hidden="true" tabindex="-1"></a>cout_iso_P <span class="ot">&lt;-</span> (h_an <span class="sc">/</span> T_P) <span class="sc">*</span> (cout_P <span class="sc">+</span> dur_P <span class="sc">*</span> cout_arret_h)</span>
+<span id="cb239-28"><a href="#cb239-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb239-29"><a href="#cb239-29" aria-hidden="true" tabindex="-1"></a>total_iso <span class="ot">&lt;-</span> (cout_iso_M <span class="sc">+</span> cout_iso_C <span class="sc">+</span> cout_iso_L <span class="sc">+</span> cout_iso_P) <span class="sc">*</span> nb_stations</span>
+<span id="cb239-30"><a href="#cb239-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb239-31"><a href="#cb239-31" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 3. Stratégie 2 : GRAND ARRÊT TOTAL (Alignement forcé sur Mèches) ---</span></span>
+<span id="cb239-32"><a href="#cb239-32" aria-hidden="true" tabindex="-1"></a><span class="co"># On change TOUT toutes les 165h (très inefficace)</span></span>
+<span id="cb239-33"><a href="#cb239-33" aria-hidden="true" tabindex="-1"></a>dur_grand_arret <span class="ot">&lt;-</span> <span class="fl">6.0</span></span>
+<span id="cb239-34"><a href="#cb239-34" aria-hidden="true" tabindex="-1"></a>f_grand_arret   <span class="ot">&lt;-</span> h_an <span class="sc">/</span> T_M </span>
+<span id="cb239-35"><a href="#cb239-35" aria-hidden="true" tabindex="-1"></a>cout_grand_arret <span class="ot">&lt;-</span> f_grand_arret <span class="sc">*</span> (cout_M <span class="sc">+</span> cout_C <span class="sc">+</span> cout_L <span class="sc">+</span> cout_P <span class="sc">+</span> (dur_grand_arret <span class="sc">*</span> cout_arret_h))</span>
+<span id="cb239-36"><a href="#cb239-36" aria-hidden="true" tabindex="-1"></a>total_grand_arret <span class="ot">&lt;-</span> cout_grand_arret <span class="sc">*</span> nb_stations</span>
+<span id="cb239-37"><a href="#cb239-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb239-38"><a href="#cb239-38" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 4. Stratégie 3 : POUPÉES RUSSES (Optimisé) ---</span></span>
+<span id="cb239-39"><a href="#cb239-39" aria-hidden="true" tabindex="-1"></a>n_total_arrets <span class="ot">&lt;-</span> <span class="fu">floor</span>(h_an <span class="sc">/</span> T_M)   <span class="co"># 53 arrêts total</span></span>
+<span id="cb239-40"><a href="#cb239-40" aria-hidden="true" tabindex="-1"></a>n_P_L          <span class="ot">&lt;-</span> freq_L_an           <span class="co"># 0.5 fois (Grand entretien bisannuel)</span></span>
+<span id="cb239-41"><a href="#cb239-41" aria-hidden="true" tabindex="-1"></a>n_C            <span class="ot">&lt;-</span> <span class="fu">floor</span>(h_an <span class="sc">/</span> T_C) <span class="sc">-</span> n_P_L </span>
+<span id="cb239-42"><a href="#cb239-42" aria-hidden="true" tabindex="-1"></a>n_M_seul       <span class="ot">&lt;-</span> n_total_arrets <span class="sc">-</span> n_C <span class="sc">-</span> n_P_L</span>
+<span id="cb239-43"><a href="#cb239-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb239-44"><a href="#cb239-44" aria-hidden="true" tabindex="-1"></a>cout_poupees <span class="ot">&lt;-</span> </span>
+<span id="cb239-45"><a href="#cb239-45" aria-hidden="true" tabindex="-1"></a>  (n_M_seul <span class="sc">*</span> (cout_M <span class="sc">+</span> <span class="fl">0.67</span> <span class="sc">*</span> cout_arret_h)) <span class="sc">+</span>            <span class="co"># Mèche seule</span></span>
+<span id="cb239-46"><a href="#cb239-46" aria-hidden="true" tabindex="-1"></a>  (n_C      <span class="sc">*</span> (cout_M <span class="sc">+</span> cout_C <span class="sc">+</span> <span class="fl">0.8</span> <span class="sc">*</span> cout_arret_h)) <span class="sc">+</span>    <span class="co"># Mèche + Capteur (Synergie)</span></span>
+<span id="cb239-47"><a href="#cb239-47" aria-hidden="true" tabindex="-1"></a>  (n_P_L    <span class="sc">*</span> (cout_M <span class="sc">+</span> cout_C <span class="sc">+</span> cout_L <span class="sc">+</span> cout_P <span class="sc">+</span> <span class="fl">6.5</span> <span class="sc">*</span> cout_arret_h)) <span class="co"># Le "Tout-en-un"</span></span>
+<span id="cb239-48"><a href="#cb239-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb239-49"><a href="#cb239-49" aria-hidden="true" tabindex="-1"></a>total_poupees <span class="ot">&lt;-</span> cout_poupees <span class="sc">*</span> nb_stations</span>
+<span id="cb239-50"><a href="#cb239-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb239-51"><a href="#cb239-51" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 5. Synthèse et Affichage ---</span></span>
+<span id="cb239-52"><a href="#cb239-52" aria-hidden="true" tabindex="-1"></a>resultats <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb239-53"><a href="#cb239-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">Strategie =</span> <span class="fu">c</span>(<span class="st">"Isolé (Standard)"</span>, <span class="st">"Grand Arrêt (Alignement forcé)"</span>, <span class="st">"Poupées Russes (Optimal)"</span>),</span>
+<span id="cb239-54"><a href="#cb239-54" aria-hidden="true" tabindex="-1"></a>  <span class="at">Cout_Annuel_Atelier =</span> <span class="fu">c</span>(total_iso, total_grand_arret, total_poupees)</span>
+<span id="cb239-55"><a href="#cb239-55" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb239-56"><a href="#cb239-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb239-57"><a href="#cb239-57" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">====================================================</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+====================================================</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb241"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb241-1"><a href="#cb241-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"   BILAN COMPARATIF DES STRATÉGIES (10 STATIONS)    </span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>   BILAN COMPARATIF DES STRATÉGIES (10 STATIONS)    </code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb243"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb243-1"><a href="#cb243-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"====================================================</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>====================================================</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb245"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb245-1"><a href="#cb245-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(resultats)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                       Strategie Cout_Annuel_Atelier
+1               Isolé (Standard)            903505.6
+2 Grand Arrêt (Alignement forcé)           6278000.0
+3       Poupées Russes (Optimal)            802600.0</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb247"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb247-1"><a href="#cb247-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"----------------------------------------------------</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>----------------------------------------------------</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb249"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb249-1"><a href="#cb249-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"ÉCONOMIE 'POUPÉES RUSSES' VS ISOLÉ :"</span>, <span class="fu">round</span>(total_iso <span class="sc">-</span> total_poupees, <span class="dv">2</span>), <span class="st">"€/an</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>ÉCONOMIE 'POUPÉES RUSSES' VS ISOLÉ : 100905.6 €/an</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb251"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb251-1"><a href="#cb251-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"PERTE SI 'GRAND ARRÊT' SYSTÉMATIQUE :"</span>, <span class="fu">round</span>(total_grand_arret <span class="sc">-</span> total_poupees, <span class="dv">2</span>), <span class="st">"€/an</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>PERTE SI 'GRAND ARRÊT' SYSTÉMATIQUE : 5475400 €/an</code></pre>
+</div>
+<details class="code-fold">
+<summary>Voir le code R</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb253"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb253-1"><a href="#cb253-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"====================================================</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>====================================================</code></pre>
+</div>
+</div>
+<p>L’analyse démontre que la stratégie des Poupées Russes est la seule viable économiquement, permettant une économie nette de 100 905 € par an pour l’atelier par rapport à une maintenance isolée. En synchronisant le remplacement des capteurs sur les arrêts fréquents des mèches et en groupant les opérations lourdes (lubrification et plateforme) lors d’un grand entretien bisannuel, on réduit drastiquement les pertes de production liées aux temps d’arrêt (1500 €/h). À l’inverse, l’alignement forcé de tous les composants sur le cycle le plus court (le “Grand Arrêt” toutes les 165h) s’avère catastrophique, générant une perte de plus de 5,4 millions d’euros due au remplacement prématuré et injustifié de pièces coûteuses encore fonctionnelles. Cette approche opportuniste transforme ainsi la maintenance d’un centre de coûts subi en un levier d’optimisation de la marge opérationnelle de l’usine.</p>
 </section>
 
 </main>
