@@ -1,6 +1,6 @@
 ---
 title: "Analyse de Fiabilité et Maintenance : Poste de Perçage Multi-têtes"
-author: "Theau Aguet"
+author: "Theau Aguet, Jean-Luc Gauvrit"
 date: "`r Sys.Date()`"
 format:
   html:
@@ -29,28 +29,33 @@ La station de perçage est un système complexe composé de cinq sous-ensembles 
 
 ### 1. La Plateforme Rotative (Châssis et Indexation)
 Il s'agit de la base mécanique qui supporte et positionne les pièces à usiner sous les têtes de perçage.
-* Fonctionnement : Elle assure la rotation et le verrouillage précis des pièces. Sa fiabilité suit une loi de Weibull avec un paramètre de forme $\beta > 1$, indiquant un phénomène d'usure mécanique marqué.
-* Maintenance : Étant un composant à arrêt long et coûteux, son optimisation repose sur un âge de remplacement préventif afin d'éviter des casses imprévues qui paralysent l'ensemble de la ligne.
+
+- Fonctionnement : Elle assure la rotation et le verrouillage précis des pièces. Sa fiabilité suit une loi de Weibull avec un paramètre de forme $\beta > 1$, indiquant un phénomène d'usure mécanique marqué.
+- Maintenance : Étant un composant à arrêt long et coûteux, son optimisation repose sur un âge de remplacement préventif afin d'éviter des casses imprévues qui paralysent l'ensemble de la ligne.
 
 ### 2. Le Système de Lubrification
 C'est le "poumon" de la station. Il assure le refroidissement et la réduction de la friction lors de l'usinage. 
-* Fonctionnement : Basé sur des cycles de nettoyage (complets ou partiels). Les interventions partielles sont modélisées comme des "réparations minimales" (NHPP).
-* Criticité : Une défaillance de lubrification entraîne un effet "cascade" immédiat, accélérant drastiquement l'usure des outils de coupe.
+
+- Fonctionnement : Basé sur des cycles de nettoyage (complets ou partiels). Les interventions partielles sont modélisées comme des "réparations minimales" (NHPP).
+- Criticité : Une défaillance de lubrification entraîne un effet "cascade" immédiat, accélérant drastiquement l'usure des outils de coupe.
 
 ### 3. Les Mèches de Perçage (Outils)
 Composants consommables soumis à une usure continue, modélisée par des chaînes de Markov.
-* États d'usure : L'outil évolue de l'état "Neuf" à "Cassé" à travers plusieurs stades de dégradation. 
-* Impact Cadence : Le remplacement d'une mèche (correctif ou préventif) entraîne un ralentissement de la cadence de production, impactant directement la rentabilité économique de la station.
+
+- États d'usure : L'outil évolue de l'état "Neuf" à "Cassé" à travers plusieurs stades de dégradation. 
+- Impact Cadence : Le remplacement d'une mèche (correctif ou préventif) entraîne un ralentissement de la cadence de production, impactant directement la rentabilité économique de la station.
 
 ### 4. Le Bloc Moteur
 L'organe moteur de la tête de perçage, dont la fiabilité suit également une loi de Weibull.
-* Usure : Le moteur subit une usure intrinsèque (vieillissement) mais est aussi exposé à des risques concurrents (chocs accidentels transmis par une mèche défaillante).
-* Enjeu : C'est l'actif le plus coûteux de la tête ; sa préservation est la priorité de la politique de maintenance des mèches.
+
+- Usure : Le moteur subit une usure intrinsèque (vieillissement) mais est aussi exposé à des risques concurrents (chocs accidentels transmis par une mèche défaillante).
+- Enjeu : C'est l'actif le plus coûteux de la tête ; sa préservation est la priorité de la politique de maintenance des mèches.
 
 ### 5. Le Système de Positionnement (Capteurs)
 Un ensemble de 4 capteurs assurant la précision du perçage.
-* Architecture : Configuré en redondance de type 3-parmi-4 (le système fonctionne tant que 3 capteurs sur 4 sont opérationnels).
-* Maintenance : Le risque principal réside dans les pannes "dormantes", nécessitant des inspections périodiques pour maintenir le niveau de sécurité requis.
+
+- Architecture : Configuré en redondance de type 3-parmi-4 (le système fonctionne tant que 3 capteurs sur 4 sont opérationnels).
+- Maintenance : Le risque principal réside dans les pannes "dormantes", nécessitant des inspections périodiques pour maintenir le niveau de sécurité requis.
 
 ------------------------------------------------------------------------
 
