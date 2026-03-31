@@ -137,8 +137,13 @@ L'objectif est de déterminer l'âge optimal de remplacement ($T^*$) permettant 
 
 # 1. Paramètres économiques et logistiques
 cout_arret_h   <- 1500
-transport      <- 200
 main_oeuvre_h  <- 100
+cout_indispo_h <- cout_arret_h + main_oeuvre_h
+
+# Données Tableau 1
+transport <- 200
+intervention_c <- 1300
+intervention_p <- 900
 
 # Calcul des durées moyennes d'arrêt (Espérances des lois log-normales)
 # Formule : E[X] = exp(mu + sigma^2 / 2)
@@ -147,44 +152,45 @@ mttr_p <- exp(1 + (0.55^2 / 2))    # Moyenne temps préventif (~3.16h)
 
 # Coût total d'une intervention Corrective (Cc)
 # (Pièces + Transport + Main d'œuvre + Perte de production)
-Cc <- 1300 + transport + (mttr_c * (cout_arret_h + main_oeuvre_h))
+Cc <- intervention_c + transport + (mttr_c * cout_indispo_h)
 
 # Coût total d'une intervention Préventive (Cp)
 # (Pièces + Transport + Main d'œuvre + Perte de production)
-Cp <- 900 + transport + (mttr_p * (cout_arret_h + main_oeuvre_h))
+Cp <- intervention_p + transport + (mttr_p * cout_indispo_h)
 
 # 2. Fonction de coût moyen par unité de temps C(T)
-# Basée sur le modèle de renouvellement par l'âge
-cost_function_plat <- function(T_age) {
-  # Fiabilité R(T) et Probabilité de défaillance F(T)
-  R_T <- exp(-(T_age / eta_plat)^beta_plat)
-  F_T <- 1 - R_T
+CA <- function(t0, eta, beta) {
   
-  # Espérance du temps de bon fonctionnement (Intégrale de R(t) de 0 à T)
-  mttf_T <- integrate(function(t) exp(-(t / eta_plat)^beta_plat), 
-                      lower = 0, upper = T_age)$value
+  # Fiabilité R(u) et Distribution F(u) pour Weibull
+  R <- function(u) exp(-(u / eta)^beta)
+  F_u <- function(u) 1 - R(u)
   
-  # Espérance de la durée totale du cycle (Fonctionnement + Arrêt)
-  duree_cycle <- mttf_T + (mttr_p * R_T + mttr_c * F_T)
+  # tau(a0) : Temps moyen d'un cycle (Dénominateur page 15)
+  # Intégrale de la fiabilité de 0 à a0
+  tau_a0 <- integrate(R, lower = 0, upper = t0)$value
   
-  # Espérance du coût du cycle
-  cout_cycle <- (Cp * R_T + Cc * F_T)
+  # Formule du cours : CA(a0) = (cC * F(t0) + cP * R(t0)) / tau(t0)
+  cout_moyen <- (Cc * F_u(t0) + Cp * R(t0)) / tau_a0
   
-  # Coût moyen par unité de temps
-  return(cout_cycle / duree_cycle)
+  return(cout_moyen)
 }
 
 # 3. Recherche de l'âge optimal (T*)
-# On cherche entre 100h et 1.5 fois la durée de vie caractéristique (eta_plat)
-opti_result <- optimize(cost_function_plat, interval = c(100, eta_plat * 1.5))
+# Paramètres issus de ton analyse de l'onglet rotating_platform
+eta_plat  <- eta_plat   # Valeur à récupérer de ton calcul précédent
+beta_plat <- beta_plat  # Valeur à récupérer de ton calcul précédent
 
-T_opti <- opti_result$minimum
-cout_horaire_min <- opti_result$objective
+# Recherche du minimum
+opti <- optimize(CA, interval = c(1, eta_plat * 2), 
+                 eta = eta_plat, beta = beta_plat)
+
+T_opti <- opti$minimum
+cout_horaire_min  <- opti$objective
 
 # 4. Calcul du coût en "Correctif Pur" pour comparaison (T -> infini)
-# En correctif pur, le coût moyen est Cc / (MTTF + mttr_c)
+# CA(inf) = Cc / MTTF
 mttf_total <- eta_plat * gamma(1 + 1/beta_plat)
-cout_correctif_pur <- Cc / (mttf_total + mttr_c)
+cout_correctif_pur <- Cc / mttf_total
 
 # 5. Affichage des résultats
 cat("--- RÉSULTATS DE L'OPTIMISATION (PLATEFORME) ---\n")
@@ -198,42 +204,44 @@ cat("Coût horaire à l'optimum         :", round(cout_horaire_min, 4), "€/h\n
 cat("Coût en politique corrective pure :", round(cout_correctif_pur, 4), "€/h\n")
 cat("Gain économique espéré           :", round(cout_correctif_pur - cout_horaire_min, 2), "€/h\n")
 
-# 6. Génération de la figure d'optimisation
-# Création d'une séquence d'âges pour le tracé (de 100h à l'horizon défini)
+# --- 6. Génération de la figure d'optimisation ---
+
+# Création d'une séquence d'âges t0 pour le tracé (de 100h à 1.5 * eta)
 t_seq <- seq(100, eta_plat * 1.5, length.out = 200)
 
-# Calcul du coût pour chaque âge de la séquence
-costs <- sapply(t_seq, cost_function_plat)
+# Calcul du coût moyen CA pour chaque âge de la séquence
+costs <- sapply(t_seq, CA, eta = eta_plat, beta = beta_plat)
 
 # Tracé de la courbe de coût
 plot(t_seq, costs, type = "l", col = "blue", lwd = 2,
-     main = "Optimisation de l'âge de remplacement (Plateforme)",
-     xlab = "Âge de remplacement préventif T (heures)",
-     ylab = "Coût moyen par heure (€/h)",
-     ylim = c(min(costs) * 0.9, max(costs[costs < cout_correctif_pur * 1.5])))
+      main = "Optimisation de l'âge de remplacement (Plateforme)",
+      xlab = "Âge de remplacement préventif t0 (heures)",
+      ylab = "Coût moyen par unité de temps CA(t0) (€/h)",
+      ylim = c(min(costs) * 0.9, min(max(costs), cout_correctif_pur * 1.2)))
 
 # Ajout d'une ligne horizontale pour le coût en correctif pur
 abline(h = cout_correctif_pur, col = "red", lty = 2, lwd = 2)
 
-# Marquage du point optimal (T*)
+# Marquage du point optimal (UTILISATION DES BONS NOMS DE VARIABLES)
 points(T_opti, cout_horaire_min, col = "darkgreen", pch = 19, cex = 1.5)
 abline(v = T_opti, col = "darkgreen", lty = 3)
 
-# Ajout d'une légende
+# Ajout d'une légende conforme aux notations du cours
 legend("topright", 
-       legend = c("Fonction de coût C(T)", "Coût Correctif Pur", "Optimum (T*)"),
-       col = c("blue", "red", "darkgreen"), 
-       lty = c(1, 2, 3), 
-       lwd = c(2, 2, 1),
-       pch = c(NA, NA, 19))
+        legend = c("Fonction de coût CA(t0)", "Coût Correctif Pur CA(inf)", "Optimum (t0*)"),
+        col = c("blue", "red", "darkgreen"), 
+        lty = c(1, 2, 3), 
+        lwd = c(2, 2, 1),
+        pch = c(NA, NA, 19),
+        bg = "white")
 
-# Ajout du texte pour l'optimum
+# Ajout du texte pour l'optimum (UTILISATION DES BONS NOMS DE VARIABLES)
 text(T_opti, cout_horaire_min, 
-     labels = paste("  T* =", round(T_opti, 0), "h"), 
-     pos = 4, col = "darkgreen", font = 2)
+      labels = paste("  t0* =", round(T_opti, 0), "h"), 
+      pos = 4, col = "darkgreen", font = 2)
 ```
 
-L'analyse des résultats d'optimisation pour la plateforme met en évidence la pertinence d'une stratégie de maintenance préventive systématique. Avec un coût de défaillance corrective ($C_c$) s'élevant à 17 599,75 €, soit près de trois fois le coût d'une intervention planifiée ($C_p$ de 6 159,43 €), l'arbitrage économique est fortement influencé par les pertes de production et les durées d'indisponibilité (10,06 h en correctif contre 3,16 h en préventif). L'âge optimal de remplacement ($T^*$) est ainsi fixé à 7 429 heures, permettant de ramener le coût horaire d'exploitation à 1,11 €/h. Bien que le gain horaire de 0,59 €/h puisse paraître modeste, il représente une réduction de 35 % des coûts par rapport à une politique de "correctif pur" (1,71 €/h). À l'échelle d'un parc de machines ou d'une exploitation annuelle longue durée, cette optimisation garantit une stabilité opérationnelle majeure tout en évitant des arrêts critiques coûteux et imprévisibles.
+L'analyse des résultats d'optimisation pour la plateforme met en évidence la pertinence d'une stratégie de maintenance préventive systématique. Avec un coût de défaillance corrective ($C_c$) s'élevant à 17 599,75 €, soit près de trois fois le coût d'une intervention planifiée ($C_p$ de 6 159,43 €), l'arbitrage économique est fortement influencé par les pertes de production et les durées d'indisponibilité (10,06 h en correctif contre 3,16 h en préventif). L'âge optimal de remplacement ($T^*$) est ainsi fixé à 7 429 heures, permettant de ramener le coût horaire d'exploitation à 1,11 €/h. Bien que le gain horaire de 0,6 €/h puisse paraître modeste, il représente une réduction de 35 % des coûts par rapport à une politique de "correctif pur" (1,71 €/h). À l'échelle d'un parc de machines ou d'une exploitation annuelle longue durée, cette optimisation garantit une stabilité opérationnelle majeure tout en évitant des arrêts critiques coûteux et imprévisibles.
 
 ------------------------------------------------------------------------
 
@@ -377,19 +385,19 @@ cat("DISPONIBILITÉ MOYENNE (A_lub)    :", round(dispo_moyenne_lub, 6), "\n")
 cat("Pourcentage de fonctionnement    :", round(dispo_moyenne_lub * 100, 2), "%\n")
 cat("====================================================\n")
 
-# 6. Graphique de répartition de l'indisponibilité
-stats_indispo <- c(indispo_corrective, indispo_preventive)
-labels_indispo <- c("Pannes (Correctif)", "Entretien (Préventif)")
+# --- Visualisation de la Répartition de l'Indisponibilité ---
 
-par(mar=c(5, 10, 4, 2))
-barplot(stats_indispo, 
-        horiz = TRUE, 
-        names.arg = labels_indispo, 
-        col = c("#E69F00", "#56B4E9"),
-        las = 1,
-        main = "Sources d'indisponibilité du circuit",
-        xlab = "Heures d'arrêt sur 8760h")
-grid()
+# 1. Données
+parts <- c(indispo_corrective, indispo_preventive)
+labels <- c(paste("Correctif (", round(indispo_corrective, 1), "h)"), 
+            paste("Préventif (", round(indispo_preventive, 1), "h)"))
+
+# 2. Graphique
+pie(parts, labels = labels, col = c("#e74c3c", "#3498db"),
+    main = "Répartition annuelle du temps d'indisponibilité (Lubrification)")
+
+# Ajout d'une légende textuelle pour le pourcentage final
+mtext(paste("Disponibilité Globale :", round(dispo_moyenne_lub * 100, 2), "%"), side = 1)
 ```
 
 Les résultats confirment la très haute performance du plan de maintenance actuel pour le système de lubrification. Avec un nombre de pannes attendu de 1,97 par an, le circuit ne subit en moyenne que deux obstructions majeures au cours d'un cycle annuel de production. L'indisponibilité totale cumulée, incluant le nettoyage préventif complet, s'élève à seulement 7 heures par an. Cela se traduit par une disponibilité moyenne de 99,92 %. D'un point de vue industriel, ce chiffre indique que le système remplit parfaitement sa fonction de soutien : le risque que les têtes de perçage fonctionnent sans lubrifiant est inférieur à 0,1 % du temps total. Cette valeur extrêmement élevée suggère que la stratégie actuelle (correctif au fil de l'eau et préventif annuel) est optimale et qu'un investissement supplémentaire pour accroître la fiabilité du circuit de lubrification ne serait pas rentable au regard du gain de disponibilité marginal.
@@ -448,9 +456,36 @@ cat("Intervalle entre nettoyages   :", round(8760/k_star, 0), "heures\n")
 cat("Coût annuel à l'optimum       :", round(cost_min, 2), "€\n")
 cat("Coût politique actuelle (k=1) :", round(cost_current, 2), "€\n")
 cat("Gain annuel espéré            :", round(cost_current - cost_min, 2), "€\n")
+
+# --- Visualisation de l'Optimisation des Coûts ---
+
+# 1. Préparation des données
+k_vals <- seq(0.1, 5, length.out = 100)
+costs  <- sapply(k_vals, lub_total_annual_cost)
+
+# 2. Création du graphique
+# On trace la courbe principale
+plot(k_vals, costs, type = "l", lwd = 2, col = "#2c3e50",
+     main = "Arbitrage Économique : Système de Lubrification",
+     xlab = "Fréquence de maintenance (Nettoyages / an)",
+     ylab = "Coût annuel total (€)",
+     panel.first = grid()) # Ajout d'une grille pour la lisibilité
+
+# 3. Ajout de l'optimum (Point Rouge)
+points(k_star, cost_min, col = "red", pch = 19, cex = 1.5)
+text(k_star, cost_min, labels = paste(" Optimum k* =", round(k_star, 2)), 
+     pos = 4, col = "red", font = 2)
+
+# 4. Ajout de la politique actuelle (Point Bleu)
+points(1, cost_current, col = "blue", pch = 19, cex = 1.5)
+text(1, cost_current, labels = " Politique actuelle (k=1)", 
+     pos = 3, col = "blue", font = 2)
+
+# 5. Ligne horizontale pour visualiser le gain
+abline(h = cost_min, lty = 2, col = "red")
 ```
 
-Les résultats de l'optimisation mettent en évidence une fréquence de maintenance préventive idéale de $k^ = 0,5$ nettoyage par an, soit une intervention tous les deux ans (17 518 heures). Ce résultat, bien que surprenant au premier abord, s'explique par la structure des coûts du système : le coût d'un nettoyage complet est massivement dominé par la perte de production (6 000 € d'arrêt pour seulement 900 € de pièces), tandis que le nettoyage partiel correctif ne coûte que 250 € et n'interrompt pas la station. L'arbitrage économique privilégie donc l'acceptation de quelques pannes de lubrification supplémentaires plutôt que le déclenchement d'opérations préventives lourdes et paralysantes. Ce passage d'une politique annuelle à une politique bisannuelle permettrait de réaliser un gain substantiel d'environ 2 863 € par an et par station. Pour l'industriel, si la politique actuelle ($k=1$) apparaît comme « sur-préventive » d'un point de vue strictement financier, une validation technique reste nécessaire afin de s'assurer que l'absence temporaire de lubrifiant n'altère pas prématurément d'autres composants, ce qui annulerait les économies réalisées.
+Les résultats de l'optimisation mettent en évidence une fréquence de maintenance préventive idéale de $k^ = 0,5$ nettoyage par an, soit une intervention tous les deux ans (17 518 heures). Ce résultat, bien que surprenant au premier abord, s'explique par la structure des coûts du système : le coût d'un nettoyage complet est massivement dominé par la perte de production (6 000 € d'arrêt pour seulement 900 € de pièces), tandis que le nettoyage partiel correctif ne coûte que 250 € et n'interrompt pas la station. L'arbitrage économique privilégie donc l'acceptation de quelques pannes de lubrification supplémentaires plutôt que le déclenchement d'opérations préventives lourdes et paralysantes. Ce passage d'une politique annuelle à une politique bisannuelle permettrait de réaliser un gain substantiel d'environ 3 221 € par an et par station. Pour l'industriel, si la politique actuelle ($k=1$) apparaît comme « sur-préventive » d'un point de vue strictement financier, une validation technique reste nécessaire afin de s'assurer que l'absence temporaire de lubrifiant n'altère pas prématurément d'autres composants, ce qui annulerait les économies réalisées.
 
 ------------------------------------------------------------------------
 
@@ -614,97 +649,100 @@ L'analyse de la distribution stationnaire globale ($\pi_{glob}$) démontre que, 
 L'objectif de cette étude est d'évaluer l'efficacité économique de deux politiques de maintenance distinctes pour les mèches de perçage, traitées indépendamment des autres composants de la station. Le Scénario A (Maintenance Corrective) modélise la stratégie actuelle où le remplacement n'intervient qu'après la rupture (état 5), engendrant un coût total de 902,50 € par intervention (incluant le surcoût de casse et la perte de production de la tête de perçage). À l'inverse, le Scénario B (Maintenance Préventive) propose un remplacement systématique dès l'entrée dans l'état de dégradation « sévère » (état 4), ramenant le coût à 702,50 € en évitant les pénalités liées à la défaillance. Pour comparer ces options, nous calculons le coût horaire attendu en multipliant la fréquence de remplacement, déduite des probabilités stationnaires globales et des taux de sortie des états critiques par le coût total de l'intervention associée à chaque stratégie.
 
 ```{r}
-# --- Optimisation des Mèches de Perçage (Point 2) ---
+# --- Optimisation des Mèches de Perçage (Version Finale) ---
 
 # 1. Paramètres du Tableau 3 et énoncé
-cout_mèche_P <- 200  # Préventif
-cout_mèche_C <- 400  # Correctif (200 + 200 de pénalité de casse)
-cout_indispo <- 0.67 * 750 # Impact du ralentissement de la station (502.5€)
+cout_mèche_P <- 200  
+cout_mèche_C <- 400  # 200 + 200 de pénalité de casse
+cout_indispo <- 750  # Coût horaire d'arrêt d'une tête (Tableau 3)
+mu_m <- 1/0.67       # Taux de réparation (1 / 0.67h)
 
-cout_total_P <- cout_mèche_P + cout_indispo # Soit 702.5 €
-cout_total_C <- cout_mèche_C + cout_indispo # Soit 902.5 €
-
-# 2. Définition des options (Remplacer à l'état 2, 3, 4 ou attendre 5)
+# 2. Définition des options et stockage
 etats_test <- 2:5
 couts_horaires <- numeric(length(etats_test))
+frequences_annuelles <- numeric(length(etats_test))
 names(couts_horaires) <- c("Préventif_E2", "Préventif_E3", "Préventif_E4", "Correctif_E5")
 
-# 3. Boucle de calcul
-for(i in 2:4) {
-  # Fréquence de remplacement à l'état i = pi_i * taux de sortie vers i+1
-  frequence <- pi_glob[i] * abs(Q_glob[i,i])
-  couts_horaires[i-1] <- frequence * cout_total_P
+# 3. Boucle de calcul (Méthode du cours : recalcul de PI pour chaque seuil)
+for(i in 1:length(etats_test)) {
+  seuil <- etats_test[i]
+  
+  # Création de la matrice spécifique à la stratégie de remplacement au seuil 'seuil'
+  Q_temp <- Q_glob
+  for(etat in seuil:5) {
+    Q_temp[etat, ] <- 0
+    Q_temp[etat, etat] <- -mu_m
+    Q_temp[etat, 1] <- mu_m
+  }
+  
+  # Calcul du vecteur pi stationnaire propre à cette politique (pi * Q = 0)
+  A <- t(Q_temp)
+  A[5, ] <- 1
+  b <- c(rep(0, 4), 1)
+  pi_strategie <- solve(A, b)
+  
+  # Probabilité d'être en maintenance (indisponibilité de la tête)
+  prob_maint <- sum(pi_strategie[seuil:5])
+  
+  # Fréquence de remplacement horaire (Flux de sortie)
+  frequence_h <- prob_maint * mu_m
+  
+  # Stockage de la fréquence par an (8760h)
+  frequences_annuelles[i] <- frequence_h * 8760
+  
+  # Coût unitaire (Préventif vs Correctif avec pénalité)
+  cout_unitaire <- if(seuil < 5) cout_mèche_P else cout_mèche_C
+  
+  # Coût horaire moyen = (Temps arrêt * coût arrêt) + (Flux * coût remplacement)
+  couts_horaires[i] <- (prob_maint * cout_indispo) + (frequence_h * cout_unitaire)
 }
 
-# Cas correctif pur (E5)
-couts_horaires[4] <- pi_glob[5] * abs(Q_glob[5,5]) * cout_total_C
+# Identification de l'optimum
+index_opti <- which.min(couts_horaires)
+optimum_etat <- names(index_opti)
+nb_total_mèches <- 30 # 10 stations * 3 têtes
+gain_annuel_atelier <- (max(couts_horaires) - min(couts_horaires)) * 8760 * nb_total_mèches
 
-# 4. Identification du meilleur
-optimum_etat <- names(which.min(couts_horaires))
-gain_max_unitaire <- max(couts_horaires) - min(couts_horaires)
-
-# PRISE EN COMPTE DES 10 STATIONS
-nb_stations <- 10
-gain_annuel_atelier <- gain_max_unitaire * 8760 * nb_stations
-
+# 4. AFFICHAGE DEMANDÉ
 cat("--- OPTIMISATION FINALE DES MÈCHES (ATELIER) ---\n")
 print(round(couts_horaires, 4))
 cat("--------------------------------------\n")
 cat("LA MEILLEURE STRATÉGIE EST :", optimum_etat, "\n")
-cat("Gain annuel pour l'ATELIER (10 stations) :", round(gain_annuel_atelier, 2), "€/an\n")
+cat("Gain annuel pour l'ATELIER (30 têtes) :", round(gain_annuel_atelier, 2), "€/an\n\n")
 
+cat("Fréquence optimale de remplacement :", round(frequences_annuelles[index_opti], 2), "fois par an / mèche\n")
+cat("Nombre total de mèches à prévoir par an pour l'atelier :", 
+    round(frequences_annuelles[index_opti] * nb_total_mèches, 0), "\n")
 
-index_opti <- which.min(couts_horaires) # Trouve l'indice du coût le plus bas
-optimum_etat <- names(index_opti)
+# --- Visualisation de l'Optimisation des Mèches ---
 
-# CALCUL DE LA FRÉQUENCE OPTIMALE RÉELLE
-# On refait le calcul pour l'état sélectionné (ou on le récupère si on l'avait stocké)
-if(index_opti <= 3) {
-  # Si c'est du préventif (E2, E3 ou E4)
-  etat_cible <- index_opti + 1
-  frequence_opti <- pi_glob[etat_cible] * abs(Q_glob[etat_cible, etat_cible])
-} else {
-  # Si c'est du correctif (E5)
-  frequence_opti <- pi_glob[5] * abs(Q_glob[5,5])
-}
+# 1. Définition des couleurs (Vert pour l'optimum, gris pour les autres)
+couleurs <- ifelse(couts_horaires == min(couts_horaires), "#27ae60", "#95a5a6")
 
-cat("LA MEILLEURE STRATÉGIE EST :", optimum_etat, "\n")
-cat("Fréquence optimale :", round(frequence_opti, 6), "remplacements/heure\n")
-cat("Soit environ :", round(frequence_opti * 8760, 1), "fois par an\n")
-cat("Cycle moyen (T_M) :", round(1/frequence_opti, 2), "heures\n")
+# 2. Graphique en barres
+# On ajuste ylim pour laisser de la place au texte au-dessus des barres
+barplot(couts_horaires, 
+        main = "Comparaison des Coûts Horaires par Stratégie de Seuil",
+        ylab = "Coût moyen horaire (€/h)",
+        col = couleurs,
+        border = "white",
+        ylim = c(0, max(couts_horaires) * 1.3))
 
-# 5. Visualisation des coûts par stratégie de remplacement
-par(mar=c(6, 5, 4, 2)) # Augmentation de la marge basse pour les étiquettes
+# 3. Ajout des valeurs au-dessus des barres pour la précision
+text(x = seq_along(couts_horaires) * 1.2 - 0.5, 
+     y = couts_horaires + 0.05, 
+     labels = paste0(round(couts_horaires, 2), " €"), 
+     cex = 0.9, font = 2, pos = 3)
 
-# Création du graphique en barres
-bp <- barplot(couts_horaires, 
-              col = "steelblue",
-              main = "Optimisation de la Maintenance Conditionnelle (Mèches)",
-              ylab = "Coût moyen horaire (€/h)",
-              xlab = "Seuil de remplacement (État)",
-              ylim = c(0, max(couts_horaires) * 1.2))
-
-# Ajout des valeurs au-dessus des barres
-text(x = bp, y = couts_horaires, 
-     labels = paste(round(couts_horaires, 3), "€"), 
-     pos = 3, cex = 0.9, font = 2)
-
-# Mise en évidence de l'optimum en vert
-index_opti <- which.min(couts_horaires)
-rect(bp[index_opti]-0.5, 0, bp[index_opti]+0.5, couts_horaires[index_opti], 
-     col = "forestgreen", border = "black", lwd = 2)
-
-# Ajout d'une ligne de référence pour le correctif pur
-abline(h = couts_horaires[4], col = "red", lty = 2)
-text(max(bp), couts_horaires[4], "Niveau Correctif", pos = 3, col = "red", cex = 0.8)
-
-legend("topright", legend = c("Coût Stratégie", "Optimum Économique"), 
-       fill = c("steelblue", "forestgreen"), bty = "n")
+# 4. Légende
+legend("topright", 
+       legend = c("Optimum Économique", "Autres Stratégies"), 
+       fill = c("#27ae60", "#95a5a6"), 
+       bty = "n", 
+       cex = 0.8)
 ```
 
-L'étude comparative des stratégies de remplacement pour les mèches de perçage démontre qu'une politique de maintenance préventive systématique à l'état 4 (Sévère) est la solution optimale. Les coûts horaires simulés chutent de 5,44 €/h en stratégie corrective pure (attendre la casse) à seulement 1,80 €/h en intervenant dès l'entrée dans l'état 4. Ce gain s'explique par le fait que l'état 4 est le point de bascule critique : le risque de transition immédiate vers la rupture (état 5) y est maximal. En acceptant de remplacer une pièce qui n'est pas encore brisée (coût réduit de 200 €), on évite les surcoûts liés à la casse (400 €) et les risques de dommages collatéraux sur la tête de perçage.
-
-Le gain financier identifié est massif : l'adoption de la stratégie Préventif_E4 permet de réaliser une économie annuelle de 31 891,19 € par rapport au pire scénario (le correctif pur). À l'inverse, un remplacement trop précoce (aux états 2 ou 3) s'avère moins efficace (4,12 €/h et 3,27 €/h respectivement), car il ne permet pas de rentabiliser suffisamment la durée de vie utile de l'outil. Cette analyse confirme qu'une surveillance précise des états de dégradation, plutôt qu'une maintenance subie, est un levier majeur de rentabilité pour la station de perçage.
+L'optimisation de la maintenance des mèches de perçage démontre qu'une stratégie conditionnelle ciblant l'état 4 (Sévère) est la plus rentable pour l'atelier, avec un coût moyen de 4,42 €/h par tête. En intervenant à ce stade critique avant la rupture, l'entreprise évite la pénalité de casse de 200 € et minimise l'indisponibilité coûteuse des stations (750 €/h), contrairement à une stratégie corrective (état 5) qui s'élève à 5,44 €/h ou à un remplacement trop précoce (états 2 ou 3) qui gaspille prématurément le potentiel des outils. Cette politique permet de réaliser un gain annuel massif de 4 337 846 € pour l'ensemble des 30 têtes de l'atelier par rapport au scénario le moins efficace, tout en stabilisant les besoins logistiques à une consommation de 1 655 mèches par an (soit environ 55 remplacements annuels par tête).
 
 ------------------------------------------------------------------------
 
@@ -836,35 +874,34 @@ cat("---------------------------------------------------\n")
 cat("Fiabilité globale du moteur                  :", round(R_moteur_global, 5), "\n")
 cat("Probabilité de défaillance cumulée à 500h    :", round(P_defaillance, 6), "\n")
 
-# 5. Visualisation de la Fiabilité Globale (Risques Concurrents)
-t_seq <- seq(0, 1000, length.out = 100) # Horizon de 1000h pour voir l'effet
+# --- Visualisation des Risques Concurrents (Moteur) ---
 
-# Calcul des trois courbes
-R_usure_seq <- exp(-(t_seq / eta_mle)^beta_mle)
-R_chocs_seq <- exp(-nu * p_barre * t_seq)
-R_total_seq <- R_usure_seq * R_chocs_seq
+# 1. Préparation des données sur 1000 heures
+t_seq <- seq(0, 1000, length.out = 100)
+nu <- 1e-3
 
-# Tracé des courbes
-plot(t_seq, R_usure_seq, type = "l", col = "blue", lwd = 2, lty = 2,
-     main = "Décomposition de la Fiabilité du Moteur",
-     xlab = "Temps de fonctionnement (heures)",
-     ylab = "Probabilité de Survie R(t)",
-     ylim = c(0, 1))
+# Fiabilités individuelles
+R_w <- exp(-(t_seq / eta_mle)^beta_mle)      # Usure pure
+R_c <- exp(-nu * p_barre * t_seq)            # Chocs purs
+R_tot <- R_w * R_c                           # Globale
 
-lines(t_seq, R_chocs_seq, col = "orange", lwd = 2, lty = 2)
-lines(t_seq, R_total_seq, col = "darkgreen", lwd = 3)
+# 2. Graphique
+plot(t_seq, R_w, type = "l", col = "blue", lty = 2, lwd = 2,
+     ylim = c(0, 1), xlab = "Temps (heures)", ylab = "Fiabilité R(t)",
+     main = "Fiabilité du Moteur : Modèle à Risques Concurrents")
+lines(t_seq, R_c, col = "orange", lty = 2, lwd = 2)
+lines(t_seq, R_tot, col = "red", lty = 1, lwd = 3)
+
+# 3. Légende
+legend("bottomleft", 
+       legend = c("Usure (Weibull)", "Chocs (Induit)", "Fiabilité Globale"),
+       col = c("blue", "orange", "red"), 
+       lty = c(2, 2, 1), lwd = c(2, 2, 3), bty = "n")
 
 # Marquage du point à 500h
-abline(v = 500, col = "gray", lty = 3)
-points(500, R_moteur_global, col = "red", pch = 19, cex = 1.2)
-
-# Ajout d'une légende
-legend("bottomleft", 
-       legend = c("Usure seule (Weibull)", "Chocs seuls (Exp)", "Fiabilité Globale", "Point 500h"),
-       col = c("blue", "orange", "darkgreen", "red"), 
-       lty = c(2, 2, 1, NA), pch = c(NA, NA, NA, 19), lwd = 2)
-
-grid()
+abline(v = 500, lty = 3, col = "darkgrey")
+points(500, R_moteur_global, col = "black", pch = 19)
+text(500, R_moteur_global, labels = paste0(round(R_moteur_global*100,1),"%"), pos = 4)
 ```
 
 L'analyse de la fiabilité globale à 500 heures démontre que le moteur est soumis à un régime de risques concurrents où les défaillances accidentelles prédominent largement sur l'usure naturelle. Bien que la fiabilité intrinsèque du bloc moteur reste très élevée (99,957 %), c'est la fiabilité induite par les chocs liés aux mèches qui impacte le plus significativement le système, chutant à 99,781 %. Avec une probabilité moyenne de rupture par choc ($\bar{p}$) de 0,00438, ce risque exogène s'avère environ cinq fois plus menaçant que le vieillissement propre de l'organe à cet horizon. La fiabilité globale de 99,739 % confirme ainsi que la survie du moteur dépend moins de sa propre robustesse que de la maîtrise statistique de l'état d'usure des outils qu'il actionne, validant l'aspect critique d'une maintenance préventive sur les mèches pour protéger cet organe noble.
@@ -942,59 +979,67 @@ L’étude de l’effet cascade révèle une dégradation brutale de la fiabilit
 
 ### Optimisation de la Maintenance du Bloc Moteur
 
-L'objectif de cette étape est de comparer l'efficacité économique de la politique de maintenance corrective actuelle avec une stratégie de maintenance préventive systématique basée sur l'âge ($T$) pour le bloc motorisation. Pour ce faire, nous intégrons l'ensemble des contraintes opérationnelles : chaque intervention immobilise une tête de perçage pendant 2,5 heures (2h de remplacement et 30 min de manipulation), générant une perte de production de 1 875 € $(2,5 \times 750 €/h)$. Le coût total d'un remplacement s'élève ainsi à 3 275 € en préventif, contre 3 475 € en correctif en raison des frais supplémentaires de détection et de ré-usinage. En nous appuyant sur la loi de Weibull identifiée précédemment, nous modélisons le coût moyen par heure $C(T)$ comme le ratio entre l'espérance du coût d'un cycle pondéré par la fiabilité $R(T)$ et la durée moyenne de bon fonctionnement (obtenue par l'intégration numérique de la fiabilité jusqu'à l'âge $T$). Cette étude vise à identifier numériquement l'âge de remplacement optimal $T^*$ qui minimise ce coût horaire, permettant ainsi de valider si un remplacement planifié est plus rentable que le maintien d'une stratégie subie de "panne au premier défaut".
+L'objectif de cette étape est de comparer l'efficacité économique de la politique de maintenance corrective actuelle avec une stratégie de maintenance préventive systématique basée sur l'âge ($T$) pour le bloc motorisation. Pour ce faire, nous intégrons l'ensemble des contraintes opérationnelles : chaque intervention immobilise une tête de perçage pendant 2,5 heures (2h de remplacement et 30 min de manipulation), générant une perte de production de 1 875 € (2,5 * 750 €/h). Le coût total d'un remplacement s'élève ainsi à 3 275 € en préventif, contre 3 475 € en correctif en raison des frais supplémentaires de détection et de ré-usinage. En nous appuyant sur la loi de Weibull identifiée précédemment, nous modélisons le coût moyen par heure $C(T)$ comme le ratio entre l'espérance du coût d'un cycle pondéré par la fiabilité $R(T)$ et la durée moyenne de bon fonctionnement (obtenue par l'intégration numérique de la fiabilité jusqu'à l'âge $T$). Cette étude vise à identifier numériquement l'âge de remplacement optimal $T^*$ qui minimise ce coût horaire, permettant ainsi de valider si un remplacement planifié est plus rentable que le maintien d'une stratégie subie de "panne au premier défaut".
 
 ```{r}
 # --- Optimisation du Bloc Moteur (Point 2) ---
 
-# 1. Paramètres de coûts (Tableau 4)
-# Perte de production : 750€/h (car une seule tête s'arrête, comme pour les mèches)
-perte_h <- 750 
-ttr_moteur <- 2.5 # 2h remplacement + 0.5h démontage/remontage
+# 1. Données du problème (Tableau 4 et Enoncé)
+cout_moteur_P <- 1400  # Coût intervention préventive
+cout_moteur_C <- 1600  # Coût intervention corrective
+perte_h <- 750         # Coût indisponibilité tête
+ttr_moteur <- 2.5      # 2h (remplacement) + 0.5h (démontage/remontage)
 
-cost_preventif <- 1400 + (ttr_moteur * perte_h) # 1400 + 1875 = 3275€
-cost_correctif <- 1600 + (ttr_moteur * perte_h) # 1600 + 1875 = 3475€
+# Coûts totaux incluant l'arrêt de production (Modèle du cours)
+c_P <- cout_moteur_P + (ttr_moteur * perte_h) # 1400 + 1875 = 3275€
+c_C <- cout_moteur_C + (ttr_moteur * perte_h) # 1600 + 1875 = 3475€
 
-# 2. Fonction de coût moyen par unité de temps C(T)
-# Modèle de remplacement systématique à l'âge T
-moteur_cost_per_hour <- function(T_age) {
-  # Fiabilité à l'âge T
-  R_T <- exp(-(T_age / eta_mle)^beta_mle)
+# Risque 2 : Chocs (Modèle de chocs successifs)
+nu <- 1e-3
+# Calcul de p(i) pour une mèche en état i (ex: i=4 pour l'optimum mèche)
+i_meche <- 4 
+p_i <- 5e-3 * exp(3.8 * log(0.6 * (i_meche - 1)))
+h_chocs <- nu * p_i  # Taux de défaillance constant lié aux chocs
+
+# 3. Fonction de Coût Moyen CA(a0) 
+moteur_cost_per_hour <- function(a0) {
+  R_global <- function(t) {
+    exp(-(t / eta_mle)^beta_mle) * exp(-h_chocs * t)
+  }
   
-  # Espérance du temps de bon fonctionnement avant T
-  # Pour Weibull, on utilise une intégration numérique de la fiabilité
-  MTTF_T <- integrate(function(x) exp(-(x / eta_mle)^beta_mle), 0, T_age)$value
+  Rel_a0 <- R_global(a0)
+  # Calcul de tau(a0) 
+  tau_a0 <- integrate(R_global, 0, a0)$value
   
-  # Coût moyen par cycle
-  # (Coût_Prév * Prob_survie_à_T) + (Coût_Corr * Prob_panne_avant_T)
-  expected_cost <- (cost_preventif * R_T) + (cost_correctif * (1 - R_T))
-  
-  # Durée moyenne d'un cycle
-  expected_time <- MTTF_T + ttr_moteur 
+  # CA(a0) 
+  expected_cost <- (c_P * Rel_a0) + (c_C * (1 - Rel_a0))
+  expected_time <- tau_a0 + ttr_moteur 
   
   return(expected_cost / expected_time)
 }
 
-# 3. Recherche de l'âge optimal T*
-ages_test <- seq(1000, 15000, by = 100)
+# 4. Recherche de l'optimum T* (ou a0*)
+ages_test <- seq(500, 15000, by = 50)
 costs_v <- sapply(ages_test, moteur_cost_per_hour)
 
 T_opti <- ages_test[which.min(costs_v)]
 min_cost <- min(costs_v)
 
-# 4. Comparaison avec le correctif pur (T -> infini)
-# En correctif pur, le coût horaire est Coût_Corr / MTTF_total
-MTTF_total <- eta_mle * gamma(1 + 1/beta_mle)
-cost_correctif_pur <- cost_correctif / MTTF_total
+# 5. Comparaison avec le Correctif Pur (T -> infini) [cite: 178]
+# En correctif pur, le coût est cC / (MTTF_global + ttr_moteur)
+# MTTF_global = Intégrale de R_global de 0 à l'infini
+MTTF_global <- integrate(function(t) exp(-(t / eta_mle)^beta_mle) * exp(-h_chocs * t), 
+                         0, Inf)$value
+cost_correctif_pur <- c_C / (MTTF_global + ttr_moteur)
 
-# 5. Affichage des résultats
+# 6. Affichage des résultats
 cat("--- OPTIMISATION DE LA MAINTENANCE MOTEUR ---\n")
 cat("Coût horaire (Correctif pur)        :", round(cost_correctif_pur, 4), "€/h\n")
 cat("Âge optimal de remplacement (T*)    :", T_opti, "heures\n")
 cat("Coût horaire à l'optimum C(T*)      :", round(min_cost, 4), "€/h\n")
 cat("Gain annuel potentiel par moteur    :", round((cost_correctif_pur - min_cost) * 8760, 2), "€\n")
 
-# 6. Visualisation de l'optimisation du moteur
+# 7. Visualisation de l'optimisation du moteur
 # On utilise les vecteurs ages_test et costs_v déjà calculés dans ton code
 plot(ages_test, costs_v, type = "l", col = "darkblue", lwd = 2,
      main = "Optimisation du Remplacement Préventif (Moteur)",
@@ -1025,11 +1070,7 @@ text(T_opti, (cost_correctif_pur + min_cost)/2,
      pos = 4, cex = 0.8, col = "darkgreen")
 ```
 
-L'application du modèle de remplacement systématique à l'âge T pour le bloc motorisation révèle une situation singulière : la stratégie de maintenance préventive n'est pas économiquement viable.
-
-Le calcul montre que le coût horaire minimal pour un remplacement préventif (0,3143 €/h) reste supérieur au coût du correctif pur (0,2918 €/h). Ce résultat s'explique par le faible écart entre le coût d'une intervention préventive (3275 €) et d'une intervention corrective (3475 €). Le gain de fiabilité obtenu en remplaçant prématurément un moteur ne compense pas la perte de potentiel de vie résiduelle de l'équipement.
-
-Pour ce composant spécifique, il est donc recommandé de maintenir une politique de "Run-to-Failure" (maintenance corrective), car le surcoût lié à la détection et au ré-usinage en cas de panne est négligeable face au coût global de remplacement et d'indisponibilité.
+L'analyse du remplacement basé sur l'âge pour le bloc moteur, conforme au Modèle II du cours, démontre que la maintenance préventive n'est pas économiquement avantageuse pour cet équipement. Les résultats indiquent que le coût horaire du correctif pur (0,3966 €/h) est inférieur au coût minimal atteignable en préventif (0,4145 €/h), ce qui se traduit par un gain annuel négatif de -157,03 €. Ce résultat s'explique par un différentiel de coût trop faible entre une intervention préventive (3275 €) et une intervention corrective (3475 €) par rapport à la grande longévité du moteur : le coût de remplacement prématuré ne compense pas le sacrifice de la durée de vie résiduelle de l'unité. En conclusion, pour le bloc motorisation, la stratégie optimale consiste à maintenir une politique de "Run-to-Failure" (correctif pur), l'âge optimal $T^*$ tendant vers l'infini.
 
 ------------------------------------------------------------------------
 
@@ -1119,7 +1160,6 @@ L'objectif de cette étape est de déterminer l'intervalle d'inspection optimal 
 
 # 1. Paramètres (Tableau 5 & Enoncé)
 cout_arret_h <- 1500
-cout_rebut_h <- 1500     # Selon l'énoncé : "temps de production perdu" = revenu station
 duree_insp   <- 0.5      
 cout_insp_fixe <- 50     # Donnée Tableau 5
 
@@ -1131,36 +1171,40 @@ cout_piece_rempl <- 225
 duree_rempl      <- 0.25
 C_un_remplacement <- cout_piece_rempl + (duree_rempl * cout_arret_h) # 225 + 375 = 600€
 
-# 2. Fonction de coût par heure
+# 2. Fonction de coût moyen CA(tau)
 sensor_cost_function <- function(tau) {
   
-  # Probabilité de panne d'un capteur seul à l'instant t
-  # (S'assure que beta_s et eta_s sont bien définis avant)
-  R_t_unitaire <- exp(-(tau / eta_s)^beta_s)
+  # A. Probabilité qu'un capteur soit en panne à l'instant t
+  # (Assurez-vous que beta_s et eta_s sont vos paramètres estimés sur 'sensor')
+  F_t_unitaire <- function(t) 1 - exp(-(t / eta_s)^beta_s)
   
-  # A. Fiabilité du système 3-parmi-4 (Rsys)
+  # B. Fiabilité du système (3-parmi-4)
+  # Le système est en panne si 2, 3 ou 4 capteurs sont KO (moins de 3 OK)
   R_sys_t <- function(t) {
-    p <- exp(-(t / eta_s)^beta_s)
-    # Formule : P(3 capteurs OK) + P(4 capteurs OK)
-    return(choose(4, 3) * (p^3) * (1 - p) + (p^4))
+    p_ok <- exp(-(t / eta_s)^beta_s)
+    # P(X >= 3) = P(X=3) + P(X=4)
+    return(choose(4, 3) * (p_ok^3) * (1 - p_ok) + (p_ok^4))
   }
   
-  # B. Espérance du temps passé en état de défaillance (Rebuts)
-  # Intégrale de l'indisponibilité (1 - Rsys) sur l'intervalle [0, tau]
-  temps_rebuts <- integrate(function(t) 1 - sapply(t, R_sys_t), lower=0, upper=tau)$value
+  # C. Espérance du temps de production de rebuts (Système avec < 3 capteurs)
+  # C'est l'intégrale de l'infidélité (1 - Rsys) sur la période d'inspection
+  temps_rebuts <- integrate(function(t) 1 - sapply(t, R_sys_t), lower = 0, upper = tau)$value
   
-  # C. Nombre moyen de capteurs à remplacer lors de l'inspection
-  # Loi Binomiale : n * p
-  nb_pannes_moyen <- 4 * (1 - R_t_unitaire)
+  # D. Nombre moyen de capteurs à remplacer à l'inspection (Loi binomiale)
+  # "Ils sont systématiquement remplacés lorsqu'ils tombent en panne"
+  p_panne_tau <- F_t_unitaire(tau)
+  nb_moyen_rempl <- 4 * p_panne_tau
   
-  # Coût total sur le cycle d'inspection
-  cout_cycle <- Cinsp + (temps_rebuts * cout_rebut_h) + (nb_pannes_moyen * C_un_remplacement)
+  # Coût total du cycle
+  # Inspection + Coût des Rebuts + Coût des remplacements effectués
+  cout_cycle <- Cinsp + (temps_rebuts * cout_arret_h) + (nb_moyen_rempl * C_un_remplacement)
   
+  # On divise par la durée du cycle (tau) pour avoir le coût horaire
   return(cout_cycle / tau)
 }
 
 # 3. Optimisation
-opti_sensor <- optimize(sensor_cost_function, interval = c(50, 3000))
+opti_sensor <- optimize(sensor_cost_function, interval = c(10, 3000))
 
 tau_opti <- opti_sensor$minimum
 cout_horaire_sensor_min <- opti_sensor$objective
@@ -1207,103 +1251,121 @@ L'objectif final de cette étude est de quantifier l'impact combiné des optimis
 
 ```{r}
 # ====================================================
-# SYNTHÈSE GLOBALE - STATION DE PERÇAGE (POINT 3)
+# SYNTHÈSE GLOBALE - POSTE DE PERÇAGE (VERSION OPTIMISÉE)
 # ====================================================
 
-# --- 1. PARAMÈTRES DE BASE (Extraits des Tableaux 1 à 5) ---
-revenu_horaire      <- 1500   # Station complète
-revenu_h_tete       <- 750    # Perte si 1 seule tête est arrêtée (Mèches/Moteur)
-main_oeuvre_h       <- 100    # Facturation MO qualifiée
+# --- 1. PARAMÈTRES DE PRODUCTION ---
+rev_stop_station <- 1500  # Arrêt complet (Plateforme, Capteurs)
+rev_stop_1_tete   <- 750   # Arrêt d'une seule tête (Mèches, Moteur)
 
-# Durées d'arrêt moyennes (MTTR)
-duree_arret_lub     <- 4.0    # Tableau 2
-duree_arret_meche   <- 0.67   # Tableau 3 (40 min)
-duree_arret_moteur  <- 2.5    # Tableau 4 (2h + 0.5h)
-duree_insp_sensor   <- 0.5    # Tableau 5 (30 min)
+# --- 2. CALCUL DES DISPONIBILITÉS INDIVIDUELLES OPTIMISÉES ---
 
-# --- 2. CALCUL DE LA DISPONIBILITÉ PAR COMPOSANT (SCÉNARIO OPTIMISÉ) ---
+# A. Plateforme Rotative (Modèle de remplacement à l'âge T*)
+# Durée moyenne du cycle = intégrale de R(u) de 0 à T_opti
+R_plat <- function(u) exp(-(u / eta_plat)^beta_plat)
+tau_T_opti <- integrate(R_plat, lower = 0, upper = T_opti)$value
+# Temps d'indisponibilité moyen par cycle
+F_plat_T_opti <- 1 - R_plat(T_opti)
+indispo_cycle_plat <- (mttr_c * F_plat_T_opti) + (mttr_p * R_plat(T_opti))
+dispo_plat_opti <- tau_T_opti / (tau_T_opti + indispo_cycle_plat)
 
-# A. Lubrification (Optimisée à k_star)
-# Disponibilité = (Temps total - Temps de maintenance préventive) / Temps total
-temps_mort_lub_annuel <- k_star * duree_arret_lub
-dispo_opti_lub        <- (8760 - temps_mort_lub_annuel) / 8760
-# Coût horaire moyen issu de optimisation Point 2
-cout_horaire_lub_min  <- cost_min / 8760
+# B. Lubrification (Optimisée à k_star nettoyages/an)
+# Seul le nettoyage complet (t_stop_full = 4h) arrête la station
+temps_mort_lub_annuel <- k_star * t_stop_full
+dispo_lub_opti        <- (8760 - temps_mort_lub_annuel) / 8760
+# Le coût horaire est déjà calculé : cout_horaire_lub_min <- cost_min / 8760
 
-# B. Mèches (Remplacement préventif à l'État 4)
-# On utilise la fréquence de ton modèle de Markov
-# freq_rempl_meche = pi_E4 * q_E4_E5 (nombre de remplacements par heure)
-freq_rempl_meche       <- pi_glob[4] * abs(Q_glob[4,4])
-indispo_meche_annuelle <- freq_rempl_meche * 8760 * duree_arret_meche
-dispo_opti_meches      <- (8760 - indispo_meche_annuelle) / 8760
+# C. Mèches (Optimisées : Remplacement à l'État 4)
+# prob_maint_meche est la probabilité stationnaire d'être en état de remplacement (4 ou 5)
+# calculée dans ta boucle d'optimisation pour l'indice 3 (Préventif_E4)
+indispo_meche_tete <- prob_maint  # Issue de ton code "Optimisation Mèches" pour E4
+dispo_meche_opti   <- 1 - indispo_meche_tete
 
-# C. Capteurs (Inspection à l'intervalle tau_opti)
-# Rsys(t) pour un système 3-parmi-4
-R_sys_t_func <- function(t) {
-  p <- exp(-(t / eta_s)^beta_s)
-  return(choose(4, 3) * (p^3) * (1 - p) + (p^4))
-}
-# Temps mort = Temps HS indétecté (Rebuts) + Temps d'arrêt pour inspection
-temps_HS_indetecte <- integrate(function(t) 1 - sapply(t, R_sys_t_func), 
-                                lower = 0, upper = tau_opti)$value
-dispo_opti_sensors <- (tau_opti - temps_HS_indetecte - duree_insp_sensor) / tau_opti
+# D. Capteurs (Optimisés à tau_opti)
+# Le système est indisponible pendant l'inspection (Cinsp inclut 0.5h) 
+# et pendant le remplacement moyen (nb_moyen_rempl * 0.25h)
+indispo_sensor <- (duree_insp + (4 * (1 - exp(-(tau_opti/eta_s)^beta_s)) * duree_rempl)) / tau_opti
+dispo_sensor_opti <- 1 - indispo_sensor
 
-# D. Moteur (Maintenance Corrective Pure - Résultat Q.9)
-# MTTF_total calculé avec la loi de Weibull (eta_mle, beta_mle)
-dispo_moteur <- MTTF_total / (MTTF_total + duree_arret_moteur)
+# E. Moteur (Maintenance Corrective avec Chocs)
+# Utilise MTTF_global calculé dans ton point moteur
+dispo_moteur_opti <- MTTF_global / (MTTF_global + ttr_moteur)
 
-# --- 3. DISPONIBILITÉ GLOBALE DU SYSTÈME (Modèle en Série) ---
-# La station tombe en panne si l'un des composants est à l'arrêt
-dispo_globale_optimisee <- dispo_opti_lub * dispo_opti_meches * dispo_opti_sensors * dispo_moteur
 
-# --- 4. BILAN FINANCIER ANNUEL GLOBAL (Coûts Horaires) ---
+# --- 3. DISPONIBILITÉ GLOBALE DU SYSTÈME (MODÈLE EN SÉRIE) ---
+# On multiplie les disponibilités (Hypothèse : une tête HS = indisponibilité de la mission nominale)
+dispo_globale <- dispo_plat_opti * dispo_lub_opti * dispo_meche_opti * dispo_sensor_opti * dispo_moteur_opti
 
-# 1. Coût Mèches (Préventif E4) : Pièce 200€ + Arrêt 0.67h à 750€/h
-cout_unit_meche_P <- 200 + (duree_arret_meche * revenu_h_tete) 
-cout_horaire_meches <- freq_rempl_meche * cout_unit_meche_P
 
-# 2. Coût Moteur (Correctif Pur) : Pièces/MO 1600€ + Arrêt 2.5h à 750€/h
-# On divise le coût d'un cycle par la durée totale du cycle (MTTF + MTTR)
-cout_unit_moteur_C <- 1600 + (duree_arret_moteur * revenu_h_tete)
-cout_horaire_moteur <- cout_unit_moteur_C / (MTTF_total + duree_arret_moteur)
+# --- 4. BILAN FINANCIER ANNUEL GLOBAL ---
 
-# 3. Coût Capteurs (Optimisé à tau_opti)
-# Déjà calculé dans le script Point 2 (cout_horaire_sensor_min)
+# Coût horaire plateforme (Déjà calculé : cout_horaire_min)
+# Coût horaire lubrification (Déjà calculé : cost_min / 8760)
+# Coût horaire capteurs (Déjà calculé : cout_horaire_sensor_min)
 
-# 4. Calcul du coût annuel total (Somme des coûts horaires * 8760)
-cout_annuel_total <- (cout_horaire_lub_min + cout_horaire_meches + 
-                      cout_horaire_sensor_min + cout_horaire_moteur) * 8760
+# Coût horaire mèches (pour une tête à l'optimum E4)
+cout_horaire_meche_opti <- couts_horaires[3] 
 
-# --- 5. AFFICHAGE DES RÉSULTATS ---
-{
+# Coût horaire moteur (pour une tête)
+cout_horaire_moteur_opti <- min_cost
+
+# COÛT TOTAL ANNUEL (10 STATIONS)
+# Note : Plateforme, Lub et Capteurs sont par station (x10)
+# Mèches et Moteurs sont par tête (x30)
+cout_annuel_atelier <- (
+  (cout_horaire_min + (cost_min/8760) + cout_horaire_sensor_min) * 10 +
+  (cout_horaire_meche_opti + cout_horaire_moteur_opti) * 30
+) * 8760
+
+
+# --- 5. AFFICHAGE DU RAPPORT FINAL ---
 cat("\n====================================================\n")
-cat("          BILAN DE SYNTHÈSE FINAL (POINT 3)         \n")
+cat("      BILAN DE SYNTHÈSE FINAL (POSTE DE PERÇAGE)    \n")
 cat("====================================================\n")
-
-cat("Disponibilité Individuelle :\n")
-cat(" - Lubrification :", round(dispo_opti_lub * 100, 4), "%\n")
-cat(" - Mèches        :", round(dispo_opti_meches * 100, 4), "%\n")
-cat(" - Capteurs      :", round(dispo_opti_sensors * 100, 4), "%\n")
-cat(" - Moteur        :", round(dispo_moteur * 100, 4), "%\n")
-
+cat("DISPONIBILITÉS (POLITIQUES OPTIMALES) :\n")
+cat(" - Plateforme (Age T*)         :", round(dispo_plat_opti * 100, 3), "%\n")
+cat(" - Lubrification (k* nettoy.)  :", round(dispo_lub_opti * 100, 3), "%\n")
+cat(" - Mèches (Seuil E4)           :", round(dispo_meche_opti * 100, 3), "%\n")
+cat(" - Capteurs (Inspection tau*)  :", round(dispo_sensor_opti * 100, 3), "%\n")
+cat(" - Moteur (Correctif + Chocs)  :", round(dispo_moteur_opti * 100, 3), "%\n")
 cat("----------------------------------------------------\n")
-
-cat("DISPONIBILITÉ GLOBALE STATION :", round(dispo_globale_optimisee * 100, 3), "%\n")
-cat("Heures d'arrêt totales / an   :", round((1 - dispo_globale_optimisee) * 8760, 2), "h\n")
-cat("COÛT DE MAINTENANCE TOTAL     :", round(cout_annuel_total, 2), "€/an\n")
-
+cat("DISPONIBILITÉ GLOBALE STATION  :", round(dispo_globale * 100, 2), "%\n")
+cat("COÛT TOTAL MAINTENANCE ATELIER :", round(cout_annuel_atelier, 2), "€ / an\n")
 cat("====================================================\n")
-}
+
+
+# --- Visualisation de la Contribution à l'Indisponibilité ---
+
+# 1. Calcul des taux d'indisponibilité (1 - A)
+indispos <- c(
+  Plateforme = 1 - dispo_plat_opti,
+  Lubrification = 1 - dispo_lub_opti,
+  Meches = 1 - dispo_meche_opti,
+  Capteurs = 1 - dispo_sensor_opti,
+  Moteur = 1 - dispo_moteur_opti
+) * 100 # En pourcentage
+
+# 2. Graphique en barres horizontales
+par(mar=c(5, 8, 4, 2)) # Ajustement des marges pour les noms
+barplot(sort(indispos), 
+        horiz = TRUE, 
+        las = 1, 
+        col = "#34495e", 
+        border = "white",
+        main = "Sources d'Indisponibilité de la Station",
+        xlab = "Taux d'indisponibilité (%)")
+
+# 3. Ajout d'une ligne de seuil critique ou commentaire
+abline(v = mean(indispos), lty = 2, col = "red")
 ```
 
-L'analyse finale de la station de perçage démontre une excellente maîtrise opérationnelle, avec une disponibilité globale de 99,55 %, ce qui limite l'indisponibilité totale à seulement 39,26 heures par an. Ce résultat valide la stratégie de maintenance mixte adoptée : l'optimisation de la lubrification ($k^*$) et le remplacement préventif des mèches (État 4) permettent de sécuriser la production, tandis que le moteur, très fiable (Question 9), est maintenu en correctif pur pour éviter des coûts de prévention inutiles. Le coût total de 55 721,25 €/an peut paraître élevé, mais il est largement dominé par le coût d'opportunité lié à la perte de production (1 500 €/h) ; investir dans ces interventions préventives est donc un choix économiquement rationnel car cela empêche des pannes aléatoires beaucoup plus longues et coûteuses. Le point critique identifié reste le système de capteurs, dont la fréquence d'inspection pèse le plus lourdement sur l'indisponibilité individuelle (99,75 %).
+L'analyse finale de la station de perçage démontre une excellente maîtrise opérationnelle, avec une disponibilité globale de 99,3 %, ce qui limite l'indisponibilité totale à seulement 39,26 heures par an. Ce résultat valide la stratégie de maintenance mixte adoptée : l'optimisation de la lubrification ($k^*$) et le remplacement préventif des mèches (État 4) permettent de sécuriser la production, tandis que le moteur, très fiable (Question 9), est maintenu en correctif pur pour éviter des coûts de prévention inutiles. Le coût total de 1 743 745 €/an peut paraître élevé, mais il est largement dominé par le coût d'opportunité lié à la perte de production (1 500 €/h) ; investir dans ces interventions préventives est donc un choix économiquement rationnel car cela empêche des pannes aléatoires beaucoup plus longues et coûteuses. Le point critique identifié reste le système de mèches, dont la fréquence d'inspection pèse le plus lourdement sur l'indisponibilité individuelle (99,6 %).
 
 # Point 4 : mise en cascade
 
 L'étude de la maintenance ne peut se limiter à une analyse cloisonnée de chaque composant, car la dégradation d'un sous-système agit souvent comme un catalyseur d'usure pour les éléments situés en aval. Dans ce scénario, nous explorons l'interdépendance critique entre la lubrification (maintenance de base) et le bloc moteur (composant noble), via le vecteur de transmission que constituent les mèches de perçage.L'enjeu est de modéliser comment une indisponibilité de la lubrification modifie la dynamique de transition des mèches vers des états d'usure sévère. Mathématiquement, cela se traduit par la construction d'une matrice de transition hybride ($Q_{res}$), pondérée par le taux de service de la lubrification. En utilisant le formalisme des chaînes de Markov absorbantes et la matrice fondamentale ($N$), nous pouvons quantifier non seulement la réduction de la durée de vie des outils, mais surtout l'augmentation du risque résiduel pour le moteur. Cette approche systémique permet de mettre en évidence le "coût caché" d'une maintenance négligée : une économie apparente sur un consommable simple peut en réalité doubler la probabilité de défaillance catastrophique du moteur, illustrant parfaitement le concept de risque en cascade en milieu industriel.
 
 ```{r}
-
 # 1. Fonction de calcul des indicateurs de performance
 calculer_indicateurs_cascade <- function(dispo_lub) {
   
@@ -1360,6 +1422,28 @@ cat(" 2. Le risque moteur par outil est de x", round(facteur_brut_outil, 2), "(b
 cat("----------------------------------------------------\n")
 cat("IMPACT SYSTÉMIQUE RÉEL SUR LE MOTEUR : x", round(impact_cascade_reel, 2), "\n")
 cat("====================================================\n")
+
+# --- Visualisation de l'Effet Cascade ---
+
+# 1. Données de comparaison (MTTF et Risque)
+labels_scenarios <- c("Lubr. Optimisée (99%)", "Lubr. Négligée (80%)")
+mttf_vals <- c(res_opti$mttf, res_degrade$mttf)
+lambda_vals <- c(res_opti$lambda, res_degrade$lambda)
+
+# 2. Configuration graphique (2 panneaux)
+par(mfrow = c(1, 2), mar = c(4, 4, 4, 2))
+
+# Graphique A : Chute de la durée de vie de la mèche
+barplot(mttf_vals, names.arg = labels_scenarios, col = c("#27ae60", "#c0392b"),
+        main = "Vie moyenne mèche (MTTF)", ylab = "Heures", border = "white")
+
+# Graphique B : Explosion du risque moteur
+barplot(lambda_vals, names.arg = labels_scenarios, col = c("#2ecc71", "#e74c3c"),
+        main = "Risque horaire moteur", ylab = "Taux de risque (h^-1)", border = "white")
+
+# 3. Message d'impact global
+mtext(paste("Impact Systémique Réel : x", round(impact_cascade_reel, 2)), 
+      side = 3, line = -2, outer = TRUE, font = 2, cex = 1.2)
 ```
 
 Cette analyse met en lumière l’interdépendance critique entre la maintenance de la lubrification et la préservation des composants en aval de la chaîne cinématique. En passant d'une maintenance optimisée à un scénario négligé (80 %), l'espérance de vie des mèches s'effondre, passant de 165,59 h à seulement 49,43 h, soit une usure 3,35 fois plus rapide. Si le risque horaire semble paradoxalement plus faible dans le scénario dégradé ($4,833 \times 10^{-5}$ contre $7,265 \times 10^{-5}$), cela s'explique par un "biais de durée" : les mèches cassent si vite qu'elles n'ont pas le temps d'atteindre les états d'usure les plus dangereux pour le moteur. Cependant, l'impact systémique réel est sans appel : en raison du remplacement beaucoup plus fréquent d'outils atteignant prématurément des niveaux de dégradation critiques, le moteur subit un stress cumulé 1,42 fois plus élevé. Cette étude prouve que toute économie réalisée sur la lubrification est illusoire, car elle génère une réaction en chaîne augmentant radicalement la fréquence d'exposition du moteur aux risques de chocs.
@@ -1369,47 +1453,91 @@ Cette analyse met en lumière l’interdépendance critique entre la maintenance
 La stratégie de maintenance opportuniste repose sur l'idée que le coût le plus élevé d'une intervention n'est pas la main-d'œuvre ou la pièce, mais l'indisponibilité de l'outil de production. Dans notre station de perçage, chaque minute d'arrêt coûte cher. En synchronisant le remplacement d'une mèche (prévu par l'analyse de l'état 4) avec une opération de lubrification systématique, nous réduisons le nombre total d'ouvertures de la machine. Ce "groupage" permet d'économiser les temps de préparation, de sécurisation et de remise en route qui sont redondants lors de deux interventions séparées. L'enjeu est de calculer le gain de temps machine ($\Delta t$) et de le multiplier par le coût d'opportunité horaire pour quantifier l'économie annuelle réelle.
 
 ```{r}
-# --- POINT 5 : MAINTENANCE GROUPÉE (OPPORTUNISTE) ---
+# --- POINT 5 : MAINTENANCE GROUPÉE (OPPORTUNISTE) À L'ÉCHELLE DE L'ATELIER ---
 
+# 1. Configuration de l'atelier
+nb_stations <- 10
+nb_tetes_par_station <- 3
+total_tetes_atelier <- nb_stations * nb_tetes_par_station
 
-# 2. Paramètres de coûts et durées (Alignés sur l'énoncé)
-cout_heure_arret <- 1500  # Coût de production de la station complète
-duree_lub_seule   <- 4.0   # 4h selon les données précédentes
-duree_meche_seule <- 0.67  # 40 min
-duree_intervention_groupee <- 4.2  # On estime un gain (ex: seulement 12 min de plus que la lub seule)
+# 2. Paramètres de coûts et durées (Données énoncé)
+cout_indispo_station <- 1500  # Arrêt complet de la station
+cout_indispo_tete    <- 750   # Arrêt d'une seule tête (production réduite)
 
-# 3. Calcul des fréquences annuelles (Base 8760h pour être raccord avec le Point 3)
-nb_interv_lub_an <- k_star
-nb_interv_meche_an <- frequence_opti * 8760
+duree_lub_seule   <- 4.0   
+duree_meche_seule <- 0.67  
 
-# 4. Calcul du gain financier
-# Gain de temps = (Somme des durées séparées) - (Durée groupée)
-gain_temps_par_regroupement <- (duree_lub_seule + duree_meche_seule) - duree_intervention_groupee
-gain_argent_par_regroupement <- gain_temps_par_regroupement * cout_heure_arret
+# Durée groupée (Maintenance opportuniste)
+# Le changement de mèche est effectué pendant les 4h d'arrêt de la lubrification.
+duree_intervention_groupee <- 4.0 
 
-# On peut grouper au maximum selon l'événement le moins fréquent
-nb_regroupements_possibles <- min(nb_interv_lub_an, nb_interv_meche_an)
-economie_annuelle_potentielle <- nb_regroupements_possibles * gain_argent_par_regroupement
+# 3. Calcul des fréquences annuelles
+# k_star : fréquence de lubrification par station
+# frequences_annuelles[index_opti] : fréquence de remplacement par mèche (tête)
+nb_interv_lub_an_atelier   <- k_star * nb_stations
+nb_interv_meche_an_atelier <- frequences_annuelles[index_opti] * total_tetes_atelier
 
-# 5. AFFICHAGE DES RÉSULTATS
-{
+# 4. Calcul du gain financier par opération de groupage
+# Sans groupage : Un arrêt Lub (4h * 1500) + Un arrêt Mèche (0.67h * 750)
+# Avec groupage : On économise l'indisponibilité de la tête car elle est "noyée" dans l'arrêt station
+cout_isole_unitaire  <- (duree_lub_seule * cout_indispo_station) + (duree_meche_seule * cout_indispo_tete)
+cout_groupe_unitaire <- (duree_intervention_groupee * cout_indispo_station)
 
-cat("  POINT 5 : ANALYSE DE LA MAINTENANCE OPPORTUNISTE  \n")
-cat("Besoins annuels théoriques :\n")
-cat(" -> Maintenance Lubrification :", round(nb_interv_lub_an, 1), "fois/an\n")
-cat(" -> Changements de Mèches     :", round(nb_interv_meche_an, 1), "fois/an\n")
+gain_par_regroupement <- cout_isole_unitaire - cout_groupe_unitaire
+
+# 5. Calcul de l'économie à l'échelle de l'atelier
+# On ne peut grouper une mèche que lorsqu'une station est déjà arrêtée pour lubrification.
+# Le nombre de groupages possibles est limité par le nombre d'interventions de lubrification.
+nb_groupages_atelier <- min(nb_interv_lub_an_atelier, nb_interv_meche_an_atelier)
+
+economie_annuelle_atelier <- nb_groupages_atelier * gain_par_regroupement
+
+# 6. AFFICHAGE DES RÉSULTATS
+cat("====================================================\n")
+cat("  POINT 5 : BILAN DE LA MAINTENANCE OPPORTUNISTE (ATELIER) \n")
+cat("====================================================\n")
+cat("Volume d'activité annuel pour 10 stations :\n")
+cat(" -> Interventions Lubrification :", round(nb_interv_lub_an_atelier, 1), "fois/an\n")
+cat(" -> Remplacements de Mèches     :", round(nb_interv_meche_an_atelier, 1), "fois/an\n")
 cat("----------------------------------------------------\n")
-cat("Gain de temps par groupage    :", round(gain_temps_par_regroupement * 60, 0), "minutes\n")
-cat("Gain financier unitaire       :", round(gain_argent_par_regroupement, 2), "€\n")
-cat("Nombre de groupages possibles :", round(nb_regroupements_possibles, 1), "fois/an\n")
+cat("Analyse du gain (Opportunisme) :\n")
+cat(" -> Gain par mèche groupée      :", round(gain_par_regroupement, 2), "€\n")
+cat(" -> Nombre de groupages prévus  :", round(nb_groupages_atelier, 1), "fois/an\n")
 cat("----------------------------------------------------\n")
-cat("ÉCONOMIE ANNUELLE POTENTIELLE :", round(economie_annuelle_potentielle, 2), "€/an\n")
-}
+cat("ÉCONOMIE TOTALE ATELIER (10 st) :", format(round(economie_annuelle_atelier, 2), big.mark=" "), "€/an\n")
+cat("====================================================\n")
+
+
+# --- Visualisation de la Maintenance Opportuniste ---
+
+# 1. Configuration des données de durée
+durees <- c(Lub = 4, Meche = 0.67)
+y_pos <- c(1.5, 0.5)
+
+# 2. Graphique
+plot(0, 0, type = "n", xlim = c(0, 5), ylim = c(0, 2.5), 
+     xlab = "Temps d'arrêt (Heures)", ylab = "", yaxt = "n",
+     main = "Stratégie de Groupage : Maintenance Isolée vs Opportuniste")
+
+# Scénario A : Maintenance Isolée (Cumulée)
+rect(0, 1.8, 4, 2.2, col = "#3498db", border = "white") # Lub
+rect(4, 1.8, 4.67, 2.2, col = "#e74c3c", border = "white") # Meche
+text(2.3, 2.4, "Maintenance Isolée (4.67h d'arrêt)", cex = 0.8, font = 2)
+
+# Scénario B : Maintenance Groupée (Optimisée)
+rect(0, 0.3, 4, 0.7, col = "#3498db", border = "white") # Lub
+rect(0, 0.4, 0.67, 0.6, col = "#e74c3c", border = "white") # Meche (dans la lub)
+text(2, 0.9, "Maintenance Groupée (4h d'arrêt)", cex = 0.8, font = 2, col = "#27ae60")
+
+# 3. Ajout d'une flèche de gain
+arrows(4.67, 1.5, 4, 1.5, col = "#27ae60", lwd = 2)
+text(4.35, 1.3, "Gain : 0.67h", col = "#27ae60", font = 2)
+
+legend("bottomright", legend = c("Lubrification", "Mèche"), 
+       fill = c("#3498db", "#e74c3c"), bty = "n")
 ```
 
-L'analyse de la maintenance opportuniste révèle une disparité critique entre les cycles de vie des composants, l'optimum de lubrification étant désormais fixé à une fréquence très basse de $k^ = 0,5$ intervention par an\* (soit environ une fois tous les deux ans). Bien que le remplacement des mèches soit fréquent (53 fois/an) et que le gain par intervention groupée soit de 28 minutes (705 € d'économie de non-production), la rareté de l'opération de lubrification bride structurellement le potentiel de synergie : à l'échelle d'une station, l'économie de 352,55 € est négligeable face au budget d'exploitation global.
-
-Ce résultat démontre que le coût d'arrêt élevé de la lubrification (1 500 €/h) impose une stratégie de « rareté » qui rend le couplage avec des consommables à cycle court peu attractif financièrement. Pour générer des gains significatifs, il apparaît donc préférable de pivoter vers un groupage des interventions lourdes, comme la plateforme et la lubrification, où la synchronisation permet de maximiser réellement la disponibilité globale de l'atelier.
+L’analyse de la maintenance opportuniste à l’échelle de l’atelier révèle une disparité critique entre les cycles de vie des composants, l’optimum de lubrification étant désormais fixé à une fréquence très basse de 5 interventions par an pour 10 stations (soit environ une fois tous les deux ans par machine). Bien que le remplacement des mèches soit une opération massivement dominante avec 1 655 remplacements annuels et qu’un gain unitaire de 502,50 € soit réalisé par regroupement (annulation du coût d'indisponibilité de la tête de perçage), la rareté de l’opération de lubrification bride structurellement le potentiel de synergie. Avec une économie annuelle totale de 2 512,84 €, ce résultat démontre que le coût d’arrêt élevé de la lubrification (1 500 €/h) impose une stratégie de « rareté » qui rend le couplage avec des consommables à cycle court peu attractif financièrement. Pour générer des gains de disponibilité significatifs, il apparaît donc préférable de pivoter vers un groupage des interventions lourdes (Plateforme et Lubrification) ou une synchronisation interne des trois têtes d'une même station.
 
 # Nouvelle stratégie de maintenance groupée (Plateforme + Lubrification)
 
@@ -1419,58 +1547,74 @@ En synchronisant le remplacement préventif de la plateforme ($t^* \approx 7\,40
 
 ```{r}
 # ====================================================
-# POINT 5 : RÉ-OPTIMISATION - STRATÉGIE DE GROUPAGE
+# POINT 5 : RÉ-OPTIMISATION - STRATÉGIE DE GROUPAGE (ATELIER 10 STATIONS)
 # ====================================================
 
-
-# --- 1. Paramètres Communs (Atelier 10 stations) ---
+# --- 1. Paramètres Communs ---
 nb_stations   <- 10
-cout_arret_h  <- 1500
+nb_tetes_total <- 30 # 3 têtes par station
 h_an          <- 8760
+cout_MO_h     <- 100 # Main d'œuvre qualifiée (Technicien)
 
-# Paramètres de remplacement (Coûts et durées)
-dur_M <- 0.67 ; cout_M <- 200    # Mèches
-dur_C <- 0.25 ; cout_C <- 225    # Capteurs
-dur_L <- 4.0  ; cout_L <- 900   # Lubrification
-dur_P <- 3.0  ; cout_P <- 1100   # Plateforme
+# Coûts d'indisponibilité (Tableau 3)
+cout_indispo_station <- 1500 # Arrêt complet
+cout_indispo_tete    <- 750  # Arrêt d'une seule tête (production réduite)
 
-# FRÉQUENCES OPTIMALES
-T_M <- 1 / frequence_opti            # Cycle Mèches (53 fois/an)
-T_C <- tau_opti            # Cycle Capteurs (26 fois/an)
-freq_L_an <- k_star      # Lubrification (1 fois tous les 2 ans)
-T_P <- T_opti          # Âge optimal Plateforme (T*)
+# --- 2. Paramètres de remplacement (Tableaux 1 à 5) ---
+# Mèches (M) - Opérateurs site (0€ MO)
+dur_M  <- 0.67 ; cout_M <- 200    
+# Capteurs (C) - Inspection (0.5h) + Remplacement (0.25h)
+dur_C  <- 0.75 ; cout_C <- 50 + 225 
+# Lubrification (L) - Préventif (Tableau 2)
+dur_L  <- 4.0  ; cout_L <- 900   
+# Plateforme (P) - Technicien (100€/h) + Pièces + Transport (Tableau 1)
+# Durée moyenne préventive : exp(mu0 + sigma0^2/2) pour Log-normale(1, 0.55) ≈ 3.16h
+dur_P  <- 3.16 
+cout_P_fixe <- 900 + 200 # Pièces + Transport
+cout_P <- cout_P_fixe + (dur_P * cout_MO_h)
 
-# --- 2. Stratégie 1 : AUCUN GROUPAGE (Isolé) ---
-cout_iso_M <- (h_an / T_M) * (cout_M + dur_M * cout_arret_h)
-cout_iso_C <- (h_an / T_C) * (cout_C + dur_C * cout_arret_h)
-cout_iso_L <- freq_L_an * (cout_L + dur_L * cout_arret_h)
-cout_iso_P <- (h_an / T_P) * (cout_P + dur_P * cout_arret_h)
+# --- 3. Fréquences Optimales (Issues des points précédents) ---
+freq_M_an <- frequences_annuelles[index_opti] # Ex: 55 fois/an/tête
+freq_C_an <- h_an / tau_opti                  # Ex: 26 fois/an/station
+freq_L_an <- k_star                           # Ex: 0.5 fois/an/station
+freq_P_an <- h_an / T_opti                    # Ex: 0.2 fois/an/station
 
-total_iso <- (cout_iso_M + cout_iso_C + cout_iso_L + cout_iso_P) * nb_stations
+# --- 4. Stratégie 1 : AUCUN GROUPAGE (Isolé) ---
+# Mèches : coût par tête (indispo tête)
+cout_iso_M <- freq_M_an * (cout_M + dur_M * cout_indispo_tete) * nb_tetes_total
+# Reste : coût par station (indispo station)
+cout_iso_C <- freq_C_an * (cout_C + dur_C * cout_indispo_station) * nb_stations
+cout_iso_L <- freq_L_an * (cout_L + dur_L * cout_indispo_station) * nb_stations
+cout_iso_P <- freq_P_an * (cout_P + dur_P * cout_indispo_station) * nb_stations
 
-# --- 3. Stratégie 2 : GRAND ARRÊT TOTAL (Alignement forcé sur Mèches) ---
-# On change TOUT toutes les 165h (très inefficace)
-dur_grand_arret <- 6.0
-f_grand_arret   <- h_an / T_M 
-cout_grand_arret <- f_grand_arret * (cout_M + cout_C + cout_L + cout_P + (dur_grand_arret * cout_arret_h))
-total_grand_arret <- cout_grand_arret * nb_stations
+total_iso <- cout_iso_M + cout_iso_C + cout_iso_L + cout_iso_P
 
-# --- 4. Stratégie 3 : POUPÉES RUSSES (Optimisé) ---
-n_total_arrets <- floor(h_an / T_M)   # 53 arrêts total
-n_P_L          <- freq_L_an           # 0.5 fois (Grand entretien bisannuel)
-n_C            <- floor(h_an / T_C) - n_P_L 
-n_M_seul       <- n_total_arrets - n_C - n_P_L
+# --- 5. Stratégie 2 : GRAND ARRÊT TOTAL (Alignement sur Mèches) ---
+# On aligne tout sur la fréquence des mèches (très coûteux en pièces)
+f_grand_arret <- freq_M_an * nb_tetes_total
+dur_grand_arret <- 6.0 # Estimation durée cumulée optimisée
+# Note : Ici on paie le prix fort en pièces de rechange prématurées
+cout_pieces_total <- cout_M + (cout_C/3) + (cout_L/3) + (cout_P/3) 
+total_grand_arret <- f_grand_arret * (cout_pieces_total + dur_grand_arret * cout_indispo_station)
 
-cout_poupees <- 
-  (n_M_seul * (cout_M + 0.67 * cout_arret_h)) +            # Mèche seule
-  (n_C      * (cout_M + cout_C + 0.8 * cout_arret_h)) +    # Mèche + Capteur (Synergie)
-  (n_P_L    * (cout_M + cout_C + cout_L + cout_P + 6.5 * cout_arret_h)) # Le "Tout-en-un"
+# --- 6. Stratégie 3 : POUPÉES RUSSES (Opportuniste) ---
+# On utilise l'arrêt Lubrification (le plus long) pour tout grouper
+n_L_total <- freq_L_an * nb_stations
+n_C_total <- freq_C_an * nb_stations
+n_M_total <- freq_M_an * nb_tetes_total
 
-total_poupees <- cout_poupees * nb_stations
+# Gain par groupage : On économise l'indisponibilité "tête" de la mèche 
+# car elle est noyée dans l'indispo station de la lubrification.
+gain_M_dans_L <- dur_M * cout_indispo_tete # 502.5 € économisés par mèche
+gain_C_dans_L <- dur_C * cout_indispo_station # 1125 € économisés par capteur
 
-# --- 5. Synthèse et Affichage ---
+# Calcul simplifié des économies de groupage possibles
+economie_poupees <- (n_L_total * gain_M_dans_L) + (min(n_L_total, n_C_total) * gain_C_dans_L)
+total_poupees <- total_iso - economie_poupees
+
+# --- 7. Synthèse et Affichage ---
 resultats <- data.frame(
-  Strategie = c("Isolé (Standard)", "Grand Arrêt (Alignement forcé)", "Poupées Russes (Optimal)"),
+  Strategie = c("Isolé (Standard)", "Grand Arrêt (Forcé)", "Poupées Russes (Optimal)"),
   Cout_Annuel_Atelier = c(total_iso, total_grand_arret, total_poupees)
 )
 
@@ -1482,6 +1626,45 @@ cat("----------------------------------------------------\n")
 cat("ÉCONOMIE 'POUPÉES RUSSES' VS ISOLÉ :", round(total_iso - total_poupees, 2), "€/an\n")
 cat("PERTE SI 'GRAND ARRÊT' SYSTÉMATIQUE :", round(total_grand_arret - total_poupees, 2), "€/an\n")
 cat("====================================================\n")
+
+
+# --- Visualisation du Bilan Stratégique ---
+
+# 1. Données (On divise par 1000 pour la lisibilité en k€)
+couts_kE <- resultats$Cout_Annuel_Atelier / 1000
+labels_strat <- c("Isolé", "Grand Arrêt", "Poupées Russes")
+
+# 2. Graphique en barres (Échelle logarithmique conseillée vu l'écart du Grand Arrêt)
+par(mar=c(5, 10, 4, 2))
+bp <- barplot(couts_kE, 
+              names.arg = labels_strat, 
+              col = c("#34495e", "#c0392b", "#27ae60"),
+              main = "Bilan Financier Annuel de l'Atelier (10 Stations)",
+              ylab = "Coût total annuel (en k€)",
+              border = "white",
+              ylim = c(0, max(couts_kE) * 1.2))
+
+# 3. Ajout des montants précis au-dessus des barres
+text(x = bp, y = couts_kE, 
+     labels = paste(format(round(couts_kE, 0), big.mark=" "), "k€"), 
+     pos = 3, cex = 1, font = 2)
+
+# 4. Note sur le gain
+abline(h = total_iso/1000, lty = 2, col = "black")
 ```
 
-L'analyse démontre que la stratégie des Poupées Russes est la seule viable économiquement, permettant une économie nette de 69 378 € par an pour l'atelier par rapport à une maintenance isolée. En synchronisant le remplacement des capteurs sur les arrêts fréquents des mèches et en groupant les opérations lourdes (lubrification et plateforme) lors d'un grand entretien bisannuel, on réduit drastiquement les pertes de production liées aux temps d'arrêt (1500 €/h). À l'inverse, l'alignement forcé de tous les composants sur le cycle le plus court (le "Grand Arrêt" toutes les 165h) s'avère catastrophique, générant une perte de plus de 2,2 millions d'euros due au remplacement prématuré et injustifié de pièces coûteuses encore fonctionnelles. Cette approche opportuniste transforme ainsi la maintenance d'un centre de coûts subi en un levier d'optimisation de la marge opérationnelle de l'usine.
+L’analyse technico-économique de l'atelier démontre que la stratégie des « Poupées Russes » (Maintenance Opportuniste) est la seule viable pour maximiser la rentabilité, avec un coût annuel optimisé à 1 587 123 €. En synchronisant intelligemment le remplacement des capteurs sur les arrêts fréquents des mèches et en groupant les opérations lourdes (lubrification et plateforme) lors d'entretiens bisannuels, cette approche permet de réaliser une économie nette de 8 138,62 € par an par rapport à une maintenance isolée. Ce gain provient directement de la réduction des temps d'indisponibilité machine, facturés à 1 500 €/h, en effectuant les tâches secondaires "en temps masqué" pendant les arrêts majeurs.
+
+À l'inverse, la stratégie du « Grand Arrêt Forcé » (alignement de tous les composants sur le cycle court des mèches, soit toutes les 165h) s'avère industriellement aberrante. Elle génère une perte colossale de plus de 15 millions d'euros par an (15 070 465 €). Ce gouffre financier s'explique par deux facteurs critiques : le remplacement prématuré et injustifié de pièces coûteuses (plateforme, lubrification) encore parfaitement fonctionnelles, et une explosion du taux d'indisponibilité de l'atelier.
+
+
+# Plan d'action opérationnel : Pilotage des flux et stocks
+
+L'optimisation statistique prévoit une consommation annuelle de 1 655 mèches pour l'ensemble de l'atelier. Pour garantir que la stratégie des Poupées Russes ne soit jamais interrompue par une rupture de stock, nous préconisons la mise en place d'un pilotage logistique en deux axes. Le premier repose sur le dimensionnement d'un stock de sécurité. Sur la base d'une consommation moyenne de 138 mèches par mois, l'aléa des chocs accidentels (nu) impose une réserve de précaution. L'application d'une loi de Poisson pour la demande permet de définir un seuil de réapprovisionnement garantissant un taux de service de 95%, évitant ainsi qu'une rupture de consommable ne paralyse le gain financier de l'arrêt groupé. Le second axe concerne l'installation d'un système Kanban à double bac afin de fluidifier l'approvisionnement entre le magasin et l'atelier. Ce flux tiré par la consommation réelle évite le surstockage tout en assurant la disponibilité immédiate des pièces lors des fenêtres d'opportunité que sont les arrêts de lubrification.
+
+Ce plan d'action transforme l'indicateur de consommation théorique en un véritable outil de diagnostic : tout écart significatif entre le stock réel et les prévisions du modèle servira d'alerte précoce sur une dérive du process, qu'il s'agisse d'un problème de réglage mécanique ou d'une lubrification devenue défaillante.
+
+
+# Conclusion
+
+Cette étude démontre que l'optimisation industrielle ne repose pas sur l'application d'un calendrier rigide, mais sur une gestion opportuniste et dynamique. En transformant les contraintes de dégradation markovienne en véritables fenêtres de tir logistiques, la stratégie des "Poupées Russes" transmute la maintenance d'un centre de coûts subi en un levier stratégique de performance pour la marge opérationnelle de l'usine. Toutefois, cette modélisation mathématique pilotée par l'Ingénieur Fiabilité pour la précision des lois de Weibull et le Data Scientist Industriel pour la prédiction des risques en cascade, doit impérativement être confrontée à une validation technique de terrain. Si les calculs préconisent d'espacer les interventions, seule l'expertise métier du technicien de maintenance et du responsable méthodes peut garantir l'absence de risques latents, tels qu'un grippage invisible ou une dérive de précision d'usinage. La réussite de ce modèle repose donc sur une alliance étroite entre la rigueur des algorithmes et la vigilance des experts, assurant que l'efficacité financière ne compromette jamais l'intégrité à long terme de l'outil de production.
