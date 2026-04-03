@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Theau Aguet, Jean-Luc Gauvrit">
-<meta name="dcterms.date" content="2026-03-31">
+<meta name="dcterms.date" content="2026-04-03">
 
 <title>Analyse de Fiabilité et Maintenance : Poste de Perçage Multi-têtes</title>
 <style>
@@ -285,11 +285,11 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#description-du-système" id="toc-description-du-système" class="nav-link" data-scroll-target="#description-du-système"><span class="header-section-number">1.1</span> Description du Système</a>
   <ul class="collapse">
-  <li><a href="#la-plateforme-rotative-châssis-et-indexation" id="toc-la-plateforme-rotative-châssis-et-indexation" class="nav-link" data-scroll-target="#la-plateforme-rotative-châssis-et-indexation"><span class="header-section-number">1.1.1</span> 1. La Plateforme Rotative (Châssis et Indexation)</a></li>
-  <li><a href="#le-système-de-lubrification" id="toc-le-système-de-lubrification" class="nav-link" data-scroll-target="#le-système-de-lubrification"><span class="header-section-number">1.1.2</span> 2. Le Système de Lubrification</a></li>
-  <li><a href="#les-mèches-de-perçage-outils" id="toc-les-mèches-de-perçage-outils" class="nav-link" data-scroll-target="#les-mèches-de-perçage-outils"><span class="header-section-number">1.1.3</span> 3. Les Mèches de Perçage (Outils)</a></li>
-  <li><a href="#le-bloc-moteur" id="toc-le-bloc-moteur" class="nav-link" data-scroll-target="#le-bloc-moteur"><span class="header-section-number">1.1.4</span> 4. Le Bloc Moteur</a></li>
-  <li><a href="#le-système-de-positionnement-capteurs" id="toc-le-système-de-positionnement-capteurs" class="nav-link" data-scroll-target="#le-système-de-positionnement-capteurs"><span class="header-section-number">1.1.5</span> 5. Le Système de Positionnement (Capteurs)</a></li>
+  <li><a href="#la-plateforme-rotative-châssis-et-indexation" id="toc-la-plateforme-rotative-châssis-et-indexation" class="nav-link" data-scroll-target="#la-plateforme-rotative-châssis-et-indexation"><span class="header-section-number">1.1.1</span> La Plateforme Rotative (Châssis et Indexation)</a></li>
+  <li><a href="#le-système-de-lubrification" id="toc-le-système-de-lubrification" class="nav-link" data-scroll-target="#le-système-de-lubrification"><span class="header-section-number">1.1.2</span> Le Système de Lubrification</a></li>
+  <li><a href="#les-mèches-de-perçage-outils" id="toc-les-mèches-de-perçage-outils" class="nav-link" data-scroll-target="#les-mèches-de-perçage-outils"><span class="header-section-number">1.1.3</span> Les Mèches de Perçage (Outils)</a></li>
+  <li><a href="#le-bloc-moteur" id="toc-le-bloc-moteur" class="nav-link" data-scroll-target="#le-bloc-moteur"><span class="header-section-number">1.1.4</span> Le Bloc Moteur</a></li>
+  <li><a href="#le-système-de-positionnement-capteurs" id="toc-le-système-de-positionnement-capteurs" class="nav-link" data-scroll-target="#le-système-de-positionnement-capteurs"><span class="header-section-number">1.1.5</span> Le Système de Positionnement (Capteurs)</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#analyse-individuelle-des-sous-systèmes" id="toc-analyse-individuelle-des-sous-systèmes" class="nav-link" data-scroll-target="#analyse-individuelle-des-sous-systèmes"><span class="header-section-number">2</span> Analyse Individuelle des Sous-systèmes</a></li>
@@ -356,7 +356,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 31, 2026</p>
+      <p class="date">April 3, 2026</p>
     </div>
   </div>
   
@@ -375,7 +375,7 @@ window.Quarto = {
 <h2 data-number="1.1" class="anchored" data-anchor-id="description-du-système"><span class="header-section-number">1.1</span> Description du Système</h2>
 <p>La station de perçage est un système complexe composé de cinq sous-ensembles critiques interdépendants. Sa performance globale dépend de la santé de chaque maillon, suivant un modèle de fiabilité en série : si l’un de ces blocs tombe en panne, l’ensemble de la station s’arrête.</p>
 <section id="la-plateforme-rotative-châssis-et-indexation" class="level3" data-number="1.1.1">
-<h3 data-number="1.1.1" class="anchored" data-anchor-id="la-plateforme-rotative-châssis-et-indexation"><span class="header-section-number">1.1.1</span> 1. La Plateforme Rotative (Châssis et Indexation)</h3>
+<h3 data-number="1.1.1" class="anchored" data-anchor-id="la-plateforme-rotative-châssis-et-indexation"><span class="header-section-number">1.1.1</span> La Plateforme Rotative (Châssis et Indexation)</h3>
 <p>Il s’agit de la base mécanique qui supporte et positionne les pièces à usiner sous les têtes de perçage.</p>
 <ul>
 <li>Fonctionnement : Elle assure la rotation et le verrouillage précis des pièces. Sa fiabilité suit une loi de Weibull avec un paramètre de forme <span class="math inline">\(\beta &gt; 1\)</span>, indiquant un phénomène d’usure mécanique marqué.</li>
@@ -383,7 +383,7 @@ window.Quarto = {
 </ul>
 </section>
 <section id="le-système-de-lubrification" class="level3" data-number="1.1.2">
-<h3 data-number="1.1.2" class="anchored" data-anchor-id="le-système-de-lubrification"><span class="header-section-number">1.1.2</span> 2. Le Système de Lubrification</h3>
+<h3 data-number="1.1.2" class="anchored" data-anchor-id="le-système-de-lubrification"><span class="header-section-number">1.1.2</span> Le Système de Lubrification</h3>
 <p>C’est le “poumon” de la station. Il assure le refroidissement et la réduction de la friction lors de l’usinage.</p>
 <ul>
 <li>Fonctionnement : Basé sur des cycles de nettoyage (complets ou partiels). Les interventions partielles sont modélisées comme des “réparations minimales” (NHPP).</li>
@@ -391,7 +391,7 @@ window.Quarto = {
 </ul>
 </section>
 <section id="les-mèches-de-perçage-outils" class="level3" data-number="1.1.3">
-<h3 data-number="1.1.3" class="anchored" data-anchor-id="les-mèches-de-perçage-outils"><span class="header-section-number">1.1.3</span> 3. Les Mèches de Perçage (Outils)</h3>
+<h3 data-number="1.1.3" class="anchored" data-anchor-id="les-mèches-de-perçage-outils"><span class="header-section-number">1.1.3</span> Les Mèches de Perçage (Outils)</h3>
 <p>Composants consommables soumis à une usure continue, modélisée par des chaînes de Markov.</p>
 <ul>
 <li>États d’usure : L’outil évolue de l’état “Neuf” à “Cassé” à travers plusieurs stades de dégradation.</li>
@@ -399,7 +399,7 @@ window.Quarto = {
 </ul>
 </section>
 <section id="le-bloc-moteur" class="level3" data-number="1.1.4">
-<h3 data-number="1.1.4" class="anchored" data-anchor-id="le-bloc-moteur"><span class="header-section-number">1.1.4</span> 4. Le Bloc Moteur</h3>
+<h3 data-number="1.1.4" class="anchored" data-anchor-id="le-bloc-moteur"><span class="header-section-number">1.1.4</span> Le Bloc Moteur</h3>
 <p>L’organe moteur de la tête de perçage, dont la fiabilité suit également une loi de Weibull.</p>
 <ul>
 <li>Usure : Le moteur subit une usure intrinsèque (vieillissement) mais est aussi exposé à des risques concurrents (chocs accidentels transmis par une mèche défaillante).</li>
@@ -407,7 +407,7 @@ window.Quarto = {
 </ul>
 </section>
 <section id="le-système-de-positionnement-capteurs" class="level3" data-number="1.1.5">
-<h3 data-number="1.1.5" class="anchored" data-anchor-id="le-système-de-positionnement-capteurs"><span class="header-section-number">1.1.5</span> 5. Le Système de Positionnement (Capteurs)</h3>
+<h3 data-number="1.1.5" class="anchored" data-anchor-id="le-système-de-positionnement-capteurs"><span class="header-section-number">1.1.5</span> Le Système de Positionnement (Capteurs)</h3>
 <p>Un ensemble de 4 capteurs assurant la précision du perçage.</p>
 <ul>
 <li>Architecture : Configuré en redondance de type 3-parmi-4 (le système fonctionne tant que 3 capteurs sur 4 sont opérationnels).</li>
@@ -472,7 +472,7 @@ window.Quarto = {
 <details class="code-fold">
 <summary>Voir le code R</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Création de la visualisation</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># On utilise le plot par défaut de flexsurv qui superpose KM et Weibull</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># On utilise le plot par défaut de flexsurv qui superpose les données et Weibull</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_flex, </span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Analyse de Survie de la Plateforme (Modèle Weibull)"</span>,</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Temps (heures)"</span>, </span>
@@ -481,7 +481,7 @@ window.Quarto = {
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">lwd =</span> <span class="dv">2</span>,</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">conf.int =</span> <span class="cn">TRUE</span>)   <span class="co"># Affiche l'intervalle de confiance</span></span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Optionnel : Ajout d'une légende pour la clarté</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajout d'une légende pour la clarté</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, </span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Données réelles (KM)"</span>, <span class="st">"Modèle Weibull"</span>),</span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"blue"</span>), </span>
@@ -491,7 +491,7 @@ window.Quarto = {
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="eval_files/figure-html/analyse-plateforme-flexsurv-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="eval_files/figure-html/analyse-plateforme-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -500,7 +500,7 @@ window.Quarto = {
 </section>
 <section id="point-2" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="point-2"><span class="header-section-number">3.1</span> Point 2</h2>
-<p>L’objectif est de déterminer l’âge optimal de remplacement (<span class="math inline">\(T^*\)</span>) permettant de minimiser le coût moyen d’exploitation par unité de temps. Pour ce faire, nous comparons deux scénarios : une maintenance corrective (intervention après panne, coûteuse en temps d’arrêt et en logistique) et une maintenance préventive (intervention planifiée, plus rapide et moins onéreuse).Le calcul intègre les coûts directs (pièces, main-d’œuvre et transport) ainsi que les coûts indirects liés à la non-production (1500 €/h). Les durées d’intervention étant aléatoires, nous calculons d’abord leurs espérances à partir des lois log-normales fournies (<span class="math inline">\(E[X] = e^{\mu + \sigma^2/2}\)</span>). En utilisant les paramètres de Weibull (<span class="math inline">\(\beta, \eta\)</span>) estimés précédemment, nous modélisons la fonction de coût global. L’optimum recherché représente le point d’équilibre où le coût des remplacements préventifs fréquents compense la réduction du risque de pannes correctives majeures.</p>
+<p>L’objectif est de déterminer l’âge optimal de remplacement (<span class="math inline">\(T^*\)</span>) permettant de minimiser le coût moyen d’exploitation par unité de temps. Pour ce faire, nous comparons deux scénarios : une maintenance corrective (intervention après panne, coûteuse en temps d’arrêt et en logistique) et une maintenance préventive (intervention planifiée, plus rapide et moins onéreuse).Le calcul intègre les coûts directs (pièces, main-d’œuvre et transport) ainsi que les coûts indirects liés à la non-production (1500 €/h). Les durées d’intervention étant aléatoires, nous calculons d’abord leurs espérances à partir des lois log-normales fournies <span class="math inline">\((E[X] = e^{\mu + \sigma^2/2})\)</span>. En utilisant les paramètres de Weibull (<span class="math inline">\(\beta\)</span>, <span class="math inline">\(\eta\)</span>) estimés précédemment, nous modélisons la fonction de coût global. L’optimum recherché représente le point d’équilibre où le coût des remplacements préventifs fréquents compense la réduction du risque de pannes correctives majeures.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Voir le code R</summary>
@@ -536,7 +536,7 @@ window.Quarto = {
 <span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>  R <span class="ot">&lt;-</span> <span class="cf">function</span>(u) <span class="fu">exp</span>(<span class="sc">-</span>(u <span class="sc">/</span> eta)<span class="sc">^</span>beta)</span>
 <span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>  F_u <span class="ot">&lt;-</span> <span class="cf">function</span>(u) <span class="dv">1</span> <span class="sc">-</span> <span class="fu">R</span>(u)</span>
 <span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>  <span class="co"># tau(a0) : Temps moyen d'un cycle (Dénominateur page 15)</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>  <span class="co"># tau(a0) : Temps moyen d'un cycle</span></span>
 <span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Intégrale de la fiabilité de 0 à a0</span></span>
 <span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>  tau_a0 <span class="ot">&lt;-</span> <span class="fu">integrate</span>(R, <span class="at">lower =</span> <span class="dv">0</span>, <span class="at">upper =</span> t0)<span class="sc">$</span>value</span>
 <span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>  </span>
@@ -546,25 +546,21 @@ window.Quarto = {
 <span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(cout_moyen)</span>
 <span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Recherche de l'âge optimal (T*)</span></span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Paramètres issus de ton analyse de l'onglet rotating_platform</span></span>
-<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>eta_plat  <span class="ot">&lt;-</span> eta_plat   <span class="co"># Valeur à récupérer de ton calcul précédent</span></span>
-<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>beta_plat <span class="ot">&lt;-</span> beta_plat  <span class="co"># Valeur à récupérer de ton calcul précédent</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Recherche du minimum</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>opti <span class="ot">&lt;-</span> <span class="fu">optimize</span>(CA, <span class="at">interval =</span> <span class="fu">c</span>(<span class="dv">1</span>, eta_plat <span class="sc">*</span> <span class="dv">2</span>), </span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>                 <span class="at">eta =</span> eta_plat, <span class="at">beta =</span> beta_plat)</span>
 <span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Recherche du minimum</span></span>
-<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>opti <span class="ot">&lt;-</span> <span class="fu">optimize</span>(CA, <span class="at">interval =</span> <span class="fu">c</span>(<span class="dv">1</span>, eta_plat <span class="sc">*</span> <span class="dv">2</span>), </span>
-<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>                 <span class="at">eta =</span> eta_plat, <span class="at">beta =</span> beta_plat)</span>
-<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>T_opti <span class="ot">&lt;-</span> opti<span class="sc">$</span>minimum</span>
-<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>cout_horaire_min  <span class="ot">&lt;-</span> opti<span class="sc">$</span>objective</span>
-<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Calcul du coût en "Correctif Pur" pour comparaison (T -&gt; infini)</span></span>
-<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a><span class="co"># CA(inf) = Cc / MTTF</span></span>
-<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>mttf_total <span class="ot">&lt;-</span> eta_plat <span class="sc">*</span> <span class="fu">gamma</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span><span class="sc">/</span>beta_plat)</span>
-<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>cout_correctif_pur <span class="ot">&lt;-</span> Cc <span class="sc">/</span> mttf_total</span>
-<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Affichage des résultats</span></span>
-<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"--- RÉSULTATS DE L'OPTIMISATION (PLATEFORME) ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>T_opti <span class="ot">&lt;-</span> opti<span class="sc">$</span>minimum</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>cout_horaire_min  <span class="ot">&lt;-</span> opti<span class="sc">$</span>objective</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Calcul du coût en "Correctif Pur" pour comparaison (T -&gt; infini)</span></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a><span class="co"># CA(inf) = Cc / MTTF</span></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>mttf_total <span class="ot">&lt;-</span> eta_plat <span class="sc">*</span> <span class="fu">gamma</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span><span class="sc">/</span>beta_plat)</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>cout_correctif_pur <span class="ot">&lt;-</span> Cc <span class="sc">/</span> mttf_total</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Affichage des résultats</span></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"--- RÉSULTATS DE L'OPTIMISATION (PLATEFORME) ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>--- RÉSULTATS DE L'OPTIMISATION (PLATEFORME) ---</code></pre>
@@ -652,7 +648,7 @@ window.Quarto = {
 <span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajout d'une ligne horizontale pour le coût en correctif pur</span></span>
 <span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> cout_correctif_pur, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
 <span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Marquage du point optimal (UTILISATION DES BONS NOMS DE VARIABLES)</span></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Marquage du point optimal</span></span>
 <span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(T_opti, cout_horaire_min, <span class="at">col =</span> <span class="st">"darkgreen"</span>, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">cex =</span> <span class="fl">1.5</span>)</span>
 <span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> T_opti, <span class="at">col =</span> <span class="st">"darkgreen"</span>, <span class="at">lty =</span> <span class="dv">3</span>)</span>
 <span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a></span>
@@ -665,7 +661,7 @@ window.Quarto = {
 <span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a>        <span class="at">pch =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, <span class="dv">19</span>),</span>
 <span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a>        <span class="at">bg =</span> <span class="st">"white"</span>)</span>
 <span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajout du texte pour l'optimum (UTILISATION DES BONS NOMS DE VARIABLES)</span></span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajout du texte pour l'optimum</span></span>
 <span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(T_opti, cout_horaire_min, </span>
 <span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a>      <span class="at">labels =</span> <span class="fu">paste</span>(<span class="st">"  t0* ="</span>, <span class="fu">round</span>(T_opti, <span class="dv">0</span>), <span class="st">"h"</span>), </span>
 <span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a>      <span class="at">pos =</span> <span class="dv">4</span>, <span class="at">col =</span> <span class="st">"darkgreen"</span>, <span class="at">font =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -701,7 +697,7 @@ window.Quarto = {
 <span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>temps_initial <span class="ot">&lt;-</span> temps_initial[<span class="sc">!</span><span class="fu">is.na</span>(temps_initial) <span class="sc">&amp;</span> temps_initial <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
 <span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Ajustement de la loi de Weibull avec flexsurv</span></span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="co"># flexsurvreg utilise une syntaxe de type formule (~1 signifie sans covariables)</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>fit_weib_flex <span class="ot">&lt;-</span> <span class="fu">flexsurvreg</span>(<span class="fu">Surv</span>(temps_initial) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">dist =</span> <span class="st">"weibull"</span>)</span>
 <span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Extraction des paramètres</span></span>
@@ -741,7 +737,7 @@ window.Quarto = {
 <details class="code-fold">
 <summary>Voir le code R</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. Calcul de la MTBF (Moyenne des Temps de Bon Fonctionnement)</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># La fonction 'totlos' ou le calcul manuel via Gamma peut être utilisé</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>mtbf_initial <span class="ot">&lt;-</span> eta_lub <span class="sc">*</span> <span class="fu">gamma</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span><span class="sc">/</span>beta_lub)</span>
 <span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">" MTBF initiale calculée :"</span>, <span class="fu">round</span>(mtbf_initial, <span class="dv">2</span>), <span class="st">"heures</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
@@ -1154,9 +1150,8 @@ window.Quarto = {
 <span id="cb89-25"><a href="#cb89-25" aria-hidden="true" tabindex="-1"></a>pi_std <span class="ot">&lt;-</span> <span class="fu">solve_stationary</span>(Q_std)</span>
 <span id="cb89-26"><a href="#cb89-26" aria-hidden="true" tabindex="-1"></a>pi_acc <span class="ot">&lt;-</span> <span class="fu">solve_stationary</span>(Q_acc)</span>
 <span id="cb89-27"><a href="#cb89-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb89-28"><a href="#cb89-28" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Affichage</span></span>
-<span id="cb89-29"><a href="#cb89-29" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Affichage des Matrices de Transition (Q)</span></span>
-<span id="cb89-30"><a href="#cb89-30" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"====================================================</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb89-28"><a href="#cb89-28" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Affichage des Matrices de Transition (Q)</span></span>
+<span id="cb89-29"><a href="#cb89-29" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"====================================================</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>====================================================</code></pre>
@@ -1398,7 +1393,7 @@ window.Quarto = {
 <div class="cell">
 <details class="code-fold">
 <summary>Voir le code R</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb123"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Optimisation des Mèches de Perçage (Version Finale) ---</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb123"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Optimisation des Mèches de Perçage ---</span></span>
 <span id="cb123-2"><a href="#cb123-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb123-3"><a href="#cb123-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Paramètres du Tableau 3 et énoncé</span></span>
 <span id="cb123-4"><a href="#cb123-4" aria-hidden="true" tabindex="-1"></a>cout_mèche_P <span class="ot">&lt;-</span> <span class="dv">200</span>  </span>
@@ -1452,7 +1447,7 @@ window.Quarto = {
 <span id="cb123-52"><a href="#cb123-52" aria-hidden="true" tabindex="-1"></a>nb_total_mèches <span class="ot">&lt;-</span> <span class="dv">30</span> <span class="co"># 10 stations * 3 têtes</span></span>
 <span id="cb123-53"><a href="#cb123-53" aria-hidden="true" tabindex="-1"></a>gain_annuel_atelier <span class="ot">&lt;-</span> (<span class="fu">max</span>(couts_horaires) <span class="sc">-</span> <span class="fu">min</span>(couts_horaires)) <span class="sc">*</span> <span class="dv">8760</span> <span class="sc">*</span> nb_total_mèches</span>
 <span id="cb123-54"><a href="#cb123-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb123-55"><a href="#cb123-55" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. AFFICHAGE DEMANDÉ</span></span>
+<span id="cb123-55"><a href="#cb123-55" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Affichage</span></span>
 <span id="cb123-56"><a href="#cb123-56" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"--- OPTIMISATION FINALE DES MÈCHES (ATELIER) ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -1613,7 +1608,7 @@ window.Quarto = {
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="eval_files/figure-html/analyse-moteur-flexsurv-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="eval_files/figure-html/analyse-moteur-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1968,7 +1963,7 @@ window.Quarto = {
 <details class="code-fold">
 <summary>Voir le code R</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb185"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb185-1"><a href="#cb185-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 7. Visualisation de l'optimisation du moteur</span></span>
-<span id="cb185-2"><a href="#cb185-2" aria-hidden="true" tabindex="-1"></a><span class="co"># On utilise les vecteurs ages_test et costs_v déjà calculés dans ton code</span></span>
+<span id="cb185-2"><a href="#cb185-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb185-3"><a href="#cb185-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ages_test, costs_v, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">col =</span> <span class="st">"darkblue"</span>, <span class="at">lwd =</span> <span class="dv">2</span>,</span>
 <span id="cb185-4"><a href="#cb185-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Optimisation du Remplacement Préventif (Moteur)"</span>,</span>
 <span id="cb185-5"><a href="#cb185-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Âge de remplacement préventif T (heures)"</span>,</span>
@@ -2147,7 +2142,7 @@ window.Quarto = {
 <span id="cb199-17"><a href="#cb199-17" aria-hidden="true" tabindex="-1"></a>sensor_cost_function <span class="ot">&lt;-</span> <span class="cf">function</span>(tau) {</span>
 <span id="cb199-18"><a href="#cb199-18" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb199-19"><a href="#cb199-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># A. Probabilité qu'un capteur soit en panne à l'instant t</span></span>
-<span id="cb199-20"><a href="#cb199-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># (Assurez-vous que beta_s et eta_s sont vos paramètres estimés sur 'sensor')</span></span>
+<span id="cb199-20"><a href="#cb199-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb199-21"><a href="#cb199-21" aria-hidden="true" tabindex="-1"></a>  F_t_unitaire <span class="ot">&lt;-</span> <span class="cf">function</span>(t) <span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(<span class="sc">-</span>(t <span class="sc">/</span> eta_s)<span class="sc">^</span>beta_s)</span>
 <span id="cb199-22"><a href="#cb199-22" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb199-23"><a href="#cb199-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># B. Fiabilité du système (3-parmi-4)</span></span>
@@ -2278,8 +2273,8 @@ window.Quarto = {
 <span id="cb208-25"><a href="#cb208-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb208-26"><a href="#cb208-26" aria-hidden="true" tabindex="-1"></a><span class="co"># C. Mèches (Optimisées : Remplacement à l'État 4)</span></span>
 <span id="cb208-27"><a href="#cb208-27" aria-hidden="true" tabindex="-1"></a><span class="co"># prob_maint_meche est la probabilité stationnaire d'être en état de remplacement (4 ou 5)</span></span>
-<span id="cb208-28"><a href="#cb208-28" aria-hidden="true" tabindex="-1"></a><span class="co"># calculée dans ta boucle d'optimisation pour l'indice 3 (Préventif_E4)</span></span>
-<span id="cb208-29"><a href="#cb208-29" aria-hidden="true" tabindex="-1"></a>indispo_meche_tete <span class="ot">&lt;-</span> prob_maint  <span class="co"># Issue de ton code "Optimisation Mèches" pour E4</span></span>
+<span id="cb208-28"><a href="#cb208-28" aria-hidden="true" tabindex="-1"></a><span class="co"># calculée dans la boucle d'optimisation pour l'indice 3 (Préventif_E4)</span></span>
+<span id="cb208-29"><a href="#cb208-29" aria-hidden="true" tabindex="-1"></a>indispo_meche_tete <span class="ot">&lt;-</span> prob_maint  <span class="co"># Issue de du code "Optimisation Mèches" pour E4</span></span>
 <span id="cb208-30"><a href="#cb208-30" aria-hidden="true" tabindex="-1"></a>dispo_meche_opti   <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> indispo_meche_tete</span>
 <span id="cb208-31"><a href="#cb208-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb208-32"><a href="#cb208-32" aria-hidden="true" tabindex="-1"></a><span class="co"># D. Capteurs (Optimisés à tau_opti)</span></span>
@@ -2289,7 +2284,7 @@ window.Quarto = {
 <span id="cb208-36"><a href="#cb208-36" aria-hidden="true" tabindex="-1"></a>dispo_sensor_opti <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> indispo_sensor</span>
 <span id="cb208-37"><a href="#cb208-37" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb208-38"><a href="#cb208-38" aria-hidden="true" tabindex="-1"></a><span class="co"># E. Moteur (Maintenance Corrective avec Chocs)</span></span>
-<span id="cb208-39"><a href="#cb208-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Utilise MTTF_global calculé dans ton point moteur</span></span>
+<span id="cb208-39"><a href="#cb208-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Utilise MTTF_global calculé dans le point moteur</span></span>
 <span id="cb208-40"><a href="#cb208-40" aria-hidden="true" tabindex="-1"></a>dispo_moteur_opti <span class="ot">&lt;-</span> MTTF_global <span class="sc">/</span> (MTTF_global <span class="sc">+</span> ttr_moteur)</span>
 <span id="cb208-41"><a href="#cb208-41" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb208-42"><a href="#cb208-42" aria-hidden="true" tabindex="-1"></a></span>
